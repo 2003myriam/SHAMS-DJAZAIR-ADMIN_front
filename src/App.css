@@ -1,1 +1,52 @@
- 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap');
+
+:root {
+  /* ================= COLORS ================= */
+  --blue: #1c2d44;
+  --light: #f8fafc;
+  --yellow: #dffe04;
+  --gris: #64748b;
+  --bleu-ciel: #4222e5;
+
+  /* ================= TYPO ================= */
+   --font-title: 'Fractul Alt', 'Montserrat', system-ui, sans-serif;
+    --font: 'Montserrat', system-ui, -apple-system, sans-serif;
+}
+
+
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--light);
+  color: var(--blue);
+}
+
+/* ================= LAYOUT ================= */
+.app-layout {
+  display: flex;
+  align-items: stretch; /*  permet aux éléments enfants de s'étirer pour occuper toute la hauteur ou la largeur de leur conteneur parent  */
+  min-height: 100vh;
+}
+
+.app-layout__content {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+}
+
+@media (max-width: 640px) {
+  /* la sidebar passe en barre fixe en bas */
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .app-layout__content {
+    padding-bottom: 76px;
+  }
+}
