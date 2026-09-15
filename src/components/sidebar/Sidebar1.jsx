@@ -13,8 +13,9 @@ const MENU_ITEMS = [
   { key: "clients", label: "Clients", icon: <FiUsers /> },
 ];
 
-function Sidebarfunction() {
-  const [active, setActive] = useState("dashboard");
+function Sidebarfunction({setSelected}) {
+  const [active1, setActive1] = useState("dashboard");
+  console.log("setSelected reçu :", setSelected);
 
   return (
     <Sidebar className="app-sidebar" width="72px" backgroundColor="transparent">
@@ -27,10 +28,13 @@ function Sidebarfunction() {
           <MenuItem
             key={item.key}
             icon={item.icon}
-            active={active === item.key}
-            onClick={() => setActive(item.key)}
+            active={active1 === item.key}
+            onClick={() => {
+              setActive1(item.key) ;
+              setSelected(item.key) ; 
+            }}
             data-label={item.label}
-            aria-current={active === item.key ? "page" : undefined}
+            aria-current={active1 === item.key ? "page" : undefined}
           />
         ))}
       </Menu>

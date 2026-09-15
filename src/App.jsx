@@ -1,10 +1,14 @@
 import './App.css'
-import Sidebarfunction from './components/sidebar/Sidebar1'
+import SidebarGeneral from './components/sidebar/SidebarGeneral'
+ 
+ 
+ 
+ 
 
 function App() {
   return (
     <div className="app-layout">
-      <Sidebarfunction />
+      <SidebarGeneral/>
       <main className="app-layout__content">
         {/* contenu des pages */}
       </main>

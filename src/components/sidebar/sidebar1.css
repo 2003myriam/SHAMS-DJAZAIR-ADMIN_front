@@ -22,6 +22,7 @@
   /* visible : sinon l'ecriture quand on met la souris  sont coupés */
   overflow: visible;
   box-shadow: 1px 0 0 rgba(255, 255, 255, 0.06), 4px 0 24px rgba(15, 23, 42, 0.08);
+  z-index: 10000000000000;   /*  l'ecriture reste tjr en haut  */
 }
 
 /* ---------- Logo ---------- */
