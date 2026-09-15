@@ -15,7 +15,6 @@ const MENU_ITEMS = [
 
 function Sidebarfunction({setSelected}) {
   const [active1, setActive1] = useState("dashboard");
-  console.log("setSelected reçu :", setSelected);
 
   return (
     <Sidebar className="app-sidebar" width="72px" backgroundColor="transparent">

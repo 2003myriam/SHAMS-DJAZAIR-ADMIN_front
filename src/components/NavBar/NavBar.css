@@ -1,0 +1,60 @@
+/* ================= NAVBAR ================= */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 64px;
+  padding: 0 28px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(28, 45, 68, 0.08);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 0;
+}
+
+/* ---------- Champ de recherche ---------- */
+.navbar__search {
+  width: 100%;
+  max-width: 320px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(28, 45, 68, 0.15);
+  border-radius: 10px;
+  background: var(--light);
+  color: var(--blue);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.navbar__search::placeholder {
+  color: rgba(28, 45, 68, 0.4);
+}
+
+.navbar__search:focus {
+  background: #ffffff;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(28, 45, 68, 0.08);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .navbar {
+    height: 56px;
+    padding: 0 16px;
+  }
+
+  .navbar__search {
+    max-width: none;
+  }
+}
+
+/* Respecte "réduire les animations" */
+@media (prefers-reduced-motion: reduce) {
+  .navbar__search {
+    transition: none !important;
+  }
+}

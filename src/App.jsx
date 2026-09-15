@@ -1,5 +1,8 @@
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import SidebarGeneral from './components/sidebar/SidebarGeneral'
+import Layout from './components/layouts/layout'
+import Marque from './pages/Marques/Marque'
+ 
  
  
  
@@ -7,12 +10,14 @@ import SidebarGeneral from './components/sidebar/SidebarGeneral'
 
 function App() {
   return (
-    <div className="app-layout">
-      <SidebarGeneral/>
+    <Layout>
       <main className="app-layout__content">
         {/* contenu des pages */}
+         <Routes>
+          <Route path="/marques" element={<Marque/>} />
+         </Routes>
       </main>
-    </div>
+    </Layout>
   )
 }
 

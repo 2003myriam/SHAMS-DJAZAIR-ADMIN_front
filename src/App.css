@@ -11,6 +11,9 @@
   /* ================= TYPO ================= */
    --font-title: 'Fractul Alt', 'Montserrat', system-ui, sans-serif;
     --font: 'Montserrat', system-ui, -apple-system, sans-serif;
+
+     /* ================= BORDER ================= */
+     --border:10px
 }
 
 
@@ -32,6 +35,13 @@ body {
   display: flex;
   align-items: stretch; /*  permet aux éléments enfants de s'étirer pour occuper toute la hauteur ou la largeur de leur conteneur parent  */
   min-height: 100vh;
+}
+
+.app-layout__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .app-layout__content {

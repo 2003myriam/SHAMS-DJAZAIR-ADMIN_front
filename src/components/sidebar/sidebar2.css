@@ -1,0 +1,195 @@
+/* ================= SIDEBAR SECONDAIRE (SOUS-MENU TEXTE) ================= */
+
+.app-sidebar2 {
+  --sb2-width: 220px;
+  --sb2-radius: 10px;
+
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-width: var(--sb2-width);
+  z-index: 10; /* passe au-dessus du navbar (z-index: 0) */
+}
+
+/* le conteneur interne de react-pro-sidebar */
+.app-sidebar2 .ps-sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 14px;
+  background: var(--light);
+  border-right: 1px solid rgba(28, 45, 68, 0.08);
+  overflow-y: auto;
+}
+
+/* ---------- Groupe de menu ---------- */
+.app-sidebar2__nav {
+  padding: 0;
+}
+
+.app-sidebar2 .ps-menu-root ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+}
+
+/* ---------- Bouton (item) ---------- */
+.app-sidebar2 .ps-menu-button {
+  width: 100%;
+  min-height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: var(--sb2-radius);
+  background: transparent;
+  color: var(--blue);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.app-sidebar2 .ps-menu-button p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Hover */
+.app-sidebar2 .ps-menu-button:hover {
+  background: rgba(28, 45, 68, 0.06) !important;
+  color: var(--blue);
+  transform: translateX(2px);
+}
+
+.app-sidebar2 .ps-menu-button:active {
+  transform: translateX(2px) scale(0.98);
+}
+
+/* ---------- État actif ---------- */
+.app-sidebar2 .ps-menuitem-root.ps-active > .ps-menu-button {
+  background: var(--blue) !important;
+  color: var(--yellow) !important;
+}
+
+.app-sidebar2 .ps-menuitem-root.ps-active > .ps-menu-button p {
+  font-weight: 600;
+}
+
+/* barre indicatrice à gauche */
+.app-sidebar2 .ps-menuitem-root {
+  position: relative;
+}
+
+.app-sidebar2 .ps-menuitem-root.ps-active::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 0 3px 3px 0;
+  background: var(--yellow);
+}
+
+/* ---------- Barre de recherche ---------- */
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) {
+  margin: 0 0 16px;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) > ul {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(28, 45, 68, 0.15);
+  border-radius: 10px;
+  padding: 0 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav):focus-within > ul {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(28, 45, 68, 0.08);
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) > ul > svg {
+  flex: 0 0 auto;
+  font-size: 17px;
+  color: var(--blue);
+  opacity: 0.55;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) .ps-menuitem-root {
+  flex: 1 1 auto;
+  position: static;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) .ps-menu-button {
+  width: 100% !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  cursor: text;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) .ps-menu-button:hover {
+  background: transparent !important;
+  transform: none;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--blue);
+  font-family: inherit;
+}
+
+.app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) input::placeholder {
+  color: rgba(28, 45, 68, 0.4);
+}
+
+/* ---------- Bouton de réduction (collé à l'extrémité, centré verticalement) ---------- */
+.app-sidebar2 .ps-sidebar-container > svg {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  padding: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: var(--yellow);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
+  z-index: 20;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .app-sidebar2 {
+    position: static;
+    height: auto;
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  .app-sidebar2 .ps-sidebar-container {
+    border-right: none;
+    border-bottom: 1px solid rgba(28, 45, 68, 0.08);
+  }
+}
+
+/* Respecte "réduire les animations" */
+@media (prefers-reduced-motion: reduce) {
+  .app-sidebar2 * {
+    transition: none !important;
+  }
+}
