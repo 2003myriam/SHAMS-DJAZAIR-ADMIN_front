@@ -3,10 +3,11 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import './Marque.css'
 import PanneauLateral from '../../components/Marques/PanneauLateral';
+import { MdDeleteForever } from "react-icons/md";
 
 function Marque() {
     const [brands, setBrands] = useState([]);
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
     const openBrandDrawer = () => {
         setOpen(true)
     }
@@ -14,6 +15,10 @@ function Marque() {
         setOpen(false)
     }
 
+    const [supprimer, setSupprimer] = useState(false);
+    const opendeletebrand = () => {
+        setSupprimer(true)
+    }
     /* ========================================== */
     // Récupération des  marques
     const getBrands = async () => {
@@ -53,12 +58,12 @@ function Marque() {
                             <h2 className="marque-card__name">{brand.name}</h2>
                             <a className="marque-card__logo" href={brand.website}><img src={brand.logo} alt={brand.name} /></a>
                             <input className="marque-card__toggle" type="checkbox" name="" id="" value={brand.isActive} />
+                            <MdDeleteForever supprimer={supprimer} onClick={opendeletebrand} />
                         </div>
 
                     ))}
                 </div>
                 <PanneauLateral open={open}   onClose={closeBrandDrawer}/>
-               
             </section>
         </>
     )

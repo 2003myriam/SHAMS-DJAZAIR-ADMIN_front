@@ -18,7 +18,7 @@ function Sidebar2({selected}) {
       { key: "Apercu", label: "Apercu generale" ,  parent: "dashboard" ,path: "/dashboard"},
       { key: "performance", label: "Performance" , parent: "dashboard" },
       { key: "produits", label: "Tous les produits" , parent: "products" },
-      { key: "categorie", label: "Catégories" , parent: "products" },
+      { key: "categorie", label: "Catégories" , parent: "products" , path: "/categories" },
       { key: "sous-categorie", label: "Sous-Catégories" , parent: "products" },
       { key: "marque", label: "Marques" , parent: "products" , path: "/marques" },
       { key: "commande", label: "Toutes les commandes" , parent: "orders" },

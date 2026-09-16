@@ -20,6 +20,7 @@
   font-size: 22px;
   font-weight: 700;
   color: var(--blue);
+  font-family: var( --font-title);
 }
 
 .marques-page__add-btn {
