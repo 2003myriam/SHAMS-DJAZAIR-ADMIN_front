@@ -1,0 +1,202 @@
+/* ==================================================
+   PANNEAU LATERAL
+================================================== */
+
+.brand-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  width: var(--drawer-width);
+  height: 100vh;
+  padding: var(--drawer-padding);
+  background: var(--blue);
+  color: var(--light);
+  box-shadow: var(--drawer-shadow);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+
+/* ==================================================
+   HEADER
+================================================== */
+
+.brand-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 40px;
+}
+
+.brand-drawer__header h2 {
+  margin: 0;
+
+  font-family: var(--font-title);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--light);
+}
+
+.brand-drawer__close {
+  width: 28px;
+  height: 28px;
+
+  color: var(--light);
+
+  cursor: pointer;
+
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.brand-drawer__close:hover {
+  color: red;
+  transform: rotate(90deg);
+}
+
+
+/* ==================================================
+   FORMULAIRE
+================================================== */
+
+.brand-drawer__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* ==================================================
+   CHAMPS
+================================================== */
+
+.brand-drawer__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-drawer__field input {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border: 1px solid rgba(248, 250, 252, 0.2);
+  border-radius: var(--border);
+
+  outline: none;
+
+  background: rgba(248, 250, 252, 0.08);
+  color: var(--light);
+
+  font-family: var(--font);
+  font-size: 14px;
+
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.brand-drawer__field input::placeholder {
+  color: rgba(248, 250, 252, 0.55);
+}
+
+.brand-drawer__field input:focus {
+  border-color: var(--yellow);
+  background: rgba(248, 250, 252, 0.12);
+}
+
+
+/* ==================================================
+   CHECKBOX
+================================================== */
+
+.brand-drawer__checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 0;
+
+  color: var(--light);
+
+  font-size: 14px;
+}
+
+.brand-drawer__checkbox input {
+  width: 18px;
+  height: 18px;
+
+  accent-color: var(--yellow);
+
+  cursor: pointer;
+}
+
+
+/* ==================================================
+   BOUTON
+================================================== */
+
+.brand-drawer__submit {
+  width: 100%;
+
+  padding: 14px 20px;
+
+  border: none;
+  border-radius: var(--border);
+
+  background: var(--yellow);
+  color: var(--blue);
+
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.brand-drawer__submit:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+
+/* ==================================================
+   MESSAGES
+================================================== */
+
+.brand-drawer__success {
+  margin-top: 20px;
+  padding: 12px 14px;
+
+  border-radius: var(--border);
+
+  background: rgb(4, 254, 4 , 0.12);
+  color: rgb(4, 254, 4);
+
+  font-size: 13px;
+}
+
+.brand-drawer__error {
+  margin-top: 20px;
+  padding: 12px 14px;
+
+  border-radius: var(--border);
+
+  background: rgb(232, 42, 42 ,0.12);
+  color: #e82a2a;
+
+  font-size: 13px;
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 640px) {
+  .brand-drawer {
+    width: 100%;
+    padding: 24px;
+  }
+}

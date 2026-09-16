@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;900&display=swap');
-
 :root {
   /* ================= COLORS ================= */
   --blue: #1c2d44;
@@ -9,14 +8,18 @@
   --bleu-ciel: #4222e5;
 
   /* ================= TYPO ================= */
-   --font-title: 'Fractul Alt', 'Montserrat', system-ui, sans-serif;
-    --font: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-title: 'Fractul Alt', 'Montserrat', system-ui, sans-serif;
+  --font: 'Montserrat', system-ui, -apple-system, sans-serif;
 
-     /* ================= BORDER ================= */
-     --border:10px
+  /* ================= BORDER ================= */
+  --border: 10px;
+
+  /* ================= DRAWER ================= */
+  --drawer-width: 420px;
+  --drawer-padding: 32px;
+  --drawer-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+  --drawer-overlay: rgba(0, 0, 0, 0.25);
 }
-
-
 
 
 * {
@@ -33,8 +36,8 @@ body {
 /* ================= LAYOUT ================= */
 .app-layout {
   display: flex;
-  align-items: stretch; /*  permet aux éléments enfants de s'étirer pour occuper toute la hauteur ou la largeur de leur conteneur parent  */
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .app-layout__main {
@@ -42,12 +45,15 @@ body {
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  min-height: 0;
 }
 
 .app-layout__content {
   flex: 1;
   min-width: 0;
+  min-height: 0;
   padding: 24px;
+  overflow-y: auto;
 }
 
 @media (max-width: 640px) {
