@@ -4,6 +4,7 @@ import "./Categorie.css"
 
 function Categorie() {
     const [categories, setCategories] = useState([]);
+    const [error, setError] = useState([]);
     /* ========================================== */
     // Récupération des  categories
     const getCategories = async () => {
@@ -29,7 +30,36 @@ function Categorie() {
         getCategories();
     }, []);
 
+    /* ========================================== */
+    /* ======== Toggle categorie========= */
+    const toggleCategorie = async (id) => {
+        const token = localStorage.getItem("token");
 
+        try {
+            const response = await axios.patch(
+                `http://localhost:5001/categories/${id}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setCategories((prevCategories) =>
+                prevCategories.map((category) =>
+                    category._id === id
+                        ? { ...category, isActive: !category.isActive }
+                        : category
+                )
+            );
+
+            setError("");
+        } catch (error) {
+            setError(
+                error.response?.data?.message || "Erreur lors de la modification."
+            );
+        }
+    };
     return (
         <>
             <section className="categories-page">
@@ -74,7 +104,7 @@ function Categorie() {
                                         className="categories-card__toggle"
                                         type="checkbox"
                                         checked={cat.isActive}
-                                        readOnly
+                                        onChange={() => toggleCategorie(cat._id)}
                                     />
                                 </div>
                             </div>
