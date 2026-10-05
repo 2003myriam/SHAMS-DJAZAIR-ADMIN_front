@@ -8,4 +8,13 @@
    dans un cadre fixe, sur fond blanc pour rester lisibles en mode sombre. */
 .marque__logo {
   @apply h-10 w-16 rounded-md border bg-white object-contain p-1;
+  
 }
+.delete-btn {
+  background-color: #dc2626;
+  color: white;
+}
+.delete-btn:hover {
+  background-color: #b91c1c;
+}
+

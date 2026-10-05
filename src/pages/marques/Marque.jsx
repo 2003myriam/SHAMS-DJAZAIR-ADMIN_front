@@ -9,6 +9,7 @@ import { Main } from '@/layouts/main'
 import { MarqueSheet } from './components/MarqueSheet'
 import { Checkbox } from "@/components/ui/checkbox"
 import './Marque.css'
+import DeleteConfirmation from './components/DeleteConfirmation'
 
 function Marque() {
     // ==========================================
@@ -21,6 +22,9 @@ function Marque() {
     // ==========================================
     // panneau ouvert ou fermé
     const [sheetOpen, setSheetOpen] = useState(false)
+    // delete ouvert ou fermé
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [brandToDelete, setBrandToDelete] = useState(null)
     // marque en cours de modification (null = création)
     const [currentBrand, setCurrentBrand] = useState(null)
 
@@ -44,12 +48,25 @@ function Marque() {
     }, [])
 
     // ==========================================
-    // Ajouter un produit
+    // Ajouter une marque
     // ==========================================
     const openCreate = () => {
         setCurrentBrand(null)
         setSheetOpen(true)
     }
+    // ==========================================
+    // supprimer une marque
+    // ==========================================
+    const handleDelete = async (id) => {
+        try {
+            const response = await axios.delete(`http://localhost:5001/brand/${id}`)
+            getBrands()
+            setDeleteDialogOpen(false)
+        } catch (error) {
+            toast.error("Impossible de récupérer les marques.")
+        }
+    }
+
 
     return (
         <>
@@ -103,17 +120,36 @@ function Marque() {
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
                                         <Button variant="ghost" size="icon" /* onClick={() => openEdit(b)} */ aria-label="Modifier"><Pencil /></Button>
-                                        <Button variant="ghost" size="icon" /* onClick={() => handleDelete(b)} */ aria-label="Supprimer"><Trash2 /></Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                                setBrandToDelete(b._id)
+                                                setDeleteDialogOpen(true)
+                                            }}
+                                            aria-label="Supprimer"
+                                        >
+                                            <Trash2 />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </div>
-            </Main>
+            </Main >
 
             {/* Panneau latéral (ajout / modification) */}
-            <MarqueSheet open={sheetOpen} onOpenChange={setSheetOpen} marques={currentBrand && { ...currentBrand, id: currentBrand._id, name: currentBrand.name }} /* onSave={handleSave} */ />
+            < MarqueSheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                marques={currentBrand && { ...currentBrand, id: currentBrand._id, name: currentBrand.name }
+                } /* onSave={handleSave} */ />
+            < DeleteConfirmation
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onConfirm={() => handleDelete(brandToDelete)}
+            />
         </>
     )
 }
