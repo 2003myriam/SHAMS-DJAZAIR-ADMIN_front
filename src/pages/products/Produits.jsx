@@ -55,27 +55,27 @@ export function Produits() {
   // Récupération des produits
   // ==========================================
 
- const getProducts = async (page = 1) => {
-  try {
-    const response = await axios.get(
-      `http://localhost:5001/products?page=${page}&limit=${pagination.productsPerPage}`
-    )
+  const getProducts = async (page = 1) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5001/products?page=${page}&limit=${pagination.productsPerPage}`
+      )
 
-    setProduits(response.data.data || [])
+      setProduits(response.data.data || [])
 
-    setPagination(
-      response.data.pagination || {
-        currentPage: page,
-        productsPerPage: pagination.productsPerPage,
-        totalProducts: 0,
-        totalPages: 0,
-      }
-    )
-  } catch (error) {
+      setPagination(
+        response.data.pagination || {
+          currentPage: page,
+          productsPerPage: pagination.productsPerPage,
+          totalProducts: 0,
+          totalPages: 0,
+        }
+      )
+    } catch (error) {
 
-    toast.error("Impossible de récupérer les produits.")
+      toast.error("Impossible de récupérer les produits.")
+    }
   }
-}
 
   // ==========================================
   // Changement de page

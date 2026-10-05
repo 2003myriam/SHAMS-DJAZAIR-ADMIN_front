@@ -8,7 +8,8 @@ import { AuthenticatedLayout } from '@/layouts/authenticated-layout'
 import { Dashboard } from '@/pages/dashboard/Dashboard'
 import { NotFoundError } from '@/pages/errors/NotFoundError'
 import { SignIn } from '@/pages/sign-in/SignIn'
-import { Produits } from '@/pages/tasks/Produits'
+import { Produits } from '@/pages/products/Produits'
+import Marque from './pages/marques/Marque'
 
 export default function App() {
   return (
@@ -20,7 +21,8 @@ export default function App() {
         {/* ===== Pages avec les sidebars + header ===== */}
         <Route element={<AuthenticatedLayout />}>
           <Route path='/' element={<Dashboard />} />
-          <Route path='/produits' element={<Produits/>} />
+          <Route path='/produits' element={<Produits />} />
+          <Route path='/marques' element={<Marque />} />
         </Route>
 
         {/* ===== Page introuvable (404) ===== */}

@@ -1,0 +1,11 @@
+/*
+ * Styles de la page Marques.
+ */
+@reference '../../styles/index.css';
+
+/* ================= LOGO ================= */
+/* Les logos ont des formats variés : on les affiche en entier (object-contain)
+   dans un cadre fixe, sur fond blanc pour rester lisibles en mode sombre. */
+.marque__logo {
+  @apply h-10 w-16 rounded-md border bg-white object-contain p-1;
+}
