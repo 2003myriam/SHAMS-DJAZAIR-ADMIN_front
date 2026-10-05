@@ -1,0 +1,141 @@
+/*
+ * Styles de la page Produits.
+ */
+@reference '../../styles/index.css';
+
+/* ================= HAUT DE PAGE ================= */
+.produits__top {
+  @apply mb-6 flex flex-wrap items-end justify-between gap-4 border-b pb-5;
+}
+
+.produits__title {
+  @apply text-2xl font-bold tracking-tight sm:text-3xl;
+}
+
+.produits__subtitle {
+  @apply mt-1 text-sm text-muted-foreground;
+}
+
+.produits__top > button {
+  @apply shadow-sm;
+}
+
+/* ================= TABLEAU ================= */
+.produits__table {
+  @apply rounded-md border;
+}
+
+.produits__actions {
+  @apply w-24 text-end;
+}
+
+.produits__empty {
+  @apply h-24 text-center text-muted-foreground;
+}
+
+.produit__image {
+  @apply size-10 rounded-md border object-cover;
+}
+
+/* ================= PAGINATION (MUI) ================= */
+.produitback-pagination {
+  @apply mt-6 flex justify-center sm:justify-end;
+}
+
+.produitback-pagination .MuiPagination-ul {
+  @apply flex-nowrap gap-1;
+}
+
+.produitback-pagination .MuiPaginationItem-root {
+  @apply m-0 h-9 min-w-9 rounded-md border border-border bg-background px-2 font-sans text-sm font-medium text-foreground transition-colors;
+}
+
+.produitback-pagination .MuiPaginationItem-root:hover {
+  @apply bg-accent text-accent-foreground;
+}
+
+.produitback-pagination .MuiPaginationItem-root.Mui-selected,
+.produitback-pagination .MuiPaginationItem-root.Mui-selected:hover {
+  @apply border-primary bg-primary text-primary-foreground;
+}
+
+.produitback-pagination .MuiPaginationItem-root.Mui-focusVisible {
+  @apply ring-2 ring-ring ring-offset-2 ring-offset-background;
+}
+
+.produitback-pagination .MuiPaginationItem-root.Mui-disabled {
+  @apply opacity-50;
+}
+
+/* Les "…" ne sont pas des boutons : pas de bordure */
+.produitback-pagination .MuiPaginationItem-ellipsis {
+  @apply border-transparent bg-transparent text-muted-foreground;
+}
+
+/* ================= PANNEAU LATÉRAL (ajout / modification) ================= */
+/* Plus large que le Sheet par défaut, header et footer fixes, contenu qui défile */
+.produit-sheet {
+  @apply w-full gap-0 sm:max-w-lg;
+}
+
+.produit-sheet__header {
+  @apply border-b pe-12;
+}
+
+.produit-sheet__form {
+  @apply flex flex-1 flex-col gap-6 overflow-y-auto px-4 py-6;
+}
+
+.produit-sheet__section {
+  @apply grid gap-4;
+}
+
+.produit-sheet__section-title {
+  @apply text-xs font-semibold tracking-wide text-muted-foreground uppercase;
+}
+
+.produit-sheet__field {
+  @apply grid min-w-0 gap-2;
+}
+
+.produit-sheet__row {
+  @apply grid gap-4 sm:grid-cols-2;
+}
+
+.produit-sheet__select {
+  @apply w-full;
+}
+
+/* Zone d'envoi de fichier (le vrai <input type="file"> est caché) */
+.produit-sheet__upload {
+  @apply flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed px-4 py-6 text-center transition-colors hover:border-primary hover:bg-accent/50 focus-within:ring-2 focus-within:ring-ring;
+}
+
+.produit-sheet__upload-icon {
+  @apply mb-1 size-6 text-muted-foreground;
+}
+
+.produit-sheet__upload-label {
+  @apply text-sm font-medium;
+}
+
+.produit-sheet__upload-hint {
+  @apply w-full truncate text-xs text-muted-foreground;
+}
+
+/* Ligne nom / valeur / supprimer */
+.produit-sheet__spec {
+  @apply grid grid-cols-[1fr_1fr_auto] items-center gap-2;
+}
+
+.produit-sheet__empty {
+  @apply rounded-md border border-dashed py-4 text-center text-sm text-muted-foreground;
+}
+
+.produit-sheet__add {
+  @apply justify-self-start;
+}
+
+.produit-sheet__footer {
+  @apply mt-0 flex-row justify-end border-t bg-muted/30;
+}

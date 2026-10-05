@@ -1,13 +1,15 @@
+// Point d'entrée de l'application : active le thème (clair / sombre) puis affiche <App />.
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
+import ReactDOM from 'react-dom/client'
+import { ThemeProvider } from './context/theme-provider'
+import App from './App'
+// Styles globaux
+import './styles/index.css'
 
-createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-       <App />
-    </BrowserRouter>
-  </StrictMode>,
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </StrictMode>
 )

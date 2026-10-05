@@ -1,0 +1,94 @@
+// Contexte du thème (clair / sombre / système), mémorisé dans un cookie.
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
+import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
+
+const DEFAULT_THEME = 'system'
+const THEME_COOKIE_NAME = 'vite-ui-theme'
+const THEME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 // 1 an
+
+const initialState = {
+  defaultTheme: DEFAULT_THEME,
+  resolvedTheme: 'light',
+  theme: DEFAULT_THEME,
+  setTheme: () => null,
+  resetTheme: () => null,
+}
+
+const ThemeContext = createContext(initialState)
+
+export function ThemeProvider({
+  children,
+  defaultTheme = DEFAULT_THEME,
+  storageKey = THEME_COOKIE_NAME,
+  ...props
+}) {
+  const [theme, _setTheme] = useState(
+    () => getCookie(storageKey) || defaultTheme
+  )
+
+  // Mémorise le thème réel (clair/sombre) pour éviter de le recalculer inutilement
+  const resolvedTheme = useMemo(() => {
+    if (theme === 'system') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+    }
+    return theme
+  }, [theme])
+
+  useEffect(() => {
+    const root = window.document.documentElement
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+    const applyTheme = (currentResolvedTheme) => {
+      root.classList.remove('light', 'dark') // Retire les classes de thème existantes
+      root.classList.add(currentResolvedTheme) // Ajoute la classe du nouveau thème
+    }
+
+    const handleChange = () => {
+      if (theme === 'system') {
+        const systemTheme = mediaQuery.matches ? 'dark' : 'light'
+        applyTheme(systemTheme)
+      }
+    }
+
+    applyTheme(resolvedTheme)
+
+    mediaQuery.addEventListener('change', handleChange)
+
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [theme, resolvedTheme])
+
+  const setTheme = (theme) => {
+    setCookie(storageKey, theme, THEME_COOKIE_MAX_AGE)
+    _setTheme(theme)
+  }
+
+  const resetTheme = () => {
+    removeCookie(storageKey)
+    _setTheme(DEFAULT_THEME)
+  }
+
+  const contextValue = {
+    defaultTheme,
+    resolvedTheme,
+    resetTheme,
+    theme,
+    setTheme,
+  }
+
+  return (
+    <ThemeContext value={contextValue} {...props}>
+      {children}
+    </ThemeContext>
+  )
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useTheme = () => {
+  const context = useContext(ThemeContext)
+
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider')
+
+  return context
+}

@@ -1,0 +1,51 @@
+/*
+ * Styles des mises en page : header, contenu, page de connexion et disposition des 2 sidebars.
+ */
+@reference '../styles/index.css';
+
+/* ================= HEADER ================= */
+.header {
+  @apply sticky top-0 z-40 flex h-16 items-center gap-3 border-b bg-background px-4;
+}
+
+.header__separator {
+  @apply h-6!;
+}
+
+.header__content {
+  @apply flex flex-1 items-center gap-3;
+}
+
+/* ================= CONTENU ================= */
+.main {
+  @apply mx-auto w-full max-w-7xl px-4 py-6;
+}
+
+/* ================= PAGE SANS SIDEBAR (connexion) ================= */
+.auth-layout {
+  @apply flex min-h-svh flex-col items-center justify-center gap-6 p-4;
+}
+
+.auth-layout__brand {
+  @apply flex items-center gap-2 text-xl font-semibold;
+}
+
+.auth-layout__brand img {
+  @apply size-10 rounded-lg bg-[#1c2d44] p-1.5;
+}
+
+/* ================= LAYOUT (2 sidebars + contenu) ================= */
+.app-layout [data-slot='sidebar-inset'] {
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  /* la sidebar d'icônes passe en barre fixe en bas */
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .app-layout [data-slot='sidebar-inset'] {
+    padding-bottom: 76px;
+  }
+}

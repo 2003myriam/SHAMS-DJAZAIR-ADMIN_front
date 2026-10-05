@@ -1,0 +1,8 @@
+/*
+ * Styles de la page Aperçu général.
+ */
+@reference '../../styles/index.css';
+
+.dashboard__title {
+  @apply text-2xl font-bold tracking-tight;
+}

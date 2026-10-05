@@ -1,0 +1,16 @@
+/*
+ * Styles de la page de connexion.
+ */
+@reference '../../styles/index.css';
+
+.sign-in__card {
+  @apply w-full max-w-sm;
+}
+
+.sign-in__form {
+  @apply grid gap-4;
+}
+
+.sign-in__field {
+  @apply grid gap-2;
+}

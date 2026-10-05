@@ -1,0 +1,24 @@
+/*
+ * Styles de la page 404.
+ */
+@reference '../../styles/index.css';
+
+.not-found {
+  @apply flex h-svh flex-col items-center justify-center gap-2 p-4 text-center;
+}
+
+.not-found__code {
+  @apply text-[7rem] leading-tight font-bold;
+}
+
+.not-found__title {
+  @apply font-medium;
+}
+
+.not-found__text {
+  @apply text-muted-foreground;
+}
+
+.not-found__actions {
+  @apply mt-6 flex gap-4;
+}
