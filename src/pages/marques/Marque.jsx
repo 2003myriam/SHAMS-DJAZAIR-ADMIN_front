@@ -24,7 +24,9 @@ function Marque() {
     const [sheetOpen, setSheetOpen] = useState(false)
     // delete ouvert ou fermé
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    // Stocker le nom et le id  quand on clique sur supprimer
     const [brandToDelete, setBrandToDelete] = useState(null)
+    const [brandNameToDelete, setBrandNameToDelete] = useState("")
     // marque en cours de modification (null = création)
     const [currentBrand, setCurrentBrand] = useState(null)
 
@@ -54,16 +56,33 @@ function Marque() {
         setCurrentBrand(null)
         setSheetOpen(true)
     }
+
+    // ==========================================
+    // Modifier une marque
+    // ==========================================
+    const openEdit = (brand) => {
+        setCurrentBrand(brand)
+        setSheetOpen(true)
+    }
     // ==========================================
     // supprimer une marque
     // ==========================================
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:5001/brand/${id}`)
-            getBrands()
-            setDeleteDialogOpen(false)
+            const token = localStorage.getItem("token");
+            const response = await axios.delete(`http://localhost:5001/brand/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            getBrands(),
+                setDeleteDialogOpen(false)
         } catch (error) {
-            toast.error("Impossible de récupérer les marques.")
+
+
+            toast.error("Impossible de supprimer la marque.")
         }
     }
 
@@ -115,17 +134,24 @@ function Marque() {
                                     <TableCell><Checkbox
                                         id="finder-pref-9k2-hard-disks-ljj-checkbox"
                                         name="finder-pref-9k2-hard-disks-ljj-checkbox"
-                                        defaultChecked
+                                        checked={b.isActive}
                                     /></TableCell>
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
-                                        <Button variant="ghost" size="icon" /* onClick={() => openEdit(b)} */ aria-label="Modifier"><Pencil /></Button>
+                                        {/* ICONE MODIFIER  */}
+                                        <Button variant="ghost"
+                                            size="icon"
+                                            onClick={() => openEdit(b)}
+                                            aria-label="Modifier">
+                                            <Pencil /></Button>
+                                        {/* ICONE SUPPRIMER  */}
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => {
-                                                setBrandToDelete(b._id)
-                                                setDeleteDialogOpen(true)
+                                                setBrandToDelete(b._id) // je garde ID de la marque
+                                                setBrandNameToDelete(b.name) // je garde nom de la marque 
+                                                setDeleteDialogOpen(true) // la boite est en etat ouvert
                                             }}
                                             aria-label="Supprimer"
                                         >
@@ -143,12 +169,14 @@ function Marque() {
             < MarqueSheet
                 open={sheetOpen}
                 onOpenChange={setSheetOpen}
-                marques={currentBrand && { ...currentBrand, id: currentBrand._id, name: currentBrand.name }
-                } /* onSave={handleSave} */ />
+                marque={currentBrand}
+                /* onSave={handleSave} */ />
+            {/* Panneau DE SUPPRESION */}
             < DeleteConfirmation
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={() => handleDelete(brandToDelete)}
+                brandName={brandNameToDelete} // envoyer le nom de la marque comme prop
             />
         </>
     )

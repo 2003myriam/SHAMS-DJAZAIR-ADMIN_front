@@ -6,10 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, } from '@/components/ui/select'
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, } from '@/components/ui/sheet'
-
+import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from "sonner"
 const EMPTY_FORM = {
   name: '',
   logo: '',
@@ -20,6 +19,10 @@ const EMPTY_FORM = {
 export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
 
   const [form, setForm] = useState(marque ?? EMPTY_FORM) // Si marque existe, prends produit. Sinon, prends EMPTY_FORM.
+  //Surveille la prop marque a chaque chnagement Si la valeur marque existe, utilise-la. Sinon, utilise emptyform
+  useEffect(() => {
+    setForm(marque ?? EMPTY_FORM)
+  }, [marque])
   // Fichiers choisis (pour afficher leur nom)
   const [imageFile, setImageFile] = useState(null)
 
@@ -30,27 +33,45 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
     try {
       const token = localStorage.getItem("token")
 
-      const response = await axios.post(
-        "http://localhost:5001/brand",
-        finalForm,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
+      if (marque) {
+
+        // MODIFICATION
+        const response = await axios.put(
+          `http://localhost:5001/brand/${marque._id}`,
+          form,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
           }
-        }
-      )
+        )
 
-      console.log("Marque créé :", response.data)
+        toast.success("Marque modifiée avec succès")
+        setForm(response.data.data)
 
-      setForm(response.data.data)
-    }
-    catch (error) {
-      console.log("Erreur lors de la création de la marque :", error)
+      } else {
+
+        // CRÉATION
+        const response = await axios.post(
+          "http://localhost:5001/brand",
+          form,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+
+        toast.success("Marque créée avec succès")
+        setForm(response.data.data)
+      }
+
+    } catch (error) {
+      console.log("Erreur lors de l'enregistrement :", error)
       console.log("Réponse du backend :", error.response?.data)
       console.log("Status :", error.response?.status)
     }
   }
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
 
@@ -100,6 +121,21 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
                   setForm({
                     ...form,
                     website: e.target.value
+                  })
+                }
+              />
+            </div>
+            {/* ======== Checkbox de la marque  =========== */}
+            <div className="marque-sheet__checkbox-field">
+              <Label htmlFor="isActive">Marque active</Label>
+              <Checkbox
+                id="isActive"
+                className="marque-sheet__checkbox"
+                checked={form.isActive}
+                onCheckedChange={(checked) =>
+                  setForm({
+                    ...form,
+                    isActive: checked
                   })
                 }
               />

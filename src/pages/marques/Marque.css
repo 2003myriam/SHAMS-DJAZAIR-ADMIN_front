@@ -18,3 +18,21 @@
   background-color: #b91c1c;
 }
 
+/* ================= CHECKBOX "MARQUE ACTIVE" ================= */
+/* Ligne encadrée : libellé à gauche, case à cocher à droite */
+.marque-sheet__checkbox-field {
+  @apply flex cursor-pointer items-center justify-between gap-4 rounded-lg border px-4 py-3 transition-colors hover:bg-accent/50;
+}
+
+.marque-sheet__checkbox-field:has([data-state='checked']) {
+  @apply border-primary bg-primary/5;
+}
+
+.marque-sheet__checkbox-field label {
+  @apply flex-1 cursor-pointer;
+}
+
+.marque-sheet__checkbox {
+  @apply size-5 cursor-pointer rounded-md;
+}
+

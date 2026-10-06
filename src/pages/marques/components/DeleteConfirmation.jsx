@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 
-function DeleteConfirmation({ open, onOpenChange, onConfirm }) {
+function DeleteConfirmation({ open, onOpenChange, onConfirm, brandName }) {
     return (
         <AlertDialog
             open={open}
@@ -25,7 +25,7 @@ function DeleteConfirmation({ open, onOpenChange, onConfirm }) {
                     </AlertDialogTitle>
 
                     <AlertDialogDescription>
-                        Êtes-vous sûr de vouloir supprimer cette marque ?
+                        Êtes-vous sûr de vouloir supprimer la marque "{brandName}" ?
                         Cette action est irréversible.
                     </AlertDialogDescription>
 
