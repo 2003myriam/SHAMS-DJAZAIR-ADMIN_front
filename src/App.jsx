@@ -10,6 +10,7 @@ import { NotFoundError } from '@/pages/errors/NotFoundError'
 import { SignIn } from '@/pages/sign-in/SignIn'
 import { Produits } from '@/pages/products/Produits'
 import Marque from './pages/marques/Marque'
+import Devis from './pages/devis/Devis'
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path='/' element={<Dashboard />} />
           <Route path='/produits' element={<Produits />} />
           <Route path='/marques' element={<Marque />} />
+          <Route path='/devis' element={<Devis />} />
         </Route>
 
         {/* ===== Page introuvable (404) ===== */}

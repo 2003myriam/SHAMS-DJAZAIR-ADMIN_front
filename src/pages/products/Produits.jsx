@@ -21,6 +21,7 @@ import Pagination from '@mui/material/Pagination'
 import { ProduitSheet } from './components/ProduitSheet'
 
 import './Produits.css'
+import DeleteConfirmation from './components/DeleteConfirmation'
 
 export function Produits() {
 
@@ -36,7 +37,11 @@ export function Produits() {
 
   // panneau ouvert ou fermé
   const [sheetOpen, setSheetOpen] = useState(false)
-
+  // delete ouvert ou fermé
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  // Stocker le nom et le id  quand on clique sur supprimer
+  const [productToDelete, setProductToDelete] = useState(null)
+  const [productNameToDelete, setProductNameToDelete] = useState("")
   // produit en cours de modification (null = création)
   const [currentProduct, setCurrentProduct] = useState(null)
 
@@ -144,13 +149,25 @@ export function Produits() {
   // ==========================================
   // Supprimer un produit
   // ==========================================
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(`http://localhost:5001/products/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      )
+      getProducts(),
+        setDeleteDialogOpen(false)
+    } catch (error) {
 
-  const handleDelete = (product) => {
 
-    setProduits(produits.filter((p) => p._id !== product._id))
-    toast.success('Produit supprimé.')
-
+      toast.error("Impossible de supprimer le produit.")
+    }
   }
+
 
   return (
 
@@ -319,11 +336,15 @@ export function Produits() {
                     >
                       <Pencil />
                     </Button>
-
+                    {/* ICONE SUPPRIMER  */}
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDelete(p)}
+                      onClick={() => {
+                        setProductToDelete(p._id) // je garde ID de la marque
+                        setProductNameToDelete(p.titre)// je garde nom de la marque 
+                        setDeleteDialogOpen(true) // la boite est en etat ouvert
+                      }}
                       aria-label="Supprimer"
                     >
                       <Trash2 />
@@ -379,6 +400,14 @@ export function Produits() {
           }
         }
         onSave={handleSave}
+      />
+
+      {/* Panneau DE SUPPRESION */}
+      < DeleteConfirmation
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => handleDelete(productToDelete)}
+        productName={productNameToDelete} // envoyer le nom de la marque comme prop
       />
 
     </>
