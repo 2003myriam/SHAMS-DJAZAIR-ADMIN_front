@@ -8,11 +8,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import { FaEye } from "react-icons/fa";
+import Pagination from '@mui/material/Pagination'
 function Devis() {
     // ==========================================
     // Devis
     // ==========================================
-    const [devis, setDeviss] = useState([])
+    const [devis, setDevis] = useState([])
     // ==========================================
     // Panneau latéral (ajout / modification)
     // ==========================================
@@ -60,9 +61,7 @@ function Devis() {
     // ==========================================
 
     const PaginateDevisPage = (event, page) => {
-
         getDevis(page)
-
     }
 
     // ==========================================
@@ -74,7 +73,31 @@ function Devis() {
         getDevis(1)
 
     }, [])
+    // ==========================================
+    // Récupération d'un seul devis
+    // ==========================================
 
+    const getDevisDetail = async (id) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:5001/request${id}`
+            )
+
+            setDevis(response.data.data || [])
+
+            setPagination(
+                response.data.pagination || {
+                    currentPage: page,
+                    devisPerPage: pagination.devisPerPage,
+                    totalDeviss: 0,
+                    totalPages: 0,
+                }
+            )
+        } catch (error) {
+
+            toast.error("Impossible de récupérer les devis.")
+        }
+    }
     return (
         <>
             <Header />
@@ -149,7 +172,10 @@ function Devis() {
                             ))}
                         </TableBody>
                     </Table>
+
                 </div>
+
+
             </Main >
         </>
     )
