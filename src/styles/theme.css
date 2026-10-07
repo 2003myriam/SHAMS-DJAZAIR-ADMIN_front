@@ -2,65 +2,79 @@
  * Variables du thème (couleurs clair / sombre, rayons, polices) utilisées par Tailwind et shadcn.
  */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* ================= CHARTE GRAPHIQUE SHAMS DJAZAIR ================= */
+  --blue: #1c2d44;
+  --light: #f8fafc;
+  --yellow: #dffe04;
 
-  --sidebar: var(--background);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: var(--accent-foreground);
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: var(--blue);
+  --card: #ffffff;
+  --card-foreground: var(--blue);
+  --popover: #ffffff;
+  --popover-foreground: var(--blue);
+  --primary: var(--blue);
+  --primary-foreground: var(--yellow);
+  --secondary: var(--light);
+  --secondary-foreground: var(--blue);
+  --muted: #eef1f5;
+  --muted-foreground: #5f6b7c;
+  --accent: #eef1f5;
+  --accent-foreground: var(--blue);
+  --destructive: #dc2626;
+  --border: rgba(28, 45, 68, 0.12);
+  --input: rgba(28, 45, 68, 0.18);
+  --ring: rgba(28, 45, 68, 0.45);
+  --chart-1: var(--blue);
+  --chart-2: #b8d103;
+  --chart-3: #4a6080;
+  --chart-4: #8a9ab0;
+  --chart-5: #f0ff7a;
+
+  --sidebar: var(--light);
+  --sidebar-foreground: var(--blue);
+  --sidebar-primary: var(--blue);
+  --sidebar-primary-foreground: var(--yellow);
+  --sidebar-accent: rgba(28, 45, 68, 0.06);
+  --sidebar-accent-foreground: var(--blue);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--ring);
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.14 0.04 259.21);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
+  --background: #131f30;
+  --foreground: var(--light);
+  --card: var(--blue);
+  --card-foreground: var(--light);
+  --popover: var(--blue);
+  --popover-foreground: var(--light);
+  --primary: var(--yellow);
+  --primary-foreground: var(--blue);
+  --secondary: #26394f;
+  --secondary-foreground: var(--light);
+  --muted: #26394f;
+  --muted-foreground: #a3b0c2;
+  --accent: #26394f;
+  --accent-foreground: var(--light);
+  --destructive: #f87171;
+  --border: rgba(248, 250, 252, 0.1);
+  --input: rgba(248, 250, 252, 0.15);
+  --ring: rgba(223, 254, 4, 0.5);
+  --chart-1: var(--yellow);
+  --chart-2: #7d93b3;
+  --chart-3: #b8d103;
+  --chart-4: #4a6080;
+  --chart-5: #f0ff7a;
+
+  --sidebar: var(--blue);
+  --sidebar-foreground: var(--light);
+  --sidebar-primary: var(--yellow);
+  --sidebar-primary-foreground: var(--blue);
+  --sidebar-accent: rgba(248, 250, 252, 0.08);
+  --sidebar-accent-foreground: var(--light);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
 @theme inline {

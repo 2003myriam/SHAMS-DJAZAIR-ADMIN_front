@@ -22,7 +22,20 @@
 
 /* ================= TABLEAU ================= */
 .produits__table {
-  @apply rounded-md border;
+  @apply overflow-hidden rounded-md border;
+}
+
+/* En-tête du tableau aux couleurs de la charte */
+.produits__table thead {
+  background: var(--blue);
+}
+
+.produits__table thead th {
+  color: var(--light);
+}
+
+.produits__table thead tr:hover {
+  background: transparent;
 }
 
 .produits__actions {

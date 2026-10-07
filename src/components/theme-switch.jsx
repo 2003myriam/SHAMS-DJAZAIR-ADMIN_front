@@ -17,7 +17,7 @@ export function ThemeSwitch() {
   /* Met à jour la balise meta theme-color
    * quand le thème change */
   useEffect(() => {
-    const themeColor = theme === 'dark' ? '#020817' : '#fff'
+    const themeColor = theme === 'dark' ? '#131f30' : '#ffffff'
     const metaThemeColor = document.querySelector("meta[name='theme-color']")
     if (metaThemeColor) metaThemeColor.setAttribute('content', themeColor)
   }, [theme])

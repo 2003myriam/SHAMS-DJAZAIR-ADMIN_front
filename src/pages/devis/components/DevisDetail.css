@@ -1,0 +1,95 @@
+/*
+ * Styles du détail d'une demande de devis.
+ * Couleurs : charte graphique de la sidebar (--blue, --light, --yellow, définies dans sidebar1.css).
+ */
+@reference '../../../styles/index.css';
+
+/* ================= DIALOG ================= */
+.devis-detail {
+  @apply sm:max-w-xl;
+  border-top: 4px solid var(--yellow);
+}
+
+.devis-detail h2[data-slot='dialog-title'] {
+  color: var(--blue);
+}
+
+.devis-detail__body {
+  @apply -mx-4 max-h-[60vh] space-y-5 overflow-y-auto px-4;
+}
+
+/* Titre de chaque bloc (Destinataire, Message) */
+.devis-detail__label {
+  @apply mb-3 text-xs font-semibold uppercase;
+  color: var(--blue);
+}
+
+/* ================= DESTINATAIRE ================= */
+.devis-detail__client {
+  @apply space-y-2 rounded-lg p-4;
+  background: var(--light);
+  border: 1px solid rgba(28, 45, 68, 0.15);
+}
+
+.devis-detail__info {
+  @apply flex items-center gap-2 text-sm;
+  color: var(--blue);
+}
+
+.devis-detail__name {
+  @apply flex items-center gap-2 font-semibold;
+  color: var(--blue);
+}
+
+/* Icône jaune sur pastille bleue (comme l'élément actif de la sidebar) */
+.devis-detail__icon {
+  @apply size-6 shrink-0 rounded-md p-1.5;
+  background: var(--blue);
+  color: var(--yellow);
+}
+
+/* ================= PRODUITS ================= */
+.devis-detail__table {
+  @apply overflow-hidden rounded-lg;
+  border: 1px solid rgba(28, 45, 68, 0.15);
+}
+
+.devis-detail__table-head {
+  background: var(--blue);
+}
+
+.devis-detail__table-head th {
+  color: var(--light);
+}
+
+.devis-detail__table tbody tr:hover {
+  background: rgba(28, 45, 68, 0.06);
+}
+
+.devis-detail__quantity {
+  @apply text-right font-semibold;
+}
+
+/* ================= MESSAGE ================= */
+.devis-detail__message {
+  @apply rounded-lg p-4;
+  background: var(--light);
+  border-left: 4px solid var(--yellow);
+}
+
+.devis-detail__message p {
+  @apply text-sm whitespace-pre-line;
+  color: var(--blue);
+}
+
+/* ================= BOUTON FERMER ================= */
+.devis-detail__close {
+  background: var(--blue);
+  color: var(--yellow);
+}
+
+.devis-detail__close:hover {
+  background: var(--blue);
+  color: var(--yellow);
+  opacity: 0.9;
+}

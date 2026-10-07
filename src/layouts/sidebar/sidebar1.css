@@ -1,12 +1,7 @@
 /*
  * Styles de la sidebar d'icônes (Sidebar1) : couleurs, info-bulles, élément actif, barre du bas sur mobile.
  */
-/* ================= COULEURS (reprises de SHAMS-DJAZAIR-ADMIN_front) ================= */
-:root {
-  --blue: #1c2d44;
-  --light: #f8fafc;
-  --yellow: #dffe04;
-}
+/* Couleurs de la charte (--blue, --light, --yellow) : définies dans src/styles/theme.css */
 
 /* ================= SIDEBAR D'ICÔNES ================= */
 /* .ps-sidebar-root : nécessaire pour passer devant le style interne de react-pro-sidebar */
