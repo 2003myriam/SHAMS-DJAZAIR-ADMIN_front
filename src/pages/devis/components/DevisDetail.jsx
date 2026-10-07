@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table"
 
 function DevisDetail({ open, onOpenChange, devis }) {
+    if (!devis) return null
 
 
     return (
@@ -50,16 +51,16 @@ function DevisDetail({ open, onOpenChange, devis }) {
                         </TableHeader>
                         <TableBody>
                             {/* Affuichage produit */}
-                            {devis.products.map((product, index) => (
-                                <TableRow key={index}>
+                            {devis.products.map((product) => (
+                                <TableRow key={product._id}>
                                     <TableCell>{product.productTitle}</TableCell>
                                     <TableCell>{product.productReference}</TableCell>
                                     <TableCell>{product.quantity}</TableCell>
                                 </TableRow>
                             ))}
-
                         </TableBody>
                     </Table>
+                    <p>{devis.message}</p>
 
 
                 </div>

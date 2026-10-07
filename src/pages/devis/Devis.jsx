@@ -9,6 +9,7 @@ import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import { FaEye } from "react-icons/fa";
 import Pagination from '@mui/material/Pagination'
+import DevisDetail from './components/DevisDetail'
 function Devis() {
     // ==========================================
     // Devis
@@ -19,6 +20,9 @@ function Devis() {
     // ==========================================
     // panneau ouvert ou fermé
     const [sheetOpen, setSheetOpen] = useState(false)
+    // quel devis selectionnée + le dialog de voir le detail
+    const [selectedDevis, setSelectedDevis] = useState(null)
+    const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
 
     // ==========================================
     // Pagination
@@ -40,7 +44,7 @@ function Devis() {
                 `http://localhost:5001/request?page=${page}&limit=${pagination.productsPerPage}`
             )
 
-            setDeviss(response.data.data || [])
+            setDevis(response.data.data || [])
 
             setPagination(
                 response.data.pagination || {
@@ -74,29 +78,12 @@ function Devis() {
 
     }, [])
     // ==========================================
-    // Récupération d'un seul devis
+    // Ouvrir le panneau de detail d'un produit 
     // ==========================================
 
-    const getDevisDetail = async (id) => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5001/request${id}`
-            )
-
-            setDevis(response.data.data || [])
-
-            setPagination(
-                response.data.pagination || {
-                    currentPage: page,
-                    devisPerPage: pagination.devisPerPage,
-                    totalDeviss: 0,
-                    totalPages: 0,
-                }
-            )
-        } catch (error) {
-
-            toast.error("Impossible de récupérer les devis.")
-        }
+    const openDetail = (devis) => {
+        setSelectedDevis(devis)
+        setDialogdetailOpen(true)
     }
     return (
         <>
@@ -144,7 +131,7 @@ function Devis() {
                                     {/* entreprise */}
                                     <TableCell>{d.company || "Aucune"}</TableCell>
                                     {/* Detail de la demande */}
-                                    <TableCell> <FaEye /></TableCell>
+                                    <TableCell onClick={() => openDetail(d)}> <FaEye /></TableCell>
 
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
@@ -174,8 +161,11 @@ function Devis() {
                     </Table>
 
                 </div>
-
-
+                <DevisDetail
+                    open={dialogdetailOpen}
+                    onOpenChange={setDialogdetailOpen}
+                    devis={selectedDevis}
+                />
             </Main >
         </>
     )
