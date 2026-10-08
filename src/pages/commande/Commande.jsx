@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
@@ -8,10 +10,8 @@ import { FaEye } from "react-icons/fa";
 import Pagination from '@mui/material/Pagination'
 import CommandeDetail from './components/CommandeDetail'
 import { OrderStatusBadge, PaymentStatusBadge } from './components/StatusBadge'
+import DeleteConfirmation from './components/DeleteConfirmation'
 import '../devis/Devis.css'
-
-// nombre de commandes par page
-const ORDERS_PER_PAGE = 12
 
 function Commande() {
     // ==========================================
@@ -21,12 +21,19 @@ function Commande() {
     // commande sélectionnée + le dialog de voir le détail
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
+    // delete ouvert ou fermé
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    // Stocker le id et le numéro quand on clique sur supprimer
+    const [orderToDelete, setOrderToDelete] = useState(null)
+    const [orderNumberToDelete, setOrderNumberToDelete] = useState("")
 
     // ==========================================
     // Pagination
     // ==========================================
     const [pagination, setPagination] = useState({
         currentPage: 1,
+        ordersPerPage: 12,
+        totalOrders: 0,
         totalPages: 0,
     })
 
@@ -37,7 +44,7 @@ function Commande() {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `http://localhost:5001/orders/admin`,
+                `http://localhost:5001/orders/admin?page=${page}&limit=${pagination.ordersPerPage}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -46,9 +53,41 @@ function Commande() {
             )
 
             setOrders(response.data.data || [])
-            setPagination(response.data.pagination || { currentPage: page, totalPages: 0 })
+
+            setPagination(
+                response.data.pagination || {
+                    currentPage: page,
+                    ordersPerPage: pagination.ordersPerPage,
+                    totalOrders: 0,
+                    totalPages: 0,
+                }
+            )
         } catch (error) {
             toast.error("Impossible de récupérer les commandes.")
+        }
+    }
+
+    // ==========================================
+    // supprimer une commande
+    // ==========================================
+    const handleDelete = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:5001/orders/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            // si on supprime la dernière commande de la page, on revient à la page précédente
+            const page = orders.length === 1 && pagination.currentPage > 1
+                ? pagination.currentPage - 1
+                : pagination.currentPage
+            getOrders(page)
+            setDeleteDialogOpen(false)
+        } catch (error) {
+            toast.error("Impossible de supprimer la commande.")
         }
     }
 
@@ -98,13 +137,14 @@ function Commande() {
                                 <TableHead className="devis__center">Statut</TableHead>
                                 <TableHead className="devis__center">Paiement</TableHead>
                                 <TableHead className="devis__center">Détail de la commande</TableHead>
+                                <TableHead className="produits__actions">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {/* Aucune commande */}
                             {orders.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="produits__empty">Aucune commande.</TableCell>
+                                    <TableCell colSpan={8} className="produits__empty">Aucune commande.</TableCell>
                                 </TableRow>
                             )}
                             {/* Commandes affichage */}
@@ -130,6 +170,23 @@ function Commande() {
                                     <TableCell className="devis__center"><PaymentStatusBadge status={o.paymentStatus} /></TableCell>
                                     {/* Détail de la commande */}
                                     <TableCell className="devis__center devis__eye" onClick={() => openDetail(o)}><FaEye /></TableCell>
+
+                                    {/* Actions */}
+                                    <TableCell className="produits__actions">
+                                        {/* ICONE SUPPRIMER  */}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                                setOrderToDelete(o._id) // je garde ID de la commande
+                                                setOrderNumberToDelete(o.orderNumber) // je garde le numéro de la commande
+                                                setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                            }}
+                                            aria-label="Supprimer"
+                                        >
+                                            <Trash2 />
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -140,6 +197,13 @@ function Commande() {
                     open={dialogdetailOpen}
                     onOpenChange={setDialogdetailOpen}
                     order={selectedOrder}
+                />
+                {/* Panneau DE SUPPRESSION */}
+                <DeleteConfirmation
+                    open={deleteDialogOpen}
+                    onOpenChange={setDeleteDialogOpen}
+                    onConfirm={() => handleDelete(orderToDelete)}
+                    orderNumber={orderNumberToDelete} // envoyer le numéro de la commande comme prop
                 />
 
                 {pagination.totalPages > 1 && (
