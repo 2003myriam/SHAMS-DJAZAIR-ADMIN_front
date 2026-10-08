@@ -1,0 +1,29 @@
+/*
+ * Styles de la page Demandes de devis.
+ */
+@reference '../../styles/index.css';
+
+/* ================= TABLEAU ================= */
+/* Colonnes centrées (date, détail) */
+.devis__center {
+  @apply text-center;
+}
+
+/* Icône "œil" pour voir le détail */
+.devis__eye {
+  @apply cursor-pointer;
+}
+
+.devis__eye svg {
+  @apply mx-auto size-4 text-muted-foreground transition-colors;
+}
+
+.devis__eye:hover svg {
+  @apply text-foreground;
+}
+
+/* ================= PANNEAU LATÉRAL ================= */
+/* Ligne produit / référence / quantité / supprimer */
+.devis-sheet__product {
+  @apply grid grid-cols-[2fr_1.5fr_5rem_auto] items-center gap-2;
+}

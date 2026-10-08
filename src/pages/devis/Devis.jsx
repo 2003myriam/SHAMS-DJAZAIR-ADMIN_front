@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
@@ -8,8 +7,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import { FaEye } from "react-icons/fa";
-import Pagination from '@mui/material/Pagination'
 import DevisDetail from './components/DevisDetail'
+import './Devis.css'
+import DeleteConfirmation from './components/DeleteConfirmation'
+import Pagination from '@mui/material/Pagination'
+import { DevisSheet } from './components/DevisSheet'
 function Devis() {
     // ==========================================
     // Devis
@@ -20,9 +22,14 @@ function Devis() {
     // ==========================================
     // panneau ouvert ou fermé
     const [sheetOpen, setSheetOpen] = useState(false)
+    // delete ouvert ou fermé
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     // quel devis selectionnée + le dialog de voir le detail
     const [selectedDevis, setSelectedDevis] = useState(null)
     const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
+    const [devisToDelete, setDevisToDelete] = useState(null)
+    // devis en cours de modification (null = création)
+    const [currentDevis, setCurrentDevis] = useState(null)
 
     // ==========================================
     // Pagination
@@ -41,7 +48,7 @@ function Devis() {
     const getDevis = async (page = 1) => {
         try {
             const response = await axios.get(
-                `http://localhost:5001/request?page=${page}&limit=${pagination.productsPerPage}`
+                `http://localhost:5001/request?page=${page}&limit=${pagination.devisPerPage}`
             )
 
             setDevis(response.data.data || [])
@@ -50,7 +57,7 @@ function Devis() {
                 response.data.pagination || {
                     currentPage: page,
                     devisPerPage: pagination.devisPerPage,
-                    totalDeviss: 0,
+                    totalDevis: 0,
                     totalPages: 0,
                 }
             )
@@ -85,6 +92,43 @@ function Devis() {
         setSelectedDevis(devis)
         setDialogdetailOpen(true)
     }
+    // ==========================================
+    // Ajouter une demande
+    // ==========================================
+    const openCreate = () => {
+        setCurrentDevis(null)
+        setSheetOpen(true)
+    }
+
+    // ==========================================
+    // Modifier une demande
+    // ==========================================
+    const openEdit = (devis) => {
+        setCurrentDevis(devis)
+        setSheetOpen(true)
+    }
+    // ==========================================
+    // supprimer une  demande
+    // ==========================================
+    const handleDelete = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.delete(`http://localhost:5001/request/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            getDevis(pagination.currentPage)
+            setDeleteDialogOpen(false)
+        } catch (error) {
+
+
+            toast.error("Impossible de supprimer la demande.")
+        }
+    }
+
     return (
         <>
             <Header />
@@ -95,8 +139,7 @@ function Devis() {
                         <h1 className="produits__title">Demande de devis</h1>
                         <p className="produits__subtitle">Voici la liste des demande de devis.</p>
                     </div>
-                    {/*onClick={openCreate} */}
-                    <Button ><Plus />Ajouter une demande</Button>
+                    <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
                 </div>
 
                 {/* Tableau */}
@@ -107,8 +150,9 @@ function Devis() {
                                 <TableHead>Nom et prénom </TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Numéro de téléphone</TableHead>
+                                <TableHead className="devis__center">Date de la demande</TableHead>
                                 <TableHead>Entreprise</TableHead>
-                                <TableHead>Detail de la demande</TableHead>
+                                <TableHead className="devis__center">Detail de la demande</TableHead>
                                 <TableHead className="produits__actions">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -116,7 +160,7 @@ function Devis() {
                             {/* Aucun produit */}
                             {devis.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={6} className="produits__empty">Aucune demande .</TableCell>
+                                    <TableCell colSpan={7} className="produits__empty">Aucune demande .</TableCell>
                                 </TableRow>
                             )}
                             {/* Devis affichage  */}
@@ -128,28 +172,35 @@ function Devis() {
                                     <TableCell>{d.email}</TableCell>
                                     {/* phone */}
                                     <TableCell>{d.phone}</TableCell>
+                                    {/* date */}
+                                    <TableCell className="devis__center">
+                                        {new Date(d.created_at).toLocaleDateString("fr-FR", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                        })}
+                                    </TableCell>
                                     {/* entreprise */}
                                     <TableCell>{d.company || "Aucune"}</TableCell>
                                     {/* Detail de la demande */}
-                                    <TableCell onClick={() => openDetail(d)}> <FaEye /></TableCell>
+                                    <TableCell className="devis__center devis__eye" onClick={() => openDetail(d)}><FaEye /></TableCell>
 
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
                                         {/* ICONE MODIFIER  */}
                                         <Button variant="ghost"
                                             size="icon"
-                                            // onClick={() => openEdit(b)}
+                                            onClick={() => openEdit(d)}
                                             aria-label="Modifier">
                                             <Pencil /></Button>
                                         {/* ICONE SUPPRIMER  */}
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            // onClick={() => {
-                                            //     setBrandToDelete(b._id) // je garde ID de la marque
-                                            //     setBrandNameToDelete(b.name) // je garde nom de la marque 
-                                            //     setDeleteDialogOpen(true) // la boite est en etat ouvert
-                                            // }}
+                                            onClick={() => {
+                                                setDevisToDelete(d._id) // je garde ID de devis
+                                                setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                            }}
                                             aria-label="Supprimer"
                                         >
                                             <Trash2 />
@@ -166,6 +217,32 @@ function Devis() {
                     onOpenChange={setDialogdetailOpen}
                     devis={selectedDevis}
                 />
+                {/* Panneau latéral (ajout / modification) */}
+                <DevisSheet
+                    open={sheetOpen}
+                    onOpenChange={setSheetOpen}
+                    devis={currentDevis}
+                    onSave={() => getDevis(currentDevis ? pagination.currentPage : 1)}
+                />
+                <DeleteConfirmation
+                    open={deleteDialogOpen}
+                    onOpenChange={setDeleteDialogOpen}
+                    onConfirm={() => handleDelete(devisToDelete)}
+                />
+                {pagination.totalPages > 1 && (
+
+                    <div className="produitback-pagination">
+
+                        <Pagination
+                            count={pagination.totalPages}
+                            page={pagination.currentPage}
+                            onChange={PaginateDevisPage}
+                            color="primary"
+                        />
+
+                    </div>
+
+                )}
             </Main >
         </>
     )
