@@ -1,0 +1,41 @@
+/*
+ * Couleurs des badges de statut (commande + paiement).
+ */
+@reference '../../../styles/index.css';
+
+.status-badge {
+  @apply mx-auto border-transparent;
+}
+
+/* En attente */
+.status-badge--pending {
+  @apply bg-amber-100 text-amber-800;
+}
+
+/* Confirmée */
+.status-badge--confirmed {
+  background: var(--blue);
+  color: var(--yellow);
+}
+
+/* Expédiée */
+.status-badge--shipped {
+  @apply bg-sky-100 text-sky-800;
+}
+
+/* Livrée / Payée */
+.status-badge--delivered,
+.status-badge--paid {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+/* Annulée / Échouée */
+.status-badge--cancelled,
+.status-badge--failed {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Remboursée */
+.status-badge--refunded {
+  @apply bg-slate-200 text-slate-700;
+}

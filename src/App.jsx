@@ -11,6 +11,7 @@ import { SignIn } from '@/pages/sign-in/SignIn'
 import { Produits } from '@/pages/products/Produits'
 import Marque from './pages/marques/Marque'
 import Devis from './pages/devis/Devis'
+import Commande from './pages/commande/Commande'
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
           <Route path='/produits' element={<Produits />} />
           <Route path='/marques' element={<Marque />} />
           <Route path='/devis' element={<Devis />} />
+          <Route path='/commande' element={<Commande />} />
         </Route>
 
         {/* ===== Page introuvable (404) ===== */}
