@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -11,6 +11,7 @@ import Pagination from '@mui/material/Pagination'
 import CommandeDetail from './components/CommandeDetail'
 import { OrderStatusBadge, PaymentStatusBadge } from './components/StatusBadge'
 import DeleteConfirmation from './components/DeleteConfirmation'
+import { CommandeSheet } from './components/CommandeSheet'
 import '../devis/Devis.css'
 
 function Commande() {
@@ -26,6 +27,14 @@ function Commande() {
     // Stocker le id et le numéro quand on clique sur supprimer
     const [orderToDelete, setOrderToDelete] = useState(null)
     const [orderNumberToDelete, setOrderNumberToDelete] = useState("")
+
+    // ==========================================
+    // Panneau latéral (modification)
+    // ==========================================
+    // panneau ouvert ou fermé
+    const [sheetOpen, setSheetOpen] = useState(false)
+    // commande en cours de modification
+    const [currentOrder, setCurrentOrder] = useState(null)
 
     // ==========================================
     // Pagination
@@ -113,6 +122,22 @@ function Commande() {
         setDialogdetailOpen(true)
     }
 
+    // ==========================================
+    // Modifier une commande
+    // ==========================================
+    const openEdit = (order) => {
+        setCurrentOrder(order)
+        setSheetOpen(true)
+    }
+
+    // ==========================================
+    // Après l'enregistrement d'une modification
+    // ==========================================
+    const handleSave = () => {
+        // on recharge la page actuelle pour afficher la commande modifiée
+        getOrders(pagination.currentPage)
+    }
+
     return (
         <>
             <Header />
@@ -173,6 +198,12 @@ function Commande() {
 
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
+                                        {/* ICONE MODIFIER  */}
+                                        <Button variant="ghost"
+                                            size="icon"
+                                            onClick={() => openEdit(o)}
+                                            aria-label="Modifier">
+                                            <Pencil /></Button>
                                         {/* ICONE SUPPRIMER  */}
                                         <Button
                                             variant="ghost"
@@ -197,6 +228,13 @@ function Commande() {
                     open={dialogdetailOpen}
                     onOpenChange={setDialogdetailOpen}
                     order={selectedOrder}
+                />
+                {/* Panneau latéral (modification) */}
+                <CommandeSheet
+                    open={sheetOpen}
+                    onOpenChange={setSheetOpen}
+                    order={currentOrder}
+                    onSave={handleSave}
                 />
                 {/* Panneau DE SUPPRESSION */}
                 <DeleteConfirmation

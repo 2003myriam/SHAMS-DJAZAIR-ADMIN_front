@@ -87,6 +87,14 @@ function Marque() {
     }
 
 
+    // ==========================================
+    // Après l'enregistrement d'une modification la modification s'affiche sans rafrechir la page
+    // ==========================================
+    const handleSave = () => {
+        // on recharge la page actuelle pour afficher la commande modifiée
+        getBrands()
+    }
+
     return (
         <>
             <Header />
@@ -170,7 +178,7 @@ function Marque() {
                 open={sheetOpen}
                 onOpenChange={setSheetOpen}
                 marque={currentBrand}
-                /* onSave={handleSave} */ />
+                onSave={handleSave} />
             {/* Panneau DE SUPPRESION */}
             < DeleteConfirmation
                 open={deleteDialogOpen}

@@ -48,6 +48,9 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
 
         toast.success("Marque modifiée avec succès")
         setForm(response.data.data)
+        // recharger la liste des marques dans la page parent
+        onSave?.()
+        onOpenChange(false)
 
       } else {
 
@@ -64,6 +67,9 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
 
         toast.success("Marque créée avec succès")
         setForm(response.data.data)
+        // recharger la liste des marques dans la page parent
+        onSave?.()
+        onOpenChange(false)
       }
 
     } catch (error) {
