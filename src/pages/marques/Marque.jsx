@@ -8,6 +8,7 @@ import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import { MarqueSheet } from './components/MarqueSheet'
 import { Checkbox } from "@/components/ui/checkbox"
+import Pagination from '@mui/material/Pagination'
 import './Marque.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
 
@@ -31,22 +32,49 @@ function Marque() {
     const [currentBrand, setCurrentBrand] = useState(null)
 
     // ==========================================
+    // Pagination
+    // ==========================================
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        brandsPerPage: 12,
+        totalBrands: 0,
+        totalPages: 0,
+    })
+
+    // ==========================================
     // Récupération des marques
     // ==========================================
-    const getBrands = async () => {
+    const getBrands = async (page = 1) => {
         try {
-            const response = await axios.get(`http://localhost:5001/brand`)
+            const response = await axios.get(
+                `http://localhost:5001/brand?page=${page}&limit=${pagination.brandsPerPage}`
+            )
             setMarques(response.data.data || [])
+            setPagination(
+                response.data.pagination || {
+                    currentPage: page,
+                    brandsPerPage: pagination.brandsPerPage,
+                    totalBrands: 0,
+                    totalPages: 0,
+                }
+            )
         } catch (error) {
             toast.error("Impossible de récupérer les marques.")
         }
     }
 
     // ==========================================
+    // Changement de page
+    // ==========================================
+    const PaginateBrandPage = (event, page) => {
+        getBrands(page)
+    }
+
+    // ==========================================
     // Chargement initial
     // ==========================================
     useEffect(() => {
-        getBrands()
+        getBrands(1)
     }, [])
 
     // ==========================================
@@ -77,8 +105,12 @@ function Marque() {
                     }
                 }
             )
-            getBrands(),
-                setDeleteDialogOpen(false)
+            // on reste sur la page actuelle (ou la précédente si c'était la dernière marque de la page)
+            const page = marques.length === 1 && pagination.currentPage > 1
+                ? pagination.currentPage - 1
+                : pagination.currentPage
+            getBrands(page)
+            setDeleteDialogOpen(false)
         } catch (error) {
 
 
@@ -92,7 +124,7 @@ function Marque() {
     // ==========================================
     const handleSave = () => {
         // on recharge la page actuelle pour afficher la commande modifiée
-        getBrands()
+        getBrands(pagination.currentPage)
     }
 
     return (
@@ -171,6 +203,18 @@ function Marque() {
                         </TableBody>
                     </Table>
                 </div>
+
+                {/* Pagination */}
+                {pagination.totalPages > 1 && (
+                    <div className="produitback-pagination">
+                        <Pagination
+                            count={pagination.totalPages}
+                            page={pagination.currentPage}
+                            onChange={PaginateBrandPage}
+                            color="primary"
+                        />
+                    </div>
+                )}
             </Main >
 
             {/* Panneau latéral (ajout / modification) */}

@@ -68,8 +68,8 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
         toast.success("Marque créée avec succès")
         setForm(response.data.data)
         // recharger la liste des marques dans la page parent
-        onSave?.()
-        onOpenChange(false)
+        onSave?.() // enregister sans rafrechir
+        onOpenChange(false) // fermer le paneau apres enregistrement
       }
 
     } catch (error) {
