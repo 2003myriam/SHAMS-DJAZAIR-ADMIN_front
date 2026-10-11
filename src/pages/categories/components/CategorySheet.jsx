@@ -1,4 +1,4 @@
-// Panneau latéral (Sheet) qui s'ouvre pour ajouter une catégorie.
+// Panneau latéral (Sheet) qui s'ouvre pour ajouter ou modifier une catégorie.
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,21 @@ const EMPTY_FORM = {
   parentCategoryId: NO_PARENT,
 }
 
-export function CategorySheet({ open, onOpenChange, onSave }) {
+// Remplir le formulaire avec la catégorie à modifier (ou vide pour la création)
+const toForm = (category) => {
+  if (!category) return EMPTY_FORM
+  // parentCategoryId peut être un objet (populate), un id ou null
+  const parentId = category.parentCategoryId?._id ?? category.parentCategoryId
+  return {
+    name: category.name ?? '',
+    description: category.description ?? '',
+    image: category.image ?? '',
+    isActive: category.isActive ?? true,
+    parentCategoryId: parentId || NO_PARENT,
+  }
+}
+
+export function CategorySheet({ open, onOpenChange, category, onSave }) {
 
   const [form, setForm] = useState(EMPTY_FORM)
   // liste des catégories parents pour le select
@@ -40,43 +54,64 @@ export function CategorySheet({ open, onOpenChange, onSave }) {
     }
   }
 
-  // à chaque ouverture : formulaire vide + liste des parents à jour
+  // à chaque ouverture : formulaire (vide ou rempli) + liste des parents à jour
   useEffect(() => {
     if (open) {
-      setForm(EMPTY_FORM)
+      setForm(toForm(category))
       getParents()
     }
-  }, [open])
+  }, [open, category])
 
   // SOUMISSION DU FORMULAIRE
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    const data = {
+      ...form,
+      // "none" => null (catégorie parent)
+      parentCategoryId: form.parentCategoryId === NO_PARENT ? null : form.parentCategoryId,
+    }
+
     try {
       const token = localStorage.getItem("token")
 
-      // CRÉATION
-      await axios.post(
-        "http://localhost:5001/categories",
-        {
-          ...form,
-          // "none" => null (catégorie parent)
-          parentCategoryId: form.parentCategoryId === NO_PARENT ? null : form.parentCategoryId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
+      if (category) {
 
-      toast.success("Catégorie créée avec succès")
+        // MODIFICATION
+        await axios.put(
+          `http://localhost:5001/categories/${category._id}`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+
+        toast.success("Catégorie modifiée avec succès")
+
+      } else {
+
+        // CRÉATION
+        await axios.post(
+          "http://localhost:5001/categories",
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        )
+
+        toast.success("Catégorie créée avec succès")
+      }
+
       // recharger la liste des catégories dans la page parent
       onSave?.() // enregister sans rafrechir
       onOpenChange(false) // fermer le paneau apres enregistrement
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "Impossible de créer la catégorie.")
+      toast.error(error.response?.data?.message || "Impossible d'enregistrer la catégorie.")
     }
   }
 
@@ -86,7 +121,9 @@ export function CategorySheet({ open, onOpenChange, onSave }) {
       <SheetContent className="produit-sheet">
         {/* header du formulaire  */}
         <SheetHeader className="produit-sheet__header">
-          <SheetTitle>Ajouter une catégorie</SheetTitle>
+          <SheetTitle>
+            {category ? 'Modifier la catégorie' : 'Ajouter une catégorie'}
+          </SheetTitle>
 
           <SheetDescription>
             Remplissez les informations puis cliquez sur Enregistrer.
@@ -149,7 +186,10 @@ export function CategorySheet({ open, onOpenChange, onSave }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem value={NO_PARENT}>Aucune (catégorie parent)</SelectItem>
-                    {parents.map((p) => (
+                    {parents
+                      // une catégorie ne peut pas être son propre parent
+                      .filter((p) => p._id !== category?._id)
+                      .map((p) => (
                       <SelectItem key={p._id} value={p._id}>
                         {p.name}
                       </SelectItem>

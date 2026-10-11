@@ -52,8 +52,10 @@ function Category() {
     // Stocker le id et le nom quand on clique sur supprimer
     const [categoryToDelete, setCategoryToDelete] = useState(null)
     const [categoryNameToDelete, setCategoryNameToDelete] = useState("")
-    // panneau d'ajout ouvert ou fermé
+    // panneau d'ajout / modification ouvert ou fermé
     const [sheetOpen, setSheetOpen] = useState(false)
+    // catégorie en cours de modification (null = création)
+    const [currentCategory, setCurrentCategory] = useState(null)
 
     // ==========================================
     // Récupération des catégories
@@ -102,6 +104,22 @@ function Category() {
     // ==========================================
     const toggleExpand = (id) => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
+    }
+
+    // ==========================================
+    // Ajouter une catégorie
+    // ==========================================
+    const openCreate = () => {
+        setCurrentCategory(null)
+        setSheetOpen(true)
+    }
+
+    // ==========================================
+    // Modifier une catégorie
+    // ==========================================
+    const openEdit = (category) => {
+        setCurrentCategory(category)
+        setSheetOpen(true)
     }
 
     // ==========================================
@@ -156,7 +174,12 @@ function Category() {
                     </TableCell>
                     {/* Actions (logique à venir) */}
                     <TableCell className="produits__actions">
-                        <Button variant="ghost" size="icon" aria-label="Modifier"><Pencil /></Button>
+                        {/* ICONE MODIFIER */}
+                        <Button variant="ghost"
+                            size="icon"
+                            onClick={() => openEdit(c)}
+                            aria-label="Modifier">
+                            <Pencil /></Button>
 
                         {/* ICONE SUPPRIMER */}
                         <Button
@@ -190,7 +213,7 @@ function Category() {
                         <h1 className="produits__title">Catégories</h1>
                         <p className="produits__subtitle">Voici la liste de vos catégories et sous-catégories.</p>
                     </div>
-                    <Button onClick={() => setSheetOpen(true)}><Plus />Ajouter une catégorie</Button>
+                    <Button onClick={openCreate}><Plus />Ajouter une catégorie</Button>
                 </div>
 
                 {/* Tableau */}
@@ -217,11 +240,12 @@ function Category() {
                     </Table>
                 </div>
 
-                {/* Panneau latéral (ajout) */}
+                {/* Panneau latéral (ajout / modification) */}
                 <CategorySheet
                     open={sheetOpen}
                     onOpenChange={setSheetOpen}
-                    onSave={getCategories} // recharger la liste après l'ajout
+                    category={currentCategory}
+                    onSave={getCategories} // recharger la liste après l'enregistrement
                 />
 
                 {/* Panneau DE SUPPRESSION */}
