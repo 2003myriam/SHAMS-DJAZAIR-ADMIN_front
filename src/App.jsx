@@ -12,6 +12,7 @@ import { Produits } from '@/pages/products/Produits'
 import Marque from './pages/marques/Marque'
 import Devis from './pages/devis/Devis'
 import Commande from './pages/commande/Commande'
+import Category from './pages/categories/Category'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path='/marques' element={<Marque />} />
           <Route path='/devis' element={<Devis />} />
           <Route path='/commande' element={<Commande />} />
+          <Route path='/categorie' element={<Category />} />
         </Route>
 
         {/* ===== Page introuvable (404) ===== */}

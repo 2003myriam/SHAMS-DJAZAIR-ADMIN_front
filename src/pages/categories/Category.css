@@ -1,0 +1,56 @@
+/*
+ * Styles de la page Catégories.
+ */
+@reference '../../styles/index.css';
+
+/* ================= NOM (chevron + image + libellé + badge) ================= */
+.category__name {
+  @apply flex items-center gap-3;
+}
+
+.category__toggle {
+  @apply flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:bg-accent;
+}
+
+.category__toggle svg {
+  @apply size-4;
+}
+
+.category__toggle--empty {
+  @apply cursor-default hover:bg-transparent;
+}
+
+/* ================= IMAGE ================= */
+.category__image {
+  @apply size-8 shrink-0 rounded-md border bg-white object-contain p-0.5;
+}
+
+.category__image--empty {
+  @apply flex items-center justify-center bg-muted text-muted-foreground;
+}
+
+.category__image--empty svg {
+  @apply size-4;
+}
+
+/* ================= LIBELLÉ ================= */
+.category__label {
+  @apply text-sm;
+}
+
+.category__label--parent {
+  @apply font-semibold;
+}
+
+/* ================= BADGES ================= */
+.category__type {
+  @apply bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300;
+}
+
+.category__status--active {
+  @apply border-transparent bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300;
+}
+
+.category__status--inactive {
+  @apply border-transparent bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300;
+}

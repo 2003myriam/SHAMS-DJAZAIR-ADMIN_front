@@ -18,6 +18,7 @@ export const MENU_ITEMS2 = [
   // PARENT PRODUIT
   {key: 'Products', label: 'Tous les produits',parent: 'Products',path: '/produits',},
   {key: 'Brands', label: 'Toutes les marques',parent: 'Products',path: '/marques',},
+  {key: 'Categories', label: 'Toutes les catégories',parent: 'Products',path: '/categorie',},
   // PARENT commande
   {key: 'Orders', label: 'Toutes les commandes',parent: 'Orders',path: '/commande',},
   {key: 'quote', label: 'Demande de devis',parent: 'Orders',path: '/devis',},
