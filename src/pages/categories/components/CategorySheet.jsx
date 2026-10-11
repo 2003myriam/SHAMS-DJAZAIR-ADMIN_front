@@ -14,101 +14,52 @@ import { toast } from "sonner"
 // Le Select n'accepte pas une valeur vide : "none" = aucune catégorie parent (null)
 const NO_PARENT = 'none'
 
-const EMPTY_FORM = {
-  name: '',
-  description: '',
-  image: '',
-  isActive: true,
-  parentCategoryId: NO_PARENT,
-}
-
 // Remplir le formulaire avec la catégorie à modifier (ou vide pour la création)
-const toForm = (category) => {
-  if (!category) return EMPTY_FORM
-  // parentCategoryId peut être un objet (populate), un id ou null
-  const parentId = category.parentCategoryId?._id ?? category.parentCategoryId
-  return {
-    name: category.name ?? '',
-    description: category.description ?? '',
-    image: category.image ?? '',
-    isActive: category.isActive ?? true,
-    parentCategoryId: parentId || NO_PARENT,
-  }
-}
+const toForm = (category) => ({
+  name: category?.name ?? '',
+  description: category?.description ?? '',
+  image: category?.image ?? '',
+  isActive: category?.isActive ?? true,
+  parentCategoryId: category?.parentCategoryId || NO_PARENT,
+})
 
 export function CategorySheet({ open, onOpenChange, category, onSave }) {
 
-  const [form, setForm] = useState(EMPTY_FORM)
+  const [form, setForm] = useState(toForm(null))
   // liste des catégories parents pour le select
   const [parents, setParents] = useState([])
 
-  // ==========================================
-  // Récupération des catégories parents
-  // ==========================================
-  const getParents = async () => {
-    try {
-      const response = await axios.get('http://localhost:5001/categories/parents')
-      setParents(response.data.data || [])
-    } catch (error) {
-      toast.error("Impossible de récupérer les catégories parents.")
-    }
-  }
-
   // à chaque ouverture : formulaire (vide ou rempli) + liste des parents à jour
   useEffect(() => {
-    if (open) {
-      setForm(toForm(category))
-      getParents()
-    }
+    if (!open) return
+    setForm(toForm(category))
+    axios.get('http://localhost:5001/categories/parents')
+      .then((response) => setParents(response.data.data || []))
+      .catch(() => toast.error("Impossible de récupérer les catégories parents."))
   }, [open, category])
 
-  // SOUMISSION DU FORMULAIRE
+  // SOUMISSION DU FORMULAIRE (création ou modification)
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const data = {
-      ...form,
-      // "none" => null (catégorie parent)
-      parentCategoryId: form.parentCategoryId === NO_PARENT ? null : form.parentCategoryId,
-    }
-
     try {
       const token = localStorage.getItem("token")
+      await axios({
+        method: category ? 'put' : 'post',
+        url: category
+          ? `http://localhost:5001/categories/${category._id}`
+          : 'http://localhost:5001/categories',
+        data: {
+          ...form,
+          // "none" => null (catégorie parent)
+          parentCategoryId: form.parentCategoryId === NO_PARENT ? null : form.parentCategoryId,
+        },
+        headers: { Authorization: `Bearer ${token}` },
+      })
 
-      if (category) {
-
-        // MODIFICATION
-        await axios.put(
-          `http://localhost:5001/categories/${category._id}`,
-          data,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
-
-        toast.success("Catégorie modifiée avec succès")
-
-      } else {
-
-        // CRÉATION
-        await axios.post(
-          "http://localhost:5001/categories",
-          data,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        )
-
-        toast.success("Catégorie créée avec succès")
-      }
-
-      // recharger la liste des catégories dans la page parent
-      onSave?.() // enregister sans rafrechir
-      onOpenChange(false) // fermer le paneau apres enregistrement
+      toast.success(category ? "Catégorie modifiée avec succès" : "Catégorie créée avec succès")
+      onSave?.() // recharger la liste sans rafraîchir
+      onOpenChange(false) // fermer le panneau après enregistrement
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Impossible d'enregistrer la catégorie.")

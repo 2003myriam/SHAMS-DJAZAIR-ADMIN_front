@@ -1,71 +1,64 @@
 import { Fragment, useEffect, useState } from 'react'
 import axios from 'axios'
-import { ChevronDown, ChevronRight, CornerDownRight, Eye, ImageOff, MoreHorizontal, Pencil, Plus } from 'lucide-react'
+import { ChevronDown, ChevronRight, CornerDownRight, ImageOff, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
-import './Category.css'
-import { Trash2 } from 'lucide-react'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import { CategorySheet } from './components/CategorySheet'
+import './Category.css'
+
+const API = 'http://localhost:5001/categories'
 
 // Libellé du badge selon la profondeur dans l'arbre
 const TYPE_LABELS = ['Parent', 'Sous-catégorie', 'Sous-sous-catégorie']
 
-// ==========================================
-// Transformer la liste plate de l'API en arbre (parent -> enfants)
-// ==========================================
-const buildTree = (categories) => {
-    const map = {}
-    categories.forEach((c) => { // parcourt chaque catégorie
-        map[c._id] = { ...c, children: [] }
-        /*  { ...c } copie les propriétés de la catégorie dans un nouvel objet.
-         children: [] ajoute un tableau vide destiné à recevoir ses sous-catégories. */
-    })
-
-    const roots = []
-    categories.forEach((c) => {
-        // parentCategoryId peut être un objet (populate), un id ou null
-        const parentId = c.parentCategoryId?._id ?? c.parentCategoryId
-        // si le parent est un objet ou un identifiant 
-        if (parentId && map[parentId]) {
-            map[parentId].children.push(map[c._id]) // récupères le parent dans map, puis tu ajoutes la catégorie actuelle à son tableau children.
-        } else {
-            roots.push(map[c._id]) // La catégorie est ajoutée aux racines.
-        }
-    })
-    return roots
-}
-
 function Category() {
     // ==========================================
-    // Catégories (sous forme d'arbre)
+    // Catégories
     // ==========================================
+    // catégories parents (1er niveau)
     const [categories, setCategories] = useState([])
+    // sous-catégories déjà chargées : { idParent: [sous-catégories] }
+    const [subcategories, setSubcategories] = useState({})
     // ids des catégories dépliées
     const [expanded, setExpanded] = useState({})
-    // delete ouvert ou fermé
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    // Stocker le id et le nom quand on clique sur supprimer
-    const [categoryToDelete, setCategoryToDelete] = useState(null)
-    const [categoryNameToDelete, setCategoryNameToDelete] = useState("")
-    // panneau d'ajout / modification ouvert ou fermé
+
+    // ==========================================
+    // Panneau latéral (ajout / modification) + suppression
+    // ==========================================
     const [sheetOpen, setSheetOpen] = useState(false)
     // catégorie en cours de modification (null = création)
     const [currentCategory, setCurrentCategory] = useState(null)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    // catégorie à supprimer (id + nom)
+    const [categoryToDelete, setCategoryToDelete] = useState(null)
 
     // ==========================================
-    // Récupération des catégories
+    // Récupération des catégories parents
     // ==========================================
     const getCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/categories')
-            setCategories(buildTree(response.data.data || []))
+            const response = await axios.get(`${API}/parents`)
+            setCategories(response.data.data || [])
         } catch (error) {
             toast.error('Impossible de récupérer les catégories.')
+        }
+    }
+
+    // ==========================================
+    // Récupération des sous-catégories d'une catégorie
+    // ==========================================
+    const getSubcategories = async (id) => {
+        try {
+            const response = await axios.get(`${API}/${id}/subcategories`)
+            setSubcategories((prev) => ({ ...prev, [id]: response.data.data || [] }))
+        } catch (error) {
+            // l'API renvoie une erreur quand la catégorie n'a pas de sous-catégorie
+            setSubcategories((prev) => ({ ...prev, [id]: [] }))
         }
     }
 
@@ -77,57 +70,57 @@ function Category() {
     }, [])
 
     // ==========================================
-    // Supprimer une catégorie
+    // Recharger après un ajout / modification / suppression
+    // (parents + sous-catégories des lignes dépliées)
     // ==========================================
-    const handleDelete = async (id) => {
-        try {
-            const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:5001/categories/${id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
-                }
-            )
-
-            // on recharge la liste pour afficher la suppression sans rafraîchir la page
-            getCategories()
-            setDeleteDialogOpen(false)
-        } catch (error) {
-            toast.error("Impossible de supprimer la catégorie.")
-
-        }
+    const refresh = () => {
+        getCategories()
+        Object.keys(expanded)
+            .filter((id) => expanded[id])
+            .forEach(getSubcategories)
     }
 
     // ==========================================
     // Déplier / replier une catégorie
     // ==========================================
     const toggleExpand = (id) => {
+        // on charge les sous-catégories seulement la 1ère fois
+        if (!expanded[id] && !subcategories[id]) getSubcategories(id)
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
     }
 
     // ==========================================
-    // Ajouter une catégorie
+    // Ajouter / modifier une catégorie
     // ==========================================
-    const openCreate = () => {
-        setCurrentCategory(null)
-        setSheetOpen(true)
-    }
-
-    // ==========================================
-    // Modifier une catégorie
-    // ==========================================
-    const openEdit = (category) => {
+    const openSheet = (category = null) => {
         setCurrentCategory(category)
         setSheetOpen(true)
     }
 
     // ==========================================
-    // Affichage récursif d'une ligne et de ses enfants
+    // Supprimer une catégorie
+    // ==========================================
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem("token")
+            await axios.delete(`${API}/${categoryToDelete._id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            refresh()
+            setDeleteDialogOpen(false)
+        } catch (error) {
+            toast.error("Impossible de supprimer la catégorie.")
+        }
+    }
+
+    // ==========================================
+    // Affichage d'une ligne puis de ses sous-catégories (si dépliée)
     // ==========================================
     const renderRow = (c, level = 0) => {
-        const hasChildren = c.children.length > 0
+        const children = subcategories[c._id]
         const isOpen = expanded[c._id]
+        // tant que les sous-catégories ne sont pas chargées, on affiche le chevron
+        const hasChildren = children === undefined || children.length > 0
 
         return (
             <Fragment key={c._id}>
@@ -135,7 +128,6 @@ function Category() {
                     {/* Nom */}
                     <TableCell>
                         <div className="category__name" style={{ paddingLeft: `${level * 1.5}rem` }}>
-                            {/* Chevron (ou flèche pour le dernier niveau) */}
                             {hasChildren ? (
                                 <button
                                     type="button"
@@ -150,7 +142,6 @@ function Category() {
                                     {level > 0 && <CornerDownRight />}
                                 </span>
                             )}
-                            {/* Image */}
                             {c.image ? (
                                 <img src={c.image} alt={c.name} className="category__image" />
                             ) : (
@@ -160,35 +151,29 @@ function Category() {
                                 {c.name}
                             </span>
                             <Badge variant="secondary" className="category__type">
-                                {TYPE_LABELS[level] ?? TYPE_LABELS[TYPE_LABELS.length - 1]}
+                                {TYPE_LABELS[Math.min(level, TYPE_LABELS.length - 1)]}
                             </Badge>
                         </div>
                     </TableCell>
                     {/* Produits */}
-                    <TableCell>{c.countProduct ?? 0}</TableCell>
+                    <TableCell>{c.countProduct ?? '—'}</TableCell>
                     {/* Statut */}
                     <TableCell>
                         <Badge className={c.isActive ? 'category__status--active' : 'category__status--inactive'}>
                             {c.isActive ? 'Active' : 'Inactive'}
                         </Badge>
                     </TableCell>
-                    {/* Actions (logique à venir) */}
+                    {/* Actions */}
                     <TableCell className="produits__actions">
-                        {/* ICONE MODIFIER */}
-                        <Button variant="ghost"
-                            size="icon"
-                            onClick={() => openEdit(c)}
-                            aria-label="Modifier">
-                            <Pencil /></Button>
-
-                        {/* ICONE SUPPRIMER */}
+                        <Button variant="ghost" size="icon" onClick={() => openSheet(c)} aria-label="Modifier">
+                            <Pencil />
+                        </Button>
                         <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => {
-                                setCategoryToDelete(c._id) // je garde ID de la catégorie
-                                setCategoryNameToDelete(c.name) // je garde le nom de la catégorie
-                                setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                setCategoryToDelete(c) // je garde la catégorie (id + nom)
+                                setDeleteDialogOpen(true)
                             }}
                             aria-label="Supprimer"
                         >
@@ -197,8 +182,8 @@ function Category() {
                     </TableCell>
                 </TableRow>
 
-                {/* Enfants */}
-                {hasChildren && isOpen && c.children.map((child) => renderRow(child, level + 1))}
+                {/* Sous-catégories */}
+                {isOpen && children?.map((child) => renderRow(child, level + 1))}
             </Fragment>
         )
     }
@@ -213,7 +198,7 @@ function Category() {
                         <h1 className="produits__title">Catégories</h1>
                         <p className="produits__subtitle">Voici la liste de vos catégories et sous-catégories.</p>
                     </div>
-                    <Button onClick={openCreate}><Plus />Ajouter une catégorie</Button>
+                    <Button onClick={() => openSheet()}><Plus />Ajouter une catégorie</Button>
                 </div>
 
                 {/* Tableau */}
@@ -228,13 +213,11 @@ function Category() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {/* Aucune catégorie */}
                             {categories.length === 0 && (
                                 <TableRow>
                                     <TableCell colSpan={4} className="produits__empty">Aucune catégorie.</TableCell>
                                 </TableRow>
                             )}
-                            {/* Catégories */}
                             {categories.map((c) => renderRow(c))}
                         </TableBody>
                     </Table>
@@ -245,15 +228,15 @@ function Category() {
                     open={sheetOpen}
                     onOpenChange={setSheetOpen}
                     category={currentCategory}
-                    onSave={getCategories} // recharger la liste après l'enregistrement
+                    onSave={refresh}
                 />
 
-                {/* Panneau DE SUPPRESSION */}
+                {/* Panneau de suppression */}
                 <DeleteConfirmation
                     open={deleteDialogOpen}
                     onOpenChange={setDeleteDialogOpen}
-                    onConfirm={() => handleDelete(categoryToDelete)}
-                    categoryName={categoryNameToDelete} // envoyer le nom de la catégorie comme prop
+                    onConfirm={handleDelete}
+                    categoryName={categoryToDelete?.name}
                 />
             </Main>
         </>
