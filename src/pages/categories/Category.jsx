@@ -10,6 +10,7 @@ import { Main } from '@/layouts/main'
 import './Category.css'
 import { Trash2 } from 'lucide-react'
 import DeleteConfirmation from './components/DeleteConfirmation'
+import { CategorySheet } from './components/CategorySheet'
 
 // Libellé du badge selon la profondeur dans l'arbre
 const TYPE_LABELS = ['Parent', 'Sous-catégorie', 'Sous-sous-catégorie']
@@ -51,6 +52,8 @@ function Category() {
     // Stocker le id et le nom quand on clique sur supprimer
     const [categoryToDelete, setCategoryToDelete] = useState(null)
     const [categoryNameToDelete, setCategoryNameToDelete] = useState("")
+    // panneau d'ajout ouvert ou fermé
+    const [sheetOpen, setSheetOpen] = useState(false)
 
     // ==========================================
     // Récupération des catégories
@@ -90,13 +93,7 @@ function Category() {
             setDeleteDialogOpen(false)
         } catch (error) {
             toast.error("Impossible de supprimer la catégorie.")
-            console.log("❌ Erreur suppression catégorie");
-            console.log("Status :", error.response?.status);
-            console.log("Message backend :", error.response?.data);
-            console.log("Erreur complète :", error);
-            console.log("Token :", localStorage.getItem("token"));
-            console.log("LocalStorage :", Object.keys(localStorage));
-            console.log("SessionStorage :", Object.keys(sessionStorage));
+
         }
     }
 
@@ -160,7 +157,7 @@ function Category() {
                     {/* Actions (logique à venir) */}
                     <TableCell className="produits__actions">
                         <Button variant="ghost" size="icon" aria-label="Modifier"><Pencil /></Button>
-                        <Button variant="ghost" size="icon" aria-label="Voir"><Eye /></Button>
+
                         {/* ICONE SUPPRIMER */}
                         <Button
                             variant="ghost"
@@ -193,7 +190,7 @@ function Category() {
                         <h1 className="produits__title">Catégories</h1>
                         <p className="produits__subtitle">Voici la liste de vos catégories et sous-catégories.</p>
                     </div>
-                    <Button><Plus />Ajouter une catégorie</Button>
+                    <Button onClick={() => setSheetOpen(true)}><Plus />Ajouter une catégorie</Button>
                 </div>
 
                 {/* Tableau */}
@@ -219,6 +216,13 @@ function Category() {
                         </TableBody>
                     </Table>
                 </div>
+
+                {/* Panneau latéral (ajout) */}
+                <CategorySheet
+                    open={sheetOpen}
+                    onOpenChange={setSheetOpen}
+                    onSave={getCategories} // recharger la liste après l'ajout
+                />
 
                 {/* Panneau DE SUPPRESSION */}
                 <DeleteConfirmation
