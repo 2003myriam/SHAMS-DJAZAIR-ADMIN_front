@@ -9,6 +9,7 @@ import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import './Category.css'
 import { Trash2 } from 'lucide-react'
+import DeleteConfirmation from './components/DeleteConfirmation'
 
 // Libellé du badge selon la profondeur dans l'arbre
 const TYPE_LABELS = ['Parent', 'Sous-catégorie', 'Sous-sous-catégorie']
@@ -45,6 +46,11 @@ function Category() {
     const [categories, setCategories] = useState([])
     // ids des catégories dépliées
     const [expanded, setExpanded] = useState({})
+    // delete ouvert ou fermé
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    // Stocker le id et le nom quand on clique sur supprimer
+    const [categoryToDelete, setCategoryToDelete] = useState(null)
+    const [categoryNameToDelete, setCategoryNameToDelete] = useState("")
 
     // ==========================================
     // Récupération des catégories
@@ -64,6 +70,35 @@ function Category() {
     useEffect(() => {
         getCategories()
     }, [])
+
+    // ==========================================
+    // Supprimer une catégorie
+    // ==========================================
+    const handleDelete = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`http://localhost:5001/categories/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+
+            // on recharge la liste pour afficher la suppression sans rafraîchir la page
+            getCategories()
+            setDeleteDialogOpen(false)
+        } catch (error) {
+            toast.error("Impossible de supprimer la catégorie.")
+            console.log("❌ Erreur suppression catégorie");
+            console.log("Status :", error.response?.status);
+            console.log("Message backend :", error.response?.data);
+            console.log("Erreur complète :", error);
+            console.log("Token :", localStorage.getItem("token"));
+            console.log("LocalStorage :", Object.keys(localStorage));
+            console.log("SessionStorage :", Object.keys(sessionStorage));
+        }
+    }
 
     // ==========================================
     // Déplier / replier une catégorie
@@ -126,7 +161,19 @@ function Category() {
                     <TableCell className="produits__actions">
                         <Button variant="ghost" size="icon" aria-label="Modifier"><Pencil /></Button>
                         <Button variant="ghost" size="icon" aria-label="Voir"><Eye /></Button>
-                        <Button variant="ghost" size="icon" aria-label="Plus d'actions"> <Trash2 /></Button>
+                        {/* ICONE SUPPRIMER */}
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                                setCategoryToDelete(c._id) // je garde ID de la catégorie
+                                setCategoryNameToDelete(c.name) // je garde le nom de la catégorie
+                                setDeleteDialogOpen(true) // la boite est en etat ouvert
+                            }}
+                            aria-label="Supprimer"
+                        >
+                            <Trash2 />
+                        </Button>
                     </TableCell>
                 </TableRow>
 
@@ -172,6 +219,14 @@ function Category() {
                         </TableBody>
                     </Table>
                 </div>
+
+                {/* Panneau DE SUPPRESSION */}
+                <DeleteConfirmation
+                    open={deleteDialogOpen}
+                    onOpenChange={setDeleteDialogOpen}
+                    onConfirm={() => handleDelete(categoryToDelete)}
+                    categoryName={categoryNameToDelete} // envoyer le nom de la catégorie comme prop
+                />
             </Main>
         </>
     )

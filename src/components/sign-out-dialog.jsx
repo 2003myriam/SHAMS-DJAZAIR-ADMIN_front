@@ -10,6 +10,8 @@ export function SignOutDialog({ open, onOpenChange }) {
 
   const handleSignOut = () => {
     auth.reset()
+    // supprime le token utilisé par les appels API
+    localStorage.removeItem('token')
     // Garde la page actuelle pour y revenir après la reconnexion
     const currentPath = location.pathname + location.search
     navigate(`/sign-in?redirect=${encodeURIComponent(currentPath)}`, {

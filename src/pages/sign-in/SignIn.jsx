@@ -1,6 +1,6 @@
 // Page de connexion : formulaire email + mot de passe.
-// La connexion est simulée : à remplacer par l'appel à votre API.
 import { useState } from 'react'
+import axios from 'axios'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
@@ -24,20 +24,37 @@ export function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!email || !password) {
       toast.error('Veuillez saisir votre email et votre mot de passe.')
       return
     }
 
-    // TODO : appeler votre API ici (ex : axios.post('/api/login', { email, password }))
-    auth.setUser({ email })
-    auth.setAccessToken('mock-access-token')
-    toast.success(`Bon retour, ${email} !`)
+    try {
+      setLoading(true)
+      const response = await axios.post('http://localhost:5001/auth/login', {
+        email,
+        password,
+      })
+      const { token } = response.data
 
-    // retourne à la page demandée avant la connexion, sinon à l'accueil
-    navigate(searchParams.get('redirect') || '/', { replace: true })
+      // token utilisé par les autres pages (Authorization: Bearer ...)
+      localStorage.setItem('token', token)
+      auth.setUser({ email })
+      auth.setAccessToken(token)
+      toast.success(`Bon retour, ${email} !`)
+
+      // retourne à la page demandée avant la connexion, sinon à l'accueil
+      navigate(searchParams.get('redirect') || '/', { replace: true })
+    } catch (error) {
+      // message renvoyé par l'API (utilisateur introuvable, mot de passe incorrect...)
+      toast.error(error.response?.data?.message || 'Impossible de se connecter.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -71,7 +88,7 @@ export function SignIn() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type='submit'>Se connecter</Button>
+            <Button type='submit' disabled={loading}>Se connecter</Button>
           </form>
         </CardContent>
       </Card>
