@@ -11,7 +11,7 @@ import DeleteConfirmation from './components/DeleteConfirmation'
 import { CategorySheet } from './components/CategorySheet'
 import './Category.css'
 
-const API = 'http://localhost:5001/categories'
+
 
 // Libellé du badge selon la profondeur dans l'arbre
 const TYPE_LABELS = ['Parent', 'Sous-catégorie', 'Sous-sous-catégorie']
@@ -42,7 +42,7 @@ function Category() {
     // ==========================================
     const getCategories = async () => {
         try {
-            const response = await axios.get(`${API}/parents`)
+            const response = await axios.get(`http://localhost:5001/categories/parents`)
             setCategories(response.data.data || [])
         } catch (error) {
             toast.error('Impossible de récupérer les catégories.')
@@ -54,7 +54,7 @@ function Category() {
     // ==========================================
     const getSubcategories = async (id) => {
         try {
-            const response = await axios.get(`${API}/${id}/subcategories`)
+            const response = await axios.get(`http://localhost:5001/categories/${id}/subcategories`)
             setSubcategories((prev) => ({ ...prev, [id]: response.data.data || [] }))
         } catch (error) {
             // l'API renvoie une erreur quand la catégorie n'a pas de sous-catégorie

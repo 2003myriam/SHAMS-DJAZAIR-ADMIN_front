@@ -16,8 +16,43 @@
   @apply mt-1 text-sm text-muted-foreground;
 }
 
-.produits__top > button {
+.produits__top > button,
+.produits__toolbar > button {
   @apply shadow-sm;
+}
+
+/* ================= RECHERCHE + BOUTON ================= */
+.produits__toolbar {
+  @apply flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center;
+}
+
+.produits__search {
+  @apply relative w-full sm:w-72 lg:w-96;
+}
+
+.produits__search-icon {
+  @apply pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors;
+}
+
+/* l'icône prend la couleur principale quand le champ est actif */
+.produits__search:focus-within .produits__search-icon {
+  @apply text-primary;
+}
+
+.produits__search-input {
+  @apply h-10 rounded-lg bg-muted/40 ps-9 pe-9 shadow-none transition-colors focus-visible:bg-background;
+}
+
+.produits__search-clear {
+  @apply absolute end-2 top-1/2 flex size-6 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground;
+}
+
+.produits__search-clear svg {
+  @apply size-4;
+}
+
+.produits__toolbar > button {
+  @apply h-10;
 }
 
 /* ================= TABLEAU ================= */

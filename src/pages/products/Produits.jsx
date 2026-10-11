@@ -3,6 +3,9 @@ import axios from 'axios'
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
+import { SearchIcon, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+
 
 import {
   Table,
@@ -22,6 +25,8 @@ import { ProduitSheet } from './components/ProduitSheet'
 
 import './Produits.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
+import { Search } from '@/components/search'
+
 
 export function Produits() {
 
@@ -30,6 +35,7 @@ export function Produits() {
   // ==========================================
 
   const [produits, setProduits] = useState([])
+  const [search, setSearch] = useState('')
 
   // ==========================================
   // Panneau latéral (ajout / modification)
@@ -63,7 +69,7 @@ export function Produits() {
   const getProducts = async (page = 1) => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/products?page=${page}&limit=${pagination.productsPerPage}`
+        `http://localhost:5001/products?page=${page}&limit=${pagination.productsPerPage}&search=${encodeURIComponent(search)}`
       )
 
       setProduits(response.data.data || [])
@@ -100,7 +106,7 @@ export function Produits() {
 
     getProducts(1)
 
-  }, [])
+  }, [search])
 
   // ==========================================
   // Ajouter un produit
@@ -194,14 +200,35 @@ export function Produits() {
             </p>
 
           </div>
+          {/* Recherche + bouton */}
+          <div className="produits__toolbar">
+            <div className="produits__search">
+              <SearchIcon className="produits__search-icon" />
+              <Input
+                type="text"
+                placeholder="Nom ou référence du produit..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="produits__search-input"
+              />
+              {/* Effacer la recherche */}
+              {search && (
+                <button
+                  type="button"
+                  className="produits__search-clear"
+                  onClick={() => setSearch('')}
+                  aria-label="Effacer la recherche"
+                >
+                  <X />
+                </button>
+              )}
+            </div>
 
-          <Button onClick={openCreate}>
-
-            <Plus />
-
-            Ajouter un produit
-
-          </Button>
+            <Button onClick={openCreate}>
+              <Plus />
+              Ajouter un produit
+            </Button>
+          </div>
 
         </div>
 
