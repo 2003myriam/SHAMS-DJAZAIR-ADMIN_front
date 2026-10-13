@@ -13,12 +13,16 @@ import { OrderStatusBadge, PaymentStatusBadge } from './components/StatusBadge'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import { CommandeSheet } from './components/CommandeSheet'
 import '../devis/Devis.css'
+import { SearchIcon, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+
 
 function Commande() {
     // ==========================================
     // Commandes
     // ==========================================
     const [orders, setOrders] = useState([])
+    const [search, setSearch] = useState('')
     // commande sélectionnée + le dialog de voir le détail
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
@@ -47,13 +51,13 @@ function Commande() {
     })
 
     // ==========================================
-    // Récupération des commandes
+    // Récupération des commandes admin finnalisé
     // ==========================================
     const getOrders = async (page = 1) => {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `http://localhost:5001/orders/admin?page=${page}&limit=${pagination.ordersPerPage}`,
+                `http://localhost:5001/orders/admin?page=${page}&limit=${pagination.ordersPerPage}&search=${encodeURIComponent(search)}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -112,7 +116,7 @@ function Commande() {
     // ==========================================
     useEffect(() => {
         getOrders(1)
-    }, [])
+    }, [search])
 
     // ==========================================
     // Ouvrir le détail d'une commande
@@ -142,11 +146,35 @@ function Commande() {
         <>
             <Header />
             <Main>
-                {/* Titre */}
+                {/* Titre + recherche */}
                 <div className="produits__top">
                     <div>
                         <h1 className="produits__title">Commandes</h1>
                         <p className="produits__subtitle">Voici la liste des commandes.</p>
+                    </div>
+
+                    <div className="produits__toolbar">
+                        <div className="produits__search">
+                            <SearchIcon className="produits__search-icon" />
+                            <Input
+                                type="text"
+                                placeholder="Numéro ou email du client..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="produits__search-input"
+                            />
+                            {/* Effacer la recherche */}
+                            {search && (
+                                <button
+                                    type="button"
+                                    className="produits__search-clear"
+                                    onClick={() => setSearch('')}
+                                    aria-label="Effacer la recherche"
+                                >
+                                    <X />
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
 

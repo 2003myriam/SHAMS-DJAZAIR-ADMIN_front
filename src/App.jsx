@@ -1,7 +1,9 @@
 // Toutes les routes de l'application (react-router-dom).
 // Pour ajouter une page : créer le composant dans src/pages puis ajouter une <Route> ici.
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from './components/ui/sonner'
+// Context des notifications (Socket.IO)
+import { NotificationsProvider } from '@/context/NotificationsContext'
 // Mises en page
 import { AuthenticatedLayout } from '@/layouts/authenticated-layout'
 // Pages
@@ -16,27 +18,31 @@ import Category from './pages/categories/Category'
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* ===== Page sans sidebar ===== */}
-        <Route path='/sign-in' element={<SignIn />} />
+    // Le Provider entoure toute l'application :
+    // tous les composants à l'intérieur peuvent lire les notifications
+    <NotificationsProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* ===== Page sans sidebar ===== */}
+          <Route path='/sign-in' element={<SignIn />} />
 
-        {/* ===== Pages avec les sidebars + header ===== */}
-        <Route element={<AuthenticatedLayout />}>
-          <Route path='/' element={<Dashboard />} />
-          <Route path='/produits' element={<Produits />} />
-          <Route path='/marques' element={<Marque />} />
-          <Route path='/devis' element={<Devis />} />
-          <Route path='/commande' element={<Commande />} />
-          <Route path='/categorie' element={<Category />} />
-        </Route>
+          {/* ===== Pages avec les sidebars + header ===== */}
+          <Route element={<AuthenticatedLayout />}>
+            <Route path='/' element={<Dashboard />} />
+            <Route path='/produits' element={<Produits />} />
+            <Route path='/marques' element={<Marque />} />
+            <Route path='/devis' element={<Devis />} />
+            <Route path='/commande' element={<Commande />} />
+            <Route path='/categorie' element={<Category />} />
+          </Route>
 
-        {/* ===== Page introuvable (404) ===== */}
-        <Route path='*' element={<NotFoundError />} />
-      </Routes>
+          {/* ===== Page introuvable (404) ===== */}
+          <Route path='*' element={<NotFoundError />} />
+        </Routes>
 
-      {/* Notifications (toast) */}
-      <Toaster duration={5000} />
-    </BrowserRouter>
+        {/* Notifications (toast) */}
+        <Toaster duration={5000} />
+      </BrowserRouter>
+    </NotificationsProvider>
   )
 }

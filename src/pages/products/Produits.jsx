@@ -25,7 +25,7 @@ import { ProduitSheet } from './components/ProduitSheet'
 
 import './Produits.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
-import { Search } from '@/components/search'
+
 
 
 export function Produits() {
