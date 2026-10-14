@@ -1,0 +1,94 @@
+/*
+ * Styles des notifications du header : cloche, badge compteur et popover de la liste.
+ */
+@reference '../styles/index.css';
+
+/* ================= CLOCHE ================= */
+.notif-bell {
+  @apply relative inline-flex size-9 shrink-0 scale-95 cursor-pointer items-center justify-center rounded-full bg-transparent text-foreground transition-colors;
+}
+
+.notif-bell:hover {
+  @apply bg-accent text-accent-foreground;
+}
+
+.notif-bell:focus-visible {
+  @apply outline-none ring-[3px] ring-ring;
+}
+
+.notif-bell[data-state='open'] {
+  @apply bg-accent;
+}
+
+.notif-bell svg {
+  @apply size-5;
+}
+
+/* ================= BADGE COMPTEUR ================= */
+/* Le badge est à côté de la cloche dans le DOM : on le remonte sur son coin haut-droit */
+.notif-badge {
+  @apply pointer-events-none relative z-10 inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-red-600 px-1 text-[0.65rem] leading-none font-semibold text-white tabular-nums;
+  margin-left: -1.6rem;
+  transform: translateY(-0.7rem);
+  box-shadow: 0 0 0 2px var(--background);
+  animation: notif-badge-pop 0.25s ease-out;
+}
+
+@keyframes notif-badge-pop {
+  from {
+    transform: translateY(-0.7rem) scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-0.7rem) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================= POPOVER ================= */
+.notif-popover {
+  @apply w-80 max-h-[26rem] overflow-y-auto p-0 shadow-lg;
+}
+
+.notif-header {
+  @apply sticky top-0 z-10 border-b bg-popover px-4 py-3;
+}
+
+.notif-title {
+  @apply text-sm font-semibold;
+}
+
+.notif-description {
+  @apply text-xs;
+}
+
+/* Aucune notification : le header est alors le dernier élément du popover */
+.notif-header:last-child {
+  @apply border-b-0;
+}
+
+.notif-header:last-child::after {
+  content: 'Aucune notification pour le moment.';
+  @apply mt-3 block rounded-md bg-muted px-3 py-6 text-center text-xs text-muted-foreground;
+}
+
+/* ================= ÉLÉMENT DE LA LISTE ================= */
+.notif-item {
+  @apply flex flex-col gap-1 border-b px-4 py-3 transition-colors;
+}
+
+.notif-item:last-child {
+  @apply border-b-0;
+}
+
+.notif-item:hover {
+  @apply bg-accent;
+}
+
+.notif-item__type {
+  @apply w-fit rounded-full bg-secondary px-2 py-0.5 text-[0.65rem] font-semibold tracking-wide text-secondary-foreground uppercase;
+}
+
+.notif-item__message {
+  @apply text-sm leading-snug text-foreground;
+}

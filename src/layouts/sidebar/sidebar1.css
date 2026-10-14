@@ -11,11 +11,28 @@
   --sb-item: 44px;
   --sb-radius: 14px;
 
+  /* couleurs (mode clair) */
+  --sb-bg: var(--blue);
+  --sb-fg: var(--light);
+  --sb-line: rgba(248, 250, 252, 0.08);
+  --sb-hover: rgba(248, 250, 252, 0.1);
+  --sb-tooltip-bg: var(--blue);
+  --sb-tooltip-fg: var(--light);
+  --sb-shadow: 4px 0 24px rgba(15, 23, 42, 0.08);
+
   position: sticky;
   top: 0;
   height: 100vh;
   min-width: var(--sb-width);
   z-index: 60; /* tooltips au-dessus de Sidebar2 et du header */
+}
+
+/* couleurs en mode sombre : plus foncé que le fond de page pour rester distinct */
+.dark .app-sidebar.ps-sidebar-root {
+  --sb-bg: #0e1826;
+  --sb-line: rgba(248, 250, 252, 0.06);
+  --sb-tooltip-bg: #26394f;
+  --sb-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
 }
 
 /* le conteneur interne de react-pro-sidebar */
@@ -24,12 +41,13 @@
   flex-direction: column;
   height: 100%;
   padding: 0;
-  background: var(--blue);
+  background: var(--sb-bg);
+  transition: background-color 0.2s ease;
   /* visible : sinon les info-bulles au survol sont coupées */
   overflow: visible;
   box-shadow:
     1px 0 0 rgba(255, 255, 255, 0.06),
-    4px 0 24px rgba(15, 23, 42, 0.08);
+    var(--sb-shadow);
   z-index: 50; /* les info-bulles restent au-dessus */
 }
 
@@ -40,7 +58,7 @@
   justify-content: center;
   height: 72px;
   flex: 0 0 auto;
-  border-bottom: 1px solid rgba(248, 250, 252, 0.08);
+  border-bottom: 1px solid var(--sb-line);
 }
 
 .app-sidebar__brand img {
@@ -64,7 +82,7 @@
 .app-sidebar__nav--bottom {
   margin-top: auto;
   padding-bottom: 16px;
-  border-top: 1px solid rgba(248, 250, 252, 0.08);
+  border-top: 1px solid var(--sb-line);
   padding-top: 14px;
 }
 
@@ -104,7 +122,7 @@
   height: auto !important;
   line-height: 0;
   font-size: 21px;
-  color: var(--light);
+  color: var(--sb-fg);
 }
 
 /* le label est vide en mode icônes : on le retire du flux */
@@ -114,8 +132,8 @@
 
 /* Survol */
 .app-sidebar .ps-menu-button:hover {
-  background: rgba(248, 250, 252, 0.1) !important;
-  color: var(--light);
+  background: var(--sb-hover) !important;
+  color: var(--sb-fg);
   transform: translateY(-1px);
 }
 
@@ -151,8 +169,8 @@
   transform: translate(-6px, -50%);
   padding: 6px 10px;
   border-radius: 8px;
-  background: var(--blue);
-  color: var(--light);
+  background: var(--sb-tooltip-bg);
+  color: var(--sb-tooltip-fg);
   font-size: 12px;
   font-weight: 500;
   line-height: 1;

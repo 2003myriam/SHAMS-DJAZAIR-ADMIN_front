@@ -15,6 +15,7 @@ import Marque from './pages/marques/Marque'
 import Devis from './pages/devis/Devis'
 import Commande from './pages/commande/Commande'
 import Category from './pages/categories/Category'
+import Notification from './pages/notification/Notification'
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
             <Route path='/devis' element={<Devis />} />
             <Route path='/commande' element={<Commande />} />
             <Route path='/categorie' element={<Category />} />
+            <Route path='/notification' element={<Notification />} />
           </Route>
 
           {/* ===== Page introuvable (404) ===== */}

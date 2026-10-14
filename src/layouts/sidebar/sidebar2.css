@@ -1,6 +1,8 @@
 /*
  * Styles de la sidebar de texte (Sidebar2) : recherche, liens, élément actif, état fermé.
  */
+/* Couleurs : variables --sidebar-* de src/styles/theme.css (changent automatiquement en mode sombre) */
+
 /* ================= SIDEBAR SECONDAIRE (SOUS-MENU TEXTE) ================= */
 
 .app-sidebar2.ps-sidebar-root {
@@ -20,8 +22,10 @@
   flex-direction: column;
   height: 100%;
   padding: 20px 14px;
-  background: var(--light);
-  border-right: 1px solid rgba(28, 45, 68, 0.08);
+  background: var(--sidebar);
+  color: var(--sidebar-foreground);
+  border-right: 1px solid var(--sidebar-border);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
   overflow-y: auto;
 }
 
@@ -45,7 +49,7 @@
   padding: 0 16px !important;
   border-radius: var(--sb2-radius);
   background: transparent;
-  color: var(--blue);
+  color: var(--sidebar-foreground);
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -64,8 +68,8 @@
 
 /* Survol */
 .app-sidebar2 .ps-menu-button:hover {
-  background: rgba(28, 45, 68, 0.06) !important;
-  color: var(--blue);
+  background: var(--sidebar-accent) !important;
+  color: var(--sidebar-accent-foreground);
   transform: translateX(2px);
 }
 
@@ -75,8 +79,8 @@
 
 /* ---------- État actif ---------- */
 .app-sidebar2 .ps-menuitem-root.ps-active > .ps-menu-button {
-  background: var(--blue) !important;
-  color: var(--yellow) !important;
+  background: var(--sidebar-primary) !important;
+  color: var(--sidebar-primary-foreground) !important;
 }
 
 .app-sidebar2 .ps-menuitem-root.ps-active > .ps-menu-button p {
@@ -110,8 +114,8 @@
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
-  border: 1px solid rgba(28, 45, 68, 0.15);
+  background: var(--background);
+  border: 1px solid var(--input);
   border-radius: 10px;
   padding: 0 12px;
   transition:
@@ -120,14 +124,14 @@
 }
 
 .app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav):focus-within > ul {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(28, 45, 68, 0.08);
+  border-color: var(--sidebar-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sidebar-primary) 15%, transparent);
 }
 
 .app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) > ul > svg {
   flex: 0 0 auto;
   font-size: 17px;
-  color: var(--blue);
+  color: var(--sidebar-foreground);
   opacity: 0.55;
 }
 
@@ -155,12 +159,12 @@
   outline: none;
   background: transparent;
   font-size: 14px;
-  color: var(--blue);
+  color: var(--sidebar-foreground);
   font-family: inherit;
 }
 
 .app-sidebar2 .ps-menu-root:not(.app-sidebar2__nav) input::placeholder {
-  color: rgba(28, 45, 68, 0.4);
+  color: var(--muted-foreground);
 }
 
 /* ---------- Bouton de réduction (collé à l'extrémité, centré verticalement) ---------- */
@@ -173,8 +177,8 @@
   height: 26px;
   padding: 5px;
   border-radius: 50%;
-  background: var(--blue);
-  color: var(--yellow);
+  background: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
   z-index: 20;
@@ -191,7 +195,7 @@
 
   .app-sidebar2 .ps-sidebar-container {
     border-right: none;
-    border-bottom: 1px solid rgba(28, 45, 68, 0.08);
+    border-bottom: 1px solid var(--sidebar-border);
   }
 }
 
