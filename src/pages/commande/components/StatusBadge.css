@@ -39,3 +39,28 @@
 .status-badge--refunded {
   @apply bg-slate-200 text-slate-700;
 }
+
+/* ================= SELECT (tableau des commandes) ================= */
+/* reprend les couleurs .status-badge--<statut> ci-dessus */
+.status-select {
+  @apply mx-auto rounded-full border-transparent font-medium shadow-none;
+}
+
+/* l'icône flèche prend la couleur du texte */
+.status-select svg {
+  @apply text-current opacity-70;
+}
+
+/* pastille de couleur devant chaque statut dans la liste */
+.status-dot {
+  @apply size-2 shrink-0 rounded-full;
+}
+
+.status-dot--pending { @apply bg-amber-500; }
+.status-dot--confirmed { background: var(--blue); }
+.status-dot--shipped { @apply bg-sky-500; }
+.status-dot--delivered,
+.status-dot--paid { @apply bg-emerald-500; }
+.status-dot--cancelled,
+.status-dot--failed { @apply bg-red-500; }
+.status-dot--refunded { @apply bg-slate-400; }

@@ -10,7 +10,8 @@ import { Main } from '@/layouts/main'
 import { FaEye } from "react-icons/fa";
 import Pagination from '@mui/material/Pagination'
 import CommandeDetail from './components/CommandeDetail'
-import { OrderStatusBadge, PaymentStatusBadge } from './components/StatusBadge'
+import { ORDER_STATUS, PAYMENT_STATUS } from './components/StatusBadge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import { CommandeSheet } from './components/CommandeSheet'
 import '../devis/Devis.css'
@@ -81,6 +82,30 @@ function Commande() {
             )
         } catch (error) {
             toast.error("Impossible de récupérer les commandes.")
+        }
+    }
+
+    // ==========================================
+    // Modifier le statut ou le paiement d'une commande
+    // ==========================================
+    // field : "status" (route /status) ou "paymentStatus" (route /payment)
+    const updateOrderField = async (id, field, value) => {
+        try {
+            const token = localStorage.getItem("token");
+            const route = field === "status" ? "status" : "payment"
+            await axios.patch(`http://localhost:5001/orders/admin/${id}/${route}`,
+                { [field]: value },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            // on met à jour la commande dans la liste
+            setOrders((prev) => prev.map((o) => (o._id === id ? { ...o, [field]: value } : o)))
+            toast.success(field === "status" ? "Statut modifié." : "Paiement modifié.")
+        } catch (error) {
+            toast.error("Impossible de modifier la commande.")
         }
     }
 
@@ -233,9 +258,35 @@ function Commande() {
                                         })}
                                     </TableCell>
                                     {/* statut de la commande */}
-                                    <TableCell className="devis__center"><OrderStatusBadge status={o.status} /></TableCell>
+                                    <TableCell className="devis__center">
+                                        <Select value={o.status} onValueChange={(value) => updateOrderField(o._id, "status", value)}>
+                                            <SelectTrigger size="sm" className={`status-select status-badge--${o.status}`}>
+                                                <SelectValue placeholder="Statut" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Object.entries(ORDER_STATUS).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        <span className={`status-dot status-dot--${value}`} />{label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
                                     {/* statut du paiement */}
-                                    <TableCell className="devis__center"><PaymentStatusBadge status={o.paymentStatus} /></TableCell>
+                                    <TableCell className="devis__center">
+                                        <Select value={o.paymentStatus} onValueChange={(value) => updateOrderField(o._id, "paymentStatus", value)}>
+                                            <SelectTrigger size="sm" className={`status-select status-badge--${o.paymentStatus}`}>
+                                                <SelectValue placeholder="Paiement" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Object.entries(PAYMENT_STATUS).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        <span className={`status-dot status-dot--${value}`} />{label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
                                     {/* Détail de la commande */}
                                     <TableCell className="devis__center devis__eye" onClick={() => openDetail(o)}><FaEye /></TableCell>
 
