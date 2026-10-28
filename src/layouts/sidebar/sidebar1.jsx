@@ -9,7 +9,7 @@ import { MENU_ITEMS } from '@/layouts/data/sidebar-data'
 import './sidebar1.css'
 
 // Sidebar d'icônes : choisit la section affichée dans Sidebar2
-export function Sidebar1({ selected, setSelected }) {
+export function Sidebar1({ selected, setSelected, totalCommandes }) {
   const { isMobile, setOpen, setOpenMobile } = useSidebar()
   const [signOutOpen, setSignOutOpen] = useState(false)
 
@@ -41,9 +41,15 @@ export function Sidebar1({ selected, setSelected }) {
               data-label={item.label}
               aria-label={item.label}
               aria-current={selected === item.key ? 'page' : undefined}
-            />
+            >
+              {item.key === 'Orders' && totalCommandes > 0 && (
+                <span className="notification-badge">{totalCommandes}</span>
+              )}
+            </MenuItem>
           ))}
         </Menu>
+
+
 
         <Menu className='app-sidebar__nav app-sidebar__nav--bottom'>
           <MenuItem

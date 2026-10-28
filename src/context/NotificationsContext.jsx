@@ -25,7 +25,9 @@ export function NotificationsProvider({ children }) {
         socket.on('notification', (data) => {
             toast.success(data.message, {
                 duration: Infinity,          // ne disparaît pas toute seule
-                closeButton: true,           // bouton pour la fermer
+                closeButton: true,   // bouton pour la fermer   
+                // duration: 8000,    disparaît après 8 secondes
+
             })
             // on ajoute la notification à la liste (la plus récente en premier)
             setNotifications((prev) => [data, ...prev])

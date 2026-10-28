@@ -8,7 +8,7 @@ import { findActiveItem, MENU_ITEMS2 } from '@/layouts/data/sidebar-data'
 import './sidebar2.css'
 
 // Sidebar de texte : liens de la section choisie dans Sidebar1
-export function Sidebar2({ selected }) {
+export function Sidebar2({ selected, commandesCount, devisCount }) {
   const { pathname } = useLocation()
   // ouverture / fermeture gérées par le SidebarProvider
   // (bouton du header, Ctrl+B)
@@ -52,6 +52,14 @@ export function Sidebar2({ selected }) {
             onClick={() => isMobile && setOpenMobile(false)}
           >
             <p>{item.label}</p>
+            {/* Affichage de nombre de notif */}
+            {item.key === 'Orders' && commandesCount > 0 && (
+              <span className="notification-badge">{commandesCount}</span>
+            )}
+
+            {item.key === 'quote' && devisCount > 0 && (
+              <span className="notification-badge">{devisCount}</span>
+            )}
           </MenuItem>
         ))}
       </Menu>

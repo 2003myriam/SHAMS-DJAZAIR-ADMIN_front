@@ -125,9 +125,33 @@
   color: var(--sb-fg);
 }
 
-/* le label est vide en mode icônes : on le retire du flux */
+/* le label ne contient que le badge en mode icônes : on le retire du flux
+   et on le place en haut à droite de l'icône */
 .app-sidebar .ps-menu-label {
-  display: none !important;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  line-height: 0;
+  pointer-events: none;
+}
+
+/* ---------- Badge : total des notifications ---------- */
+.app-sidebar .notification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff1f1f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  /* contour de la couleur du fond pour détacher le badge de l'icône */
+  box-shadow: 0 0 0 2px var(--sb-bg);
 }
 
 /* Survol */
