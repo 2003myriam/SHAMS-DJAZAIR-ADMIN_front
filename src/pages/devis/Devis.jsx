@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
+import { Pencil, Plus, Trash2, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -17,6 +18,10 @@ function Devis() {
     // Devis
     // ==========================================
     const [devis, setDevis] = useState([])
+    // depuis une notification : ?id=<devis à surligner>&search=<email du client>
+    const [searchParams, setSearchParams] = useSearchParams()
+    const highlightId = searchParams.get('id')
+    const search = searchParams.get('search') || ''
     // ==========================================
     // Panneau latéral (ajout / modification)
     // ==========================================
@@ -48,7 +53,7 @@ function Devis() {
     const getDevis = async (page = 1) => {
         try {
             const response = await axios.get(
-                `http://localhost:5001/request?page=${page}&limit=${pagination.devisPerPage}`
+                `http://localhost:5001/request?page=${page}&limit=${pagination.devisPerPage}&search=${encodeURIComponent(search)}`
             )
 
             setDevis(response.data.data || [])
@@ -83,7 +88,14 @@ function Devis() {
 
         getDevis(1)
 
-    }, [])
+    }, [search])
+
+    // faire défiler jusqu'au devis venant d'une notification
+    useEffect(() => {
+        if (highlightId) {
+            document.getElementById(`row-${highlightId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    }, [devis, highlightId])
     // ==========================================
     // Ouvrir le panneau de detail d'un produit 
     // ==========================================
@@ -142,6 +154,16 @@ function Devis() {
                     <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
                 </div>
 
+                {/* Filtre venant d'une notification */}
+                {search && (
+                    <div className="devis__filter">
+                        <span>Demandes de <strong>{search}</strong></span>
+                        <Button variant="ghost" size="sm" onClick={() => setSearchParams({})}>
+                            <X />Tout afficher
+                        </Button>
+                    </div>
+                )}
+
                 {/* Tableau */}
                 <div className="produits__table">
                     <Table>
@@ -165,7 +187,11 @@ function Devis() {
                             )}
                             {/* Devis affichage  */}
                             {devis.map((d) => (
-                                <TableRow key={d._id}>
+                                <TableRow
+                                    key={d._id}
+                                    id={`row-${d._id}`}
+                                    className={d._id === highlightId ? 'row--highlight' : ''}
+                                >
                                     {/* Nom et prenom  */}
                                     <TableCell>{d.firstName} | {d.lastName} </TableCell>
                                     {/* email */}

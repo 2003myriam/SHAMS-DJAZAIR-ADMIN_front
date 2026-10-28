@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 import { Check, CheckCheck, FileText, ShoppingCart } from "lucide-react"
-import { FaEye } from "react-icons/fa"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Header } from "@/layouts/header"
 import { Main } from "@/layouts/main"
-import CommandeDetail from "../commande/components/CommandeDetail"
-import DevisDetail from "../devis/components/DevisDetail"
 import "../devis/Devis.css"
 import "./Notification.css"
 
@@ -27,10 +25,6 @@ function Notification() {
     const [notifications, setNotifications] = useState([])
     const [loading, setLoading] = useState(true)
 
-    // notification sélectionnée + dialog de détail
-    const [selectedNotif, setSelectedNotif] = useState(null)
-    const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
-
 
     const getNotifications = async () => {
         try {
@@ -48,14 +42,6 @@ function Notification() {
     }, [])
 
     // ==========================================
-    // Ouvrir le détail de la commande ou du devis
-    // ==========================================
-    const openDetail = (notif) => {
-        setSelectedNotif(notif)
-        setDialogdetailOpen(true)
-    }
-
-    // ==========================================
     // Marquer comme lue / non lue (bascule isRead)
     // ==========================================
     const toggleRead = async (id) => {
@@ -71,10 +57,27 @@ function Notification() {
         }
     }
 
-    // relatedId est un objet seulement si le populate a fonctionné
-    const related = selectedNotif?.relatedId && typeof selectedNotif.relatedId === "object"
-        ? selectedNotif.relatedId
-        : null
+    // ==========================================
+    // Clic sur la carte : aller vers la commande ou le devis
+    // ==========================================
+    const navigate = useNavigate()
+
+    const openRelated = (notif) => {
+        // élément supprimé : rien à ouvrir
+        if (!notif.relatedId) return
+
+        // ouvrir une notification la marque comme lue
+        if (!notif.isRead) toggleRead(notif._id)
+
+        const related = typeof notif.relatedId === "object" ? notif.relatedId : null
+        const id = related?._id || notif.relatedId
+        // recherche pour retrouver l'élément même s'il n'est pas sur la 1re page
+        const search = notif.type === "commande" ? related?.orderNumber : related?.email
+        const params = new URLSearchParams({ id })
+        if (search) params.set("search", search)
+        // naviguer vers la demande souhaité selon la notif 
+        navigate(`/${notif.type === "commande" ? "commande" : "devis"}?${params}`)
+    }
 
     return (
         <>
@@ -97,12 +100,16 @@ function Notification() {
                 <div className="notif__list">
                     {notifications.map((notif) => {
                         const isCommande = notif.type === "commande"
-                        const hasDetail = notif.relatedId && typeof notif.relatedId === "object"
+                        const clickable = Boolean(notif.relatedId)
 
                         return (
                             <article
                                 key={notif._id}
-                                className={`notif__card ${!notif.isRead ? "notif__card--unread" : ""}`}
+                                className={`notif__card ${!notif.isRead ? "notif__card--unread" : ""} ${clickable ? "notif__card--clickable" : ""}`}
+                                onClick={() => openRelated(notif)}
+                                onKeyDown={(e) => e.key === "Enter" && openRelated(notif)}
+                                role={clickable ? "link" : undefined}
+                                tabIndex={clickable ? 0 : undefined}
                             >
                                 {/* Icône selon le type */}
                                 <div className={`notif__icon notif__icon--${notif.type}`}>
@@ -122,20 +129,12 @@ function Notification() {
                                     )}
                                 </div>
 
-                                <div className="notif__actions">
-                                    {/* Voir le détail */}
-                                    {hasDetail && (
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="notif__eye"
-                                            onClick={() => openDetail(notif)}
-                                            aria-label={isCommande ? "Voir la commande" : "Voir le devis"}
-                                            title={isCommande ? "Voir la commande" : "Voir le devis"}
-                                        >
-                                            <FaEye />
-                                        </Button>
-                                    )}
+                                {/* stopPropagation : les boutons ne déclenchent pas le clic de la carte */}
+                                <div
+                                    className="notif__actions"
+                                    onClick={(e) => e.stopPropagation()}
+                                    onKeyDown={(e) => e.stopPropagation()}
+                                >
                                     {/* Marquer comme lue / non lue */}
                                     <Button
                                         variant="ghost"
@@ -152,22 +151,6 @@ function Notification() {
                         )
                     })}
                 </div>
-
-                {/* Détail de la commande ou du devis */}
-                {selectedNotif?.type === "commande" && (
-                    <CommandeDetail
-                        open={dialogdetailOpen}
-                        onOpenChange={setDialogdetailOpen}
-                        order={related}
-                    />
-                )}
-                {selectedNotif?.type === "devis" && (
-                    <DevisDetail
-                        open={dialogdetailOpen}
-                        onOpenChange={setDialogdetailOpen}
-                        devis={related}
-                    />
-                )}
             </Main>
         </>
     )

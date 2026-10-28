@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -22,7 +23,10 @@ function Commande() {
     // Commandes
     // ==========================================
     const [orders, setOrders] = useState([])
-    const [search, setSearch] = useState('')
+    // depuis une notification : ?id=<commande à surligner>&search=<n° commande>
+    const [searchParams] = useSearchParams()
+    const highlightId = searchParams.get('id')
+    const [search, setSearch] = useState(searchParams.get('search') || '')
     // commande sélectionnée + le dialog de voir le détail
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
@@ -118,6 +122,13 @@ function Commande() {
         getOrders(1)
     }, [search])
 
+    // faire défiler jusqu'à la commande venant d'une notification
+    useEffect(() => {
+        if (highlightId) {
+            document.getElementById(`row-${highlightId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    }, [orders, highlightId])
+
     // ==========================================
     // Ouvrir le détail d'une commande
     // ==========================================
@@ -202,7 +213,11 @@ function Commande() {
                             )}
                             {/* Commandes affichage */}
                             {orders.map((o) => (
-                                <TableRow key={o._id}>
+                                <TableRow
+                                    key={o._id}
+                                    id={`row-${o._id}`}
+                                    className={o._id === highlightId ? 'row--highlight' : ''}
+                                >
                                     {/* numéro */}
                                     <TableCell>#{o.orderNumber}</TableCell>
                                     {/* client */}

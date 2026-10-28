@@ -29,6 +29,20 @@
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
 }
 
+/* cliquable : mène vers la commande ou le devis */
+.notif__card--clickable {
+  cursor: pointer;
+}
+
+.notif__card--clickable:hover {
+  border-color: color-mix(in srgb, var(--foreground) 22%, transparent);
+}
+
+.notif__card--clickable:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
 /* non lue : liseré rouge à gauche */
 .notif__card--unread {
   border-left: 4px solid #e5484d;
@@ -97,7 +111,7 @@
   font-size: 14px;
 }
 
-/* ---------- Boutons d'action (voir le détail, marquer comme lue) ---------- */
+/* ---------- Bouton d'action (marquer comme lue) ---------- */
 .notif__actions {
   flex: 0 0 auto;
   align-self: center;
@@ -106,18 +120,15 @@
   gap: 4px;
 }
 
-.notif__eye,
 .notif__read {
   border-radius: 10px;
   color: var(--muted-foreground);
 }
 
-.notif__eye:hover,
 .notif__read:hover {
   color: var(--foreground);
 }
 
-.notif__eye svg,
 .notif__read svg {
   width: 18px;
   height: 18px;
