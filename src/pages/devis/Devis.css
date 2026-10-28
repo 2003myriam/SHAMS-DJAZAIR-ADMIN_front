@@ -22,6 +22,71 @@
   @apply text-foreground;
 }
 
+/* ================= STATUT (select) ================= */
+.devis-status {
+  @apply rounded-full border-transparent font-medium shadow-none;
+}
+
+/* pastille de couleur devant chaque statut dans la liste */
+.devis-status__dot {
+  @apply size-2 shrink-0 rounded-full;
+}
+
+/* Nouveau */
+.devis-status--nouveau {
+  @apply bg-sky-100 text-sky-800;
+}
+
+/* Contacté */
+.devis-status--contacte {
+  @apply bg-violet-100 text-violet-800;
+}
+
+/* En attente */
+.devis-status--en_attente {
+  @apply bg-amber-100 text-amber-800;
+}
+
+/* Devis envoyé */
+.devis-status--devis_envoye {
+  @apply bg-indigo-100 text-indigo-800;
+}
+
+/* Accepté */
+.devis-status--accepte {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+/* Refusé */
+.devis-status--refuse {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Annulé */
+.devis-status--annule {
+  @apply bg-slate-200 text-slate-700;
+}
+
+/* Terminé */
+.devis-status--termine {
+  @apply bg-teal-100 text-teal-800;
+}
+
+/* l'icône flèche prend la couleur du texte */
+.devis-status svg {
+  @apply text-current opacity-70;
+}
+
+/* pastilles : couleur plus soutenue que le fond du select */
+.devis-status__dot.devis-status--nouveau { @apply bg-sky-500; }
+.devis-status__dot.devis-status--contacte { @apply bg-violet-500; }
+.devis-status__dot.devis-status--en_attente { @apply bg-amber-500; }
+.devis-status__dot.devis-status--devis_envoye { @apply bg-indigo-500; }
+.devis-status__dot.devis-status--accepte { @apply bg-emerald-500; }
+.devis-status__dot.devis-status--refuse { @apply bg-red-500; }
+.devis-status__dot.devis-status--annule { @apply bg-slate-400; }
+.devis-status__dot.devis-status--termine { @apply bg-teal-500; }
+
 /* Ligne ouverte depuis une notification (aussi utilisé par la page Commandes) */
 .row--highlight {
   background: color-mix(in srgb, var(--yellow) 22%, transparent);

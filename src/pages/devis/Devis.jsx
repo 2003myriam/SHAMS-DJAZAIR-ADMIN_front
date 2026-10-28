@@ -5,6 +5,7 @@ import { Pencil, Plus, Trash2, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, } from "@/components/ui/select";
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import { FaEye } from "react-icons/fa";
@@ -13,6 +14,19 @@ import './Devis.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import Pagination from '@mui/material/Pagination'
 import { DevisSheet } from './components/DevisSheet'
+
+// Libellés en français des statuts du modèle Devis
+const DEVIS_STATUS = {
+    nouveau: "Nouveau",
+    contacte: "Contacté",
+    en_attente: "En attente",
+    devis_envoye: "Devis envoyé",
+    accepte: "Accepté",
+    refuse: "Refusé",
+    annule: "Annulé",
+    termine: "Terminé",
+}
+
 function Devis() {
     // ==========================================
     // Devis
@@ -120,6 +134,28 @@ function Devis() {
         setSheetOpen(true)
     }
     // ==========================================
+    // Modifier le statut d'une demande
+    // ==========================================
+    const updateStatus = async (id, status) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.patch(`http://localhost:5001/request/${id}/status`,
+                { status },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            // on met à jour le statut dans la liste
+            setDevis((prev) => prev.map((d) => (d._id === id ? { ...d, status } : d)))
+            toast.success("Statut modifié.")
+        } catch (error) {
+            toast.error("Impossible de modifier le statut.")
+        }
+    }
+
+    // ==========================================
     // supprimer une  demande
     // ==========================================
     const handleDelete = async (id) => {
@@ -175,6 +211,7 @@ function Devis() {
                                 <TableHead className="devis__center">Date de la demande</TableHead>
                                 <TableHead>Entreprise</TableHead>
                                 <TableHead className="devis__center">Detail de la demande</TableHead>
+                                <TableHead>Statut</TableHead>
                                 <TableHead className="produits__actions">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -182,7 +219,7 @@ function Devis() {
                             {/* Aucun produit */}
                             {devis.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="produits__empty">Aucune demande .</TableCell>
+                                    <TableCell colSpan={8} className="produits__empty">Aucune demande .</TableCell>
                                 </TableRow>
                             )}
                             {/* Devis affichage  */}
@@ -210,6 +247,24 @@ function Devis() {
                                     <TableCell>{d.company || "Aucune"}</TableCell>
                                     {/* Detail de la demande */}
                                     <TableCell className="devis__center devis__eye" onClick={() => openDetail(d)}><FaEye /></TableCell>
+                                    {/* Statut */}
+                                    <TableCell>
+                                        <Select
+                                            value={d.status}
+                                            onValueChange={(value) => updateStatus(d._id, value)}
+                                        >
+                                            <SelectTrigger size="sm" className={`devis-status devis-status--${d.status}`}>
+                                                <SelectValue placeholder="Statut" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {Object.entries(DEVIS_STATUS).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        <span className={`devis-status__dot devis-status--${value}`} />{label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
 
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
