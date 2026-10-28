@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { FileText, ShoppingCart } from "lucide-react"
+import { Check, CheckCheck, FileText, ShoppingCart } from "lucide-react"
 import { FaEye } from "react-icons/fa"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -55,6 +55,22 @@ function Notification() {
         setDialogdetailOpen(true)
     }
 
+    // ==========================================
+    // Marquer comme lue / non lue (bascule isRead)
+    // ==========================================
+    const toggleRead = async (id) => {
+        try {
+            const response = await axios.patch(`http://localhost:5001/notification/${id}/read`)
+            const isRead = response.data.data.isRead
+            // on met à jour seulement isRead pour garder les données populées
+            setNotifications((prev) =>
+                prev.map((n) => (n._id === id ? { ...n, isRead } : n))
+            )
+        } catch (error) {
+            toast.error("Impossible de modifier la notification.")
+        }
+    }
+
     // relatedId est un objet seulement si le populate a fonctionné
     const related = selectedNotif?.relatedId && typeof selectedNotif.relatedId === "object"
         ? selectedNotif.relatedId
@@ -106,18 +122,32 @@ function Notification() {
                                     )}
                                 </div>
 
-                                {/* Voir le détail */}
-                                {hasDetail && (
+                                <div className="notif__actions">
+                                    {/* Voir le détail */}
+                                    {hasDetail && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="notif__eye"
+                                            onClick={() => openDetail(notif)}
+                                            aria-label={isCommande ? "Voir la commande" : "Voir le devis"}
+                                            title={isCommande ? "Voir la commande" : "Voir le devis"}
+                                        >
+                                            <FaEye />
+                                        </Button>
+                                    )}
+                                    {/* Marquer comme lue / non lue */}
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="notif__eye"
-                                        onClick={() => openDetail(notif)}
-                                        aria-label={isCommande ? "Voir la commande" : "Voir le devis"}
+                                        className={`notif__read ${notif.isRead ? "notif__read--done" : ""}`}
+                                        onClick={() => toggleRead(notif._id)}
+                                        aria-label={notif.isRead ? "Marquer comme non lue" : "Marquer comme lue"}
+                                        title={notif.isRead ? "Marquer comme non lue" : "Marquer comme lue"}
                                     >
-                                        <FaEye />
+                                        {notif.isRead ? <CheckCheck /> : <Check />}
                                     </Button>
-                                )}
+                                </div>
                             </article>
                         )
                     })}

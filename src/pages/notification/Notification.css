@@ -97,20 +97,36 @@
   font-size: 14px;
 }
 
-/* ---------- Bouton œil (voir le détail) ---------- */
-.notif__eye {
+/* ---------- Boutons d'action (voir le détail, marquer comme lue) ---------- */
+.notif__actions {
   flex: 0 0 auto;
   align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.notif__eye,
+.notif__read {
+  border-radius: 10px;
   color: var(--muted-foreground);
 }
 
-.notif__eye:hover {
+.notif__eye:hover,
+.notif__read:hover {
   color: var(--foreground);
 }
 
-.notif__eye svg {
+.notif__eye svg,
+.notif__read svg {
   width: 18px;
   height: 18px;
+}
+
+/* déjà lue : double coche verte */
+.notif__read--done,
+.notif__read--done:hover {
+  color: #16a34a;
 }
 
 .notif__missing {
