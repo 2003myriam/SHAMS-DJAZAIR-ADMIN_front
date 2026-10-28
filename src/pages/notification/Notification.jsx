@@ -1,13 +1,35 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { FileText, ShoppingCart } from "lucide-react"
+import { FaEye } from "react-icons/fa"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Header } from "@/layouts/header"
+import { Main } from "@/layouts/main"
+import CommandeDetail from "../commande/components/CommandeDetail"
+import DevisDetail from "../devis/components/DevisDetail"
+import "../devis/Devis.css"
+import "./Notification.css"
+
+// Formatage de la date (ex : 28/10/2026 14:05)
+const formatDate = (date) =>
+    new Date(date).toLocaleString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    })
+
 function Notification() {
-    // Liste de toutes les notifications 
+    // Liste de toutes les notifications
     const [notifications, setNotifications] = useState([])
     const [loading, setLoading] = useState(true)
+
+    // notification sélectionnée + dialog de détail
+    const [selectedNotif, setSelectedNotif] = useState(null)
+    const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
 
 
     const getNotifications = async () => {
@@ -25,35 +47,98 @@ function Notification() {
         getNotifications()
     }, [])
 
+    // ==========================================
+    // Ouvrir le détail de la commande ou du devis
+    // ==========================================
+    const openDetail = (notif) => {
+        setSelectedNotif(notif)
+        setDialogdetailOpen(true)
+    }
+
+    // relatedId est un objet seulement si le populate a fonctionné
+    const related = selectedNotif?.relatedId && typeof selectedNotif.relatedId === "object"
+        ? selectedNotif.relatedId
+        : null
+
     return (
         <>
             <Header />
-            <div className="p-6 space-y-4">
-                <h1 className="text-2xl font-bold">Notifications</h1>
+            <Main>
+                {/* Titre */}
+                <div className="produits__top">
+                    <div>
+                        <h1 className="produits__title">Notifications</h1>
+                        <p className="produits__subtitle">Les nouvelles commandes et demandes de devis.</p>
+                    </div>
+                </div>
 
-                {loading && <p className="text-muted-foreground">Chargement...</p>}
+                {loading && <p className="notif__empty">Chargement...</p>}
 
                 {!loading && notifications.length === 0 && (
-                    <p className="text-muted-foreground">Aucune notification</p>
+                    <p className="notif__empty">Aucune notification</p>
                 )}
 
-                {notifications.map((notif) => (
-                    <Card key={notif._id}>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle className="text-base">{notif.type}</CardTitle>
-                            {!notif.isRead && <Badge>Nouveau</Badge>}
+                <div className="notif__list">
+                    {notifications.map((notif) => {
+                        const isCommande = notif.type === "commande"
+                        const hasDetail = notif.relatedId && typeof notif.relatedId === "object"
 
-                        </CardHeader>
-                        <CardContent>
+                        return (
+                            <article
+                                key={notif._id}
+                                className={`notif__card ${!notif.isRead ? "notif__card--unread" : ""}`}
+                            >
+                                {/* Icône selon le type */}
+                                <div className={`notif__icon notif__icon--${notif.type}`}>
+                                    {isCommande ? <ShoppingCart /> : <FileText />}
+                                </div>
 
-                            <p>{notif.message}</p>
-                            <p className="text-xs text-muted-foreground mt-2">
-                                {new Date(notif.created_at).toLocaleString("fr-FR")}
-                            </p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+                                <div className="notif__body">
+                                    <div className="notif__head">
+                                        <span className="notif__type">{isCommande ? "Commande" : "Devis"}</span>
+                                        {!notif.isRead && <Badge className="notif__new">Nouveau</Badge>}
+                                        <span className="notif__date">{formatDate(notif.created_at)}</span>
+                                    </div>
+
+                                    <p className="notif__message">{notif.message}</p>
+                                    {notif.relatedId === null && (
+                                        <p className="notif__missing">L'élément lié a été supprimé.</p>
+                                    )}
+                                </div>
+
+                                {/* Voir le détail */}
+                                {hasDetail && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="notif__eye"
+                                        onClick={() => openDetail(notif)}
+                                        aria-label={isCommande ? "Voir la commande" : "Voir le devis"}
+                                    >
+                                        <FaEye />
+                                    </Button>
+                                )}
+                            </article>
+                        )
+                    })}
+                </div>
+
+                {/* Détail de la commande ou du devis */}
+                {selectedNotif?.type === "commande" && (
+                    <CommandeDetail
+                        open={dialogdetailOpen}
+                        onOpenChange={setDialogdetailOpen}
+                        order={related}
+                    />
+                )}
+                {selectedNotif?.type === "devis" && (
+                    <DevisDetail
+                        open={dialogdetailOpen}
+                        onOpenChange={setDialogdetailOpen}
+                        devis={related}
+                    />
+                )}
+            </Main>
         </>
     )
 }
