@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { Header } from "@/layouts/header"
 import { Main } from "@/layouts/main"
+import Pagination from "@mui/material/Pagination"
 import "../devis/Devis.css"
 import "./Notification.css"
 
@@ -27,17 +28,39 @@ function Notification() {
     // filtre actif : "all", "false" (non lues) ou "true" (lues)
     const [filter, setFilter] = useState("all")
 
+    // ==========================================
+    // Pagination
+    // ==========================================
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        notifsPerPage: 12,
+        totalnotifs: 0,
+        totalPages: 0,
+    })
 
-    const getNotifications = async (isRead) => {
+    const getNotifications = async (isRead, page = 1) => {
         try {
             const response = await axios.get(
                 "http://localhost:5001/notification",
                 {
-                    params: isRead === "all" ? {} : { isRead }
+                    params: {
+                        page,
+                        limit: pagination.notifsPerPage,
+                        ...(isRead === "all" ? {} : { isRead }),
+                    }
                 }
             );
 
             setNotifications(response.data.data || []);
+
+            setPagination(
+                response.data.pagination || {
+                    currentPage: page,
+                    notifsPerPage: pagination.notifsPerPage,
+                    totalnotifs: 0,
+                    totalPages: 0,
+                }
+            );
         } catch (error) {
             toast.error("Impossible de récupérer les notifications.");
         } finally {
@@ -46,8 +69,15 @@ function Notification() {
     };
 
     useEffect(() => {
-        getNotifications()
+        getNotifications("all", 1)
     }, [])
+
+    // ==========================================
+    // Changement de page (on garde le filtre actif)
+    // ==========================================
+    const paginateNotifsPage = (event, page) => {
+        getNotifications(filter, page)
+    }
 
     // ==========================================
     // Marquer comme lue / non lue (bascule isRead)
@@ -111,7 +141,7 @@ function Notification() {
                                 className={`notif__filter ${filter === f.value ? "notif__filter--active" : ""}`}
                                 onClick={() => {
                                     setFilter(f.value)
-                                    getNotifications(f.value)
+                                    getNotifications(f.value, 1)
                                 }}
                             >
                                 {f.label}
@@ -180,6 +210,17 @@ function Notification() {
                         )
                     })}
                 </div>
+
+                {pagination.totalPages > 1 && (
+                    <div className="produitback-pagination">
+                        <Pagination
+                            count={pagination.totalPages}
+                            page={pagination.currentPage}
+                            onChange={paginateNotifsPage}
+                            color="primary"
+                        />
+                    </div>
+                )}
             </Main>
         </>
     )
