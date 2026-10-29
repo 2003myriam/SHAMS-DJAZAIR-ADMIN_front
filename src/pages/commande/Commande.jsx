@@ -19,6 +19,14 @@ import { SearchIcon, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 
+// Libellés en français des canaux (customer.source du modèle Order)
+const SOURCES = {
+    social_media: 'Réseaux sociaux',
+    ouedkniss: 'Ouedkniss',
+    direct: 'Direct',
+    other: 'Autre',
+}
+
 function Commande() {
     // ==========================================
     // Commandes
@@ -31,6 +39,7 @@ function Commande() {
     // filtres : "all" (tous) ou une clé de ORDER_STATUS / PAYMENT_STATUS
     const [statusFilter, setStatusFilter] = useState('all')
     const [paymentFilter, setPaymentFilter] = useState('all')
+    const [sourceFilter, setSourceFilter] = useState('all')
     // commande sélectionnée + le dialog de voir le détail
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
@@ -74,6 +83,7 @@ function Commande() {
                         // "all" : pas de filtre
                         ...(statusFilter === 'all' ? {} : { status: statusFilter }),
                         ...(paymentFilter === 'all' ? {} : { paymentStatus: paymentFilter }),
+                        ...(sourceFilter === 'all' ? {} : { source: sourceFilter }),
                     },
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -156,7 +166,7 @@ function Commande() {
     // ==========================================
     useEffect(() => {
         getOrders(1)
-    }, [search, statusFilter, paymentFilter])
+    }, [search, statusFilter, paymentFilter, sourceFilter])
 
     // faire défiler jusqu'à la commande venant d'une notification
     useEffect(() => {
@@ -203,55 +213,67 @@ function Commande() {
 
                 {/* Barre d'outils : recherche à gauche, filtres à droite */}
                 <div className="devis__toolbar">
-                        <div className="produits__search">
-                            <SearchIcon className="produits__search-icon" />
-                            <Input
-                                type="text"
-                                placeholder="Numéro ou email du client..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="produits__search-input"
-                            />
-                            {/* Effacer la recherche */}
-                            {search && (
-                                <button
-                                    type="button"
-                                    className="produits__search-clear"
-                                    onClick={() => setSearch('')}
-                                    aria-label="Effacer la recherche"
-                                >
-                                    <X />
-                                </button>
-                            )}
-                        </div>
-                        {/* Filtre par statut de la commande */}
-                        <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger className="devis__status-filter">
-                                <SelectValue placeholder="Statut" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Tous les statuts</SelectItem>
-                                {Object.entries(ORDER_STATUS).map(([value, label]) => (
-                                    <SelectItem key={value} value={value}>
-                                        <span className={`status-dot status-dot--${value}`} />{label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {/* Filtre par statut du paiement */}
-                        <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-                            <SelectTrigger className="devis__status-filter">
-                                <SelectValue placeholder="Paiement" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Tous les paiements</SelectItem>
-                                {Object.entries(PAYMENT_STATUS).map(([value, label]) => (
-                                    <SelectItem key={value} value={value}>
-                                        <span className={`status-dot status-dot--${value}`} />{label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                    <div className="produits__search">
+                        <SearchIcon className="produits__search-icon" />
+                        <Input
+                            type="text"
+                            placeholder="Numéro ou email du client..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="produits__search-input"
+                        />
+                        {/* Effacer la recherche */}
+                        {search && (
+                            <button
+                                type="button"
+                                className="produits__search-clear"
+                                onClick={() => setSearch('')}
+                                aria-label="Effacer la recherche"
+                            >
+                                <X />
+                            </button>
+                        )}
+                    </div>
+                    {/* Filtre par statut de la commande */}
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                        <SelectTrigger className="devis__status-filter">
+                            <SelectValue placeholder="Statut" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tous les statuts</SelectItem>
+                            {Object.entries(ORDER_STATUS).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    <span className={`status-dot status-dot--${value}`} />{label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {/* Filtre par statut du paiement */}
+                    <Select value={paymentFilter} onValueChange={setPaymentFilter}>
+                        <SelectTrigger className="devis__status-filter">
+                            <SelectValue placeholder="Paiement" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tous les paiements</SelectItem>
+                            {Object.entries(PAYMENT_STATUS).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    <span className={`status-dot status-dot--${value}`} />{label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {/* Filtre par canal */}
+                    <Select value={sourceFilter} onValueChange={setSourceFilter}>
+                        <SelectTrigger className="devis__status-filter">
+                            <SelectValue placeholder="Canal" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tous les canaux</SelectItem>
+                            {Object.entries(SOURCES).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>{label}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 {/* Tableau */}
@@ -263,6 +285,7 @@ function Commande() {
                                 <TableHead>Client</TableHead>
                                 <TableHead>Numéro de téléphone</TableHead>
                                 <TableHead className="devis__center">Date de la commande</TableHead>
+                                <TableHead className="devis__center">Canal</TableHead>
                                 <TableHead className="devis__center">Statut</TableHead>
                                 <TableHead className="devis__center">Paiement</TableHead>
                                 <TableHead className="devis__center">Détail de la commande</TableHead>
@@ -297,6 +320,7 @@ function Commande() {
                                             year: "numeric",
                                         })}
                                     </TableCell>
+                                    <TableCell>{SOURCES[o.customer?.source] || o.customer?.source || '—'}</TableCell>
                                     {/* statut de la commande */}
                                     <TableCell className="devis__center">
                                         <Select value={o.status} onValueChange={(value) => updateOrderField(o._id, "status", value)}>

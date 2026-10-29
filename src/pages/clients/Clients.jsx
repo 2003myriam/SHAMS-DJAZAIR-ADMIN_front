@@ -15,6 +15,11 @@ const ROLES = {
     employee: 'Employé',
 }
 
+// Date de création : createdAt si elle existe, sinon on la lit dans l'_id MongoDB
+// (les 8 premiers caractères de l'_id = date de création en secondes)
+const getCreationDate = (user) =>
+    user.createdAt ? new Date(user.createdAt) : new Date(parseInt(user._id.substring(0, 8), 16) * 1000)
+
 function Clients() {
     // ==========================================
     // Clients
@@ -67,6 +72,7 @@ function Clients() {
                                 <TableHead>Nom et prénom</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Numéro de téléphone</TableHead>
+                                <TableHead className="devis__center">Date de création</TableHead>
                                 <TableHead className="devis__center">Rôle</TableHead>
                                 <TableHead className="devis__center">Statut</TableHead>
                             </TableRow>
@@ -75,7 +81,7 @@ function Clients() {
                             {/* Aucun client */}
                             {users.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="produits__empty">Aucun client.</TableCell>
+                                    <TableCell colSpan={6} className="produits__empty">Aucun client.</TableCell>
                                 </TableRow>
                             )}
                             {/* Clients affichage */}
@@ -94,6 +100,14 @@ function Clients() {
                                     <TableCell>{u.email}</TableCell>
                                     {/* phone */}
                                     <TableCell>{u.phone}</TableCell>
+                                    {/* date de création */}
+                                    <TableCell className="devis__center">
+                                        {getCreationDate(u).toLocaleDateString("fr-FR", {
+                                            day: "2-digit",
+                                            month: "2-digit",
+                                            year: "numeric",
+                                        })}
+                                    </TableCell>
                                     {/* rôle */}
                                     <TableCell className="devis__center">
                                         <Badge variant="secondary">{ROLES[u.role] || u.role}</Badge>
