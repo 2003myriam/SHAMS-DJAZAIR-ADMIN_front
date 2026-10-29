@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
-import { Pencil, Plus, Trash2, X } from 'lucide-react'
+import { Pencil, Plus, SearchIcon, Trash2, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -33,9 +34,13 @@ function Devis() {
     // ==========================================
     const [devis, setDevis] = useState([])
     // depuis une notification : ?id=<devis à surligner>&search=<email du client>
-    const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams] = useSearchParams()
     const highlightId = searchParams.get('id')
-    const search = searchParams.get('search') || ''
+    // recherche par email ou téléphone (pré-remplie depuis une notification)
+    const [search, setSearch] = useState(searchParams.get('search') || '')
+
+    // filtre par statut : "all" (tous) ou une clé de DEVIS_STATUS
+    const [filter, setFilter] = useState("all")
     // ==========================================
     // Panneau latéral (ajout / modification)
     // ==========================================
@@ -64,10 +69,19 @@ function Devis() {
     // Récupération des devis
     // ==========================================
 
-    const getDevis = async (page = 1) => {
+    const getDevis = async (status, page = 1) => {
         try {
             const response = await axios.get(
-                `http://localhost:5001/request?page=${page}&limit=${pagination.devisPerPage}&search=${encodeURIComponent(search)}`
+                `http://localhost:5001/request`,
+                {
+                    params: {
+                        page,
+                        limit: pagination.devisPerPage,
+                        search,
+                        // "all" : pas de filtre de statut
+                        ...(status === "all" ? {} : { status }),
+                    }
+                }
             )
 
             setDevis(response.data.data || [])
@@ -90,8 +104,17 @@ function Devis() {
     // Changement de page
     // ==========================================
 
+    // on garde le filtre de statut actif
     const PaginateDevisPage = (event, page) => {
-        getDevis(page)
+        getDevis(filter, page)
+    }
+
+    // ==========================================
+    // Changement du filtre de statut (retour à la page 1)
+    // ==========================================
+    const changeFilter = (value) => {
+        setFilter(value)
+        getDevis(value, 1)
     }
 
     // ==========================================
@@ -100,7 +123,7 @@ function Devis() {
 
     useEffect(() => {
 
-        getDevis(1)
+        getDevis(filter, 1)
 
     }, [search])
 
@@ -168,7 +191,7 @@ function Devis() {
                     }
                 }
             )
-            getDevis(pagination.currentPage)
+            getDevis(filter, pagination.currentPage)
             setDeleteDialogOpen(false)
         } catch (error) {
 
@@ -187,18 +210,48 @@ function Devis() {
                         <h1 className="produits__title">Demande de devis</h1>
                         <p className="produits__subtitle">Voici la liste des demande de devis.</p>
                     </div>
-                    <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
                 </div>
 
-                {/* Filtre venant d'une notification */}
-                {search && (
-                    <div className="devis__filter">
-                        <span>Demandes de <strong>{search}</strong></span>
-                        <Button variant="ghost" size="sm" onClick={() => setSearchParams({})}>
-                            <X />Tout afficher
-                        </Button>
-                    </div>
-                )}
+                {/* Barre d'outils : recherche à gauche, filtre + bouton à droite */}
+                <div className="devis__toolbar">
+                        {/* Recherche par email ou téléphone */}
+                        <div className="produits__search">
+                            <SearchIcon className="produits__search-icon" />
+                            <Input
+                                type="text"
+                                placeholder="Email ou téléphone..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="produits__search-input"
+                            />
+                            {/* Effacer la recherche */}
+                            {search && (
+                                <button
+                                    type="button"
+                                    className="produits__search-clear"
+                                    onClick={() => setSearch('')}
+                                    aria-label="Effacer la recherche"
+                                >
+                                    <X />
+                                </button>
+                            )}
+                        </div>
+                        {/* Filtre par statut */}
+                        <Select value={filter} onValueChange={changeFilter}>
+                            <SelectTrigger className="devis__status-filter">
+                                <SelectValue placeholder="Statut" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Tous les statuts</SelectItem>
+                                {Object.entries(DEVIS_STATUS).map(([value, label]) => (
+                                    <SelectItem key={value} value={value}>
+                                        <span className={`devis-status__dot devis-status--${value}`} />{label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
+                </div>
 
                 {/* Tableau */}
                 <div className="produits__table">
@@ -303,7 +356,7 @@ function Devis() {
                     open={sheetOpen}
                     onOpenChange={setSheetOpen}
                     devis={currentDevis}
-                    onSave={() => getDevis(currentDevis ? pagination.currentPage : 1)}
+                    onSave={() => getDevis(filter, currentDevis ? pagination.currentPage : 1)}
                 />
                 <DeleteConfirmation
                     open={deleteDialogOpen}

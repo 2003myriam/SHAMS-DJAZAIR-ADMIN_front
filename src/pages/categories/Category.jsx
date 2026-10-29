@@ -103,13 +103,14 @@ function Category() {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem("token")
-            await axios.delete(`${API}/${categoryToDelete._id}`, {
+            await axios.delete(`http://localhost:5001/categories/${categoryToDelete._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             refresh()
             setDeleteDialogOpen(false)
         } catch (error) {
-            toast.error("Impossible de supprimer la catégorie.")
+            // on affiche la raison renvoyée par le backend (ex : catégorie parent avec des sous-catégories)
+            toast.error(error.response?.data?.message || "Impossible de supprimer la catégorie.")
         }
     }
 

@@ -22,6 +22,24 @@
   @apply text-foreground;
 }
 
+/* ================= BARRE D'OUTILS (filtre + ajouter) ================= */
+.devis__toolbar {
+  @apply mb-4 flex flex-col gap-3 sm:flex-row sm:items-center;
+}
+
+/* la recherche prend toute la largeur restante */
+.devis__toolbar .produits__search {
+  @apply w-full flex-1 sm:w-auto lg:w-auto;
+}
+
+.devis__status-filter {
+  @apply h-10! w-full shrink-0 sm:w-48;
+}
+
+.devis__toolbar > button {
+  @apply h-10 shrink-0 shadow-sm;
+}
+
 /* ================= STATUT (select) ================= */
 .devis-status {
   @apply rounded-full border-transparent font-medium shadow-none;
@@ -98,12 +116,6 @@
   50% {
     background: color-mix(in srgb, var(--yellow) 45%, transparent);
   }
-}
-
-/* Bandeau "Demandes de <email>" + bouton Tout afficher */
-.devis__filter {
-  @apply mb-4 flex items-center justify-between gap-3 rounded-xl border px-4 py-2 text-sm;
-  background: var(--muted);
 }
 
 /* ================= PANNEAU LATÉRAL ================= */
