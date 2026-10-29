@@ -28,6 +28,9 @@ function Commande() {
     const [searchParams] = useSearchParams()
     const highlightId = searchParams.get('id')
     const [search, setSearch] = useState(searchParams.get('search') || '')
+    // filtres : "all" (tous) ou une clé de ORDER_STATUS / PAYMENT_STATUS
+    const [statusFilter, setStatusFilter] = useState('all')
+    const [paymentFilter, setPaymentFilter] = useState('all')
     // commande sélectionnée + le dialog de voir le détail
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [dialogdetailOpen, setDialogdetailOpen] = useState(false)
@@ -62,8 +65,16 @@ function Commande() {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `http://localhost:5001/orders/admin?page=${page}&limit=${pagination.ordersPerPage}&search=${encodeURIComponent(search)}`,
+                `http://localhost:5001/orders/admin`,
                 {
+                    params: {
+                        page,
+                        limit: pagination.ordersPerPage,
+                        search,
+                        // "all" : pas de filtre
+                        ...(statusFilter === 'all' ? {} : { status: statusFilter }),
+                        ...(paymentFilter === 'all' ? {} : { paymentStatus: paymentFilter }),
+                    },
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
@@ -141,11 +152,11 @@ function Commande() {
     }
 
     // ==========================================
-    // Chargement initial
+    // Chargement initial + à chaque recherche / filtre (retour à la page 1)
     // ==========================================
     useEffect(() => {
         getOrders(1)
-    }, [search])
+    }, [search, statusFilter, paymentFilter])
 
     // faire défiler jusqu'à la commande venant d'une notification
     useEffect(() => {
@@ -182,14 +193,16 @@ function Commande() {
         <>
             <Header />
             <Main>
-                {/* Titre + recherche */}
+                {/* Titre */}
                 <div className="produits__top">
                     <div>
                         <h1 className="produits__title">Commandes</h1>
                         <p className="produits__subtitle">Voici la liste des commandes.</p>
                     </div>
+                </div>
 
-                    <div className="produits__toolbar">
+                {/* Barre d'outils : recherche à gauche, filtres à droite */}
+                <div className="devis__toolbar">
                         <div className="produits__search">
                             <SearchIcon className="produits__search-icon" />
                             <Input
@@ -211,7 +224,34 @@ function Commande() {
                                 </button>
                             )}
                         </div>
-                    </div>
+                        {/* Filtre par statut de la commande */}
+                        <Select value={statusFilter} onValueChange={setStatusFilter}>
+                            <SelectTrigger className="devis__status-filter">
+                                <SelectValue placeholder="Statut" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Tous les statuts</SelectItem>
+                                {Object.entries(ORDER_STATUS).map(([value, label]) => (
+                                    <SelectItem key={value} value={value}>
+                                        <span className={`status-dot status-dot--${value}`} />{label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {/* Filtre par statut du paiement */}
+                        <Select value={paymentFilter} onValueChange={setPaymentFilter}>
+                            <SelectTrigger className="devis__status-filter">
+                                <SelectValue placeholder="Paiement" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Tous les paiements</SelectItem>
+                                {Object.entries(PAYMENT_STATUS).map(([value, label]) => (
+                                    <SelectItem key={value} value={value}>
+                                        <span className={`status-dot status-dot--${value}`} />{label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                 </div>
 
                 {/* Tableau */}

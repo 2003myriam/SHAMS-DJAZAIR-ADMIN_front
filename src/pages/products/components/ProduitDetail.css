@@ -1,0 +1,180 @@
+/*
+ * Styles du détail d'un produit (même style que le détail d'un devis / d'une commande).
+ * Couleurs : variables de src/styles/theme.css (changent automatiquement en mode sombre).
+ */
+@reference '../../../styles/index.css';
+
+/* ================= DIALOG ================= */
+.produit-detail {
+  @apply gap-5 sm:max-w-3xl;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+}
+
+.produit-detail__body {
+  @apply -mx-6 max-h-[70vh] space-y-6 overflow-y-auto px-6;
+}
+
+.produit-detail__loading {
+  @apply py-16 text-center text-sm text-muted-foreground;
+}
+
+/* ================= IMAGE + INFOS ================= */
+.produit-detail__top {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.produit-detail__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  /* fond blanc : les photos produit ont souvent un fond blanc */
+  background: #fff;
+}
+
+.produit-detail__image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.produit-detail__no-image {
+  @apply size-10 text-slate-300;
+}
+
+.produit-detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.produit-detail__tags {
+  @apply flex flex-wrap gap-2;
+}
+
+.produit-detail__title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+.produit-detail__ref {
+  @apply font-mono font-medium text-foreground;
+}
+
+.produit-detail__description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+.produit-detail__datasheet {
+  @apply w-fit rounded-[10px];
+}
+
+/* ================= CARACTÉRISTIQUES ================= */
+.produit-detail__label {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.produit-detail__specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.produit-detail__spec {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* séparation verticale entre les 2 colonnes */
+.produit-detail__spec:nth-child(odd) {
+  border-right: 1px solid var(--border);
+}
+
+/* une ligne sur deux légèrement grisée */
+.produit-detail__spec:nth-child(4n + 1),
+.produit-detail__spec:nth-child(4n + 2) {
+  background: var(--muted);
+}
+
+.produit-detail__spec dt {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.produit-detail__spec dd {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+.produit-detail__empty {
+  @apply rounded-xl bg-muted px-4 py-6 text-center text-sm text-muted-foreground;
+}
+
+/* ================= BOUTON FERMER ================= */
+.produit-detail__close {
+  border-radius: 10px;
+  padding-inline: 20px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 640px) {
+  .produit-detail {
+    padding: 20px 16px;
+  }
+
+  .produit-detail__body {
+    @apply -mx-4 px-4;
+  }
+
+  .produit-detail__top {
+    grid-template-columns: 1fr;
+  }
+
+  .produit-detail__image {
+    max-width: 220px;
+    margin: 0 auto;
+  }
+
+  .produit-detail__specs {
+    grid-template-columns: 1fr;
+  }
+
+  .produit-detail__spec:nth-child(odd) {
+    border-right: none;
+  }
+
+  .produit-detail__spec:nth-child(4n + 1),
+  .produit-detail__spec:nth-child(4n + 2) {
+    background: transparent;
+  }
+
+  .produit-detail__spec:nth-child(odd) {
+    background: var(--muted);
+  }
+}

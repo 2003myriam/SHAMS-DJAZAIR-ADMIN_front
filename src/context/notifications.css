@@ -62,12 +62,8 @@
   @apply text-xs;
 }
 
-/* Aucune notification : le header est alors le dernier élément du popover */
-.notif-header:last-child {
-  @apply border-b-0;
-}
-
-.notif-header:last-child::after {
+/* Aucune notification : message sous le header */
+.notif-popover:not(:has(.notif-item)) .notif-header::after {
   content: 'Aucune notification pour le moment.';
   @apply mt-3 block rounded-md bg-muted px-3 py-6 text-center text-xs text-muted-foreground;
 }
@@ -75,10 +71,6 @@
 /* ================= ÉLÉMENT DE LA LISTE ================= */
 .notif-item {
   @apply flex flex-col gap-1 border-b px-4 py-3 transition-colors;
-}
-
-.notif-item:last-child {
-  @apply border-b-0;
 }
 
 .notif-item:hover {
@@ -91,4 +83,27 @@
 
 .notif-item__message {
   @apply text-sm leading-snug text-foreground;
+}
+
+/* ================= LIEN VERS LE CENTRE DE NOTIFICATION ================= */
+/* collé en bas du popover, même quand la liste défile */
+.notif-footer {
+  @apply sticky bottom-0 z-10 flex w-full items-center justify-center gap-1.5 border-t bg-popover px-4 py-3 text-sm font-medium text-foreground transition-colors;
+}
+
+.notif-footer:hover {
+  @apply bg-accent text-accent-foreground;
+}
+
+.notif-footer:focus-visible {
+  @apply outline-none ring-[3px] ring-ring ring-inset;
+}
+
+.notif-footer svg {
+  @apply size-4 transition-transform;
+}
+
+/* la flèche avance au survol */
+.notif-footer:hover svg {
+  @apply translate-x-0.5;
 }

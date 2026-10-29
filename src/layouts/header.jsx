@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/popover"
 import { useNotifications } from '@/context/NotificationsContext'
 import '@/context/notifications.css'
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 export function Header({ children }) {
   const notifications = useNotifications()
@@ -42,7 +44,11 @@ export function Header({ children }) {
               <p className='notif-item__message'>{notification.message}</p>
             </div>
           ))}
+          <Link to="/notification" className='notif-footer'>
+            Ouvrir le centre de notification <ArrowRight />
+          </Link>
         </PopoverContent>
+
       </Popover>
       <ThemeSwitch />
     </header>

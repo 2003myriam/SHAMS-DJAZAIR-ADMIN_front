@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Eye, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { SearchIcon, X } from 'lucide-react'
@@ -25,6 +25,7 @@ import { ProduitSheet } from './components/ProduitSheet'
 
 import './Produits.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
+import ProduitDetail from './components/ProduitDetail'
 
 
 
@@ -50,6 +51,9 @@ export function Produits() {
   const [productNameToDelete, setProductNameToDelete] = useState("")
   // produit en cours de modification (null = création)
   const [currentProduct, setCurrentProduct] = useState(null)
+  // détail d'un produit : id du produit + dialog ouvert ou fermé
+  const [detailProductId, setDetailProductId] = useState(null)
+  const [detailOpen, setDetailOpen] = useState(false)
 
   // ==========================================
   // Pagination
@@ -354,6 +358,18 @@ export function Produits() {
                   {/* Actions */}
 
                   <TableCell className="produits__actions">
+                    {/* ICONE VOIR LE DÉTAIL */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        setDetailProductId(p._id)
+                        setDetailOpen(true)
+                      }}
+                      aria-label="Voir le détail"
+                    >
+                      <Eye />
+                    </Button>
 
                     <Button
                       variant="ghost"
@@ -411,6 +427,16 @@ export function Produits() {
 
       </Main>
 
+
+      {/* ==========================================
+          Détail d'un produit
+      ========================================== */}
+
+      <ProduitDetail
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+        productId={detailProductId}
+      />
 
       {/* ==========================================
           Panneau latéral (ajout / modification)
