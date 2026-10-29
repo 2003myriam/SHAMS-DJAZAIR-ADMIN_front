@@ -2,14 +2,15 @@
 // Pour ajouter un lien : l'ajouter dans MENU_ITEMS2 avec le bon "parent".
 import { LayoutDashboard } from 'lucide-react'
 import { AiOutlineProduct } from 'react-icons/ai'
-import { FiFileText } from "react-icons/fi";
+import { FiFileText, FiUsers } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
 // Sidebar 1 : les icônes (une icône = une section)
 export const MENU_ITEMS = [
   { key: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
   { key: 'Products', label: 'Produits', icon: AiOutlineProduct },
   { key: 'Orders', label: 'Commande', icon: FiFileText },
-  { key: 'Notifications', label: 'Notification', icon: FaRegBell }, 
+  { key: 'Clients', label: 'Clients', icon: FiUsers },
+  { key: 'Notifications', label: 'Notification', icon: FaRegBell },
 ]
 
 // Sidebar 2 : les liens de la section sélectionnée (parent = key de MENU_ITEMS)
@@ -22,6 +23,8 @@ export const MENU_ITEMS2 = [
   // PARENT commande
   {key: 'Orders', label: 'Toutes les commandes',parent: 'Orders',path: '/commande',},
   {key: 'quote', label: 'Demande de devis',parent: 'Orders',path: '/devis',},
+  // PARENT client
+  {key: 'Clients', label: 'Tous les clients',parent: 'Clients',path: '/clients',},
   // PARENT notification
   {key: 'Notifications', label: 'Toutes les notifications',parent: 'Notifications',path: '/notification',},
  

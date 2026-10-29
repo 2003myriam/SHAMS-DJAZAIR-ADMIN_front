@@ -16,6 +16,7 @@ import Devis from './pages/devis/Devis'
 import Commande from './pages/commande/Commande'
 import Category from './pages/categories/Category'
 import Notification from './pages/notification/Notification'
+import Clients from './pages/clients/Clients'
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
             <Route path='/commande' element={<Commande />} />
             <Route path='/categorie' element={<Category />} />
             <Route path='/notification' element={<Notification />} />
+            <Route path='/clients' element={<Clients />} />
           </Route>
 
           {/* ===== Page introuvable (404) ===== */}

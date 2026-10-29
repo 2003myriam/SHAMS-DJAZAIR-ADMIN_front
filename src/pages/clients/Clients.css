@@ -1,0 +1,24 @@
+/*
+ * Styles de la page Clients.
+ */
+@reference '../../styles/index.css';
+
+/* Nom + avatar avec les initiales */
+.client__name {
+  @apply flex items-center gap-3 font-medium;
+}
+
+.client__avatar {
+  @apply flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold;
+  background: color-mix(in srgb, var(--yellow) 85%, transparent);
+  color: #1c2d44;
+}
+
+/* Statut du compte */
+.client__status--active {
+  @apply border-transparent bg-emerald-100 text-emerald-800;
+}
+
+.client__status--inactive {
+  @apply border-transparent bg-slate-200 text-slate-700;
+}
