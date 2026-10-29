@@ -9,6 +9,37 @@
   gap: 12px;
 }
 
+/* ---------- Filtres (toutes / non lues / lues) ---------- */
+.notif__filters {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--muted);
+}
+
+.notif__filter {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.notif__filter:hover {
+  color: var(--foreground);
+}
+
+.notif__filter--active {
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
 .notif__empty {
   color: var(--muted-foreground);
 }

@@ -24,18 +24,26 @@ function Notification() {
     // Liste de toutes les notifications
     const [notifications, setNotifications] = useState([])
     const [loading, setLoading] = useState(true)
+    // filtre actif : "all", "false" (non lues) ou "true" (lues)
+    const [filter, setFilter] = useState("all")
 
 
-    const getNotifications = async () => {
+    const getNotifications = async (isRead) => {
         try {
-            const response = await axios.get("http://localhost:5001/notification")
-            setNotifications(response.data.data || [])
+            const response = await axios.get(
+                "http://localhost:5001/notification",
+                {
+                    params: isRead === "all" ? {} : { isRead }
+                }
+            );
+
+            setNotifications(response.data.data || []);
         } catch (error) {
-            toast.error("Impossible de récupérer les notifications.")
+            toast.error("Impossible de récupérer les notifications.");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         getNotifications()
@@ -88,6 +96,27 @@ function Notification() {
                     <div>
                         <h1 className="produits__title">Notifications</h1>
                         <p className="produits__subtitle">Les nouvelles commandes et demandes de devis.</p>
+                    </div>
+
+                    {/* Filtres : toutes / non lues / lues */}
+                    <div className="notif__filters">
+                        {[
+                            { value: "all", label: "Toutes" },
+                            { value: "false", label: "Non lues" },
+                            { value: "true", label: "Lues" },
+                        ].map((f) => (
+                            <button
+                                key={f.value}
+                                type="button"
+                                className={`notif__filter ${filter === f.value ? "notif__filter--active" : ""}`}
+                                onClick={() => {
+                                    setFilter(f.value)
+                                    getNotifications(f.value)
+                                }}
+                            >
+                                {f.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
