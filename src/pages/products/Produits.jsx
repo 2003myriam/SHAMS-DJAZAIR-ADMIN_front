@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Eye, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Download, Eye, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { SearchIcon, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-
+import { saveAs } from "file-saver";
 
 import {
   Table,
@@ -178,6 +178,45 @@ export function Produits() {
     }
   }
 
+  // ==========================================
+  // Exporter les produits
+  // ==========================================
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.get(
+        "http://localhost:5001/products/export",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const fileName = "Produit_DATA";
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      saveAs(blob, `${fileName}.xlsx`);
+
+      toast.success("Exportation réussie !");
+    } catch (error) {
+      // avec responseType "blob", le message d'erreur du serveur arrive sous forme de Blob
+      let message = "Impossible d'exporter les produits.";
+      if (error.response?.data instanceof Blob) {
+        try {
+          const json = JSON.parse(await error.response.data.text());
+          if (json.message) message = json.message;
+        } catch { /* réponse non JSON */ }
+      }
+      console.error("Export produits :", message);
+      toast.error(message);
+    }
+  };
 
   return (
 
@@ -227,6 +266,11 @@ export function Produits() {
                 </button>
               )}
             </div>
+
+            <Button variant="outline" onClick={handleExport}>
+              <Download />
+              Exporter
+            </Button>
 
             <Button onClick={openCreate}>
               <Plus />
