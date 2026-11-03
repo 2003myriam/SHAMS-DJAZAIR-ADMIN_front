@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { Header } from "@/layouts/header"
 import { Main } from "@/layouts/main"
 import Pagination from "@mui/material/Pagination"
+import { useUnreadRefresh } from "@/context/NotificationsContext"
 import "../devis/Devis.css"
 import "./Notification.css"
 
@@ -82,14 +83,23 @@ function Notification() {
     // ==========================================
     // Marquer comme lue / non lue (bascule isRead)
     // ==========================================
+    const { refreshUnread } = useUnreadRefresh()
+
     const toggleRead = async (id) => {
         try {
             const response = await axios.patch(`http://localhost:5001/notification/${id}/read`)
             const isRead = response.data.data.isRead
-            // on met à jour seulement isRead pour garder les données populées
-            setNotifications((prev) =>
-                prev.map((n) => (n._id === id ? { ...n, isRead } : n))
-            )
+            if (filter === "all") {
+                // on met à jour seulement isRead pour garder les données populées
+                setNotifications((prev) =>
+                    prev.map((n) => (n._id === id ? { ...n, isRead } : n))
+                )
+            } else {
+                // filtre lues / non lues : la notification doit sortir de la liste
+                getNotifications(filter, pagination.currentPage)
+            }
+            // met à jour les compteurs des sidebars sans recharger la page
+            refreshUnread()
         } catch (error) {
             toast.error("Impossible de modifier la notification.")
         }

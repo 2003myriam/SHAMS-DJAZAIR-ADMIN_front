@@ -6,6 +6,7 @@ import { Sidebar1 } from './sidebar1'
 import { Sidebar2 } from './sidebar2'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { useUnreadRefresh } from '@/context/NotificationsContext'
 
 export function SidebarGeneral() {
   const { pathname } = useLocation()
@@ -15,18 +16,24 @@ export function SidebarGeneral() {
   )
   // Récuperation de toutes les notifiations afin de pouvoir mettre les chiffre evant chaque type de notif
   const [notifications, setNotifications] = useState([])
+  // change quand une notification est lue / non lue ou qu'une nouvelle arrive
+  const { unreadVersion } = useUnreadRefresh()
   const getNotifications = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/notification")
+      // seulement les non lues, avec une grande limite (la route est paginée à 12 par défaut)
+      const response = await axios.get("http://localhost:5001/notification", {
+        params: { isRead: false, limit: 1000 }
+      })
       setNotifications(response.data.data || [])
     } catch (error) {
       toast.error("Impossible de récupérer les notifications.")
     }
   }
 
+  // rechargé au départ puis à chaque changement
   useEffect(() => {
     getNotifications()
-  }, [])
+  }, [unreadVersion])
   // Compteur des notif 
   const commandesCount = notifications.filter(notife => notife.type === "commande" && notife.isRead === false).length
   const devisCount = notifications.filter(notife => notife.type === "devis" && notife.isRead === false).length

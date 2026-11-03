@@ -6,7 +6,7 @@ import { FiFileText, FiUsers } from "react-icons/fi";
 import { FaRegBell } from "react-icons/fa";
 // Sidebar 1 : les icônes (une icône = une section)
 export const MENU_ITEMS = [
-  { key: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
+  // { key: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
   { key: 'Products', label: 'Produits', icon: AiOutlineProduct },
   { key: 'Orders', label: 'Commande', icon: FiFileText },
   { key: 'Clients', label: 'Clients', icon: FiUsers },
@@ -15,7 +15,7 @@ export const MENU_ITEMS = [
 
 // Sidebar 2 : les liens de la section sélectionnée (parent = key de MENU_ITEMS)
 export const MENU_ITEMS2 = [
-  { key: 'apercu', label: 'Aperçu général', parent: 'dashboard', path: '/' },
+  //{ key: 'apercu', label: 'Aperçu général', parent: 'dashboard', path: '/' },
   // PARENT PRODUIT
   {key: 'Products', label: 'Tous les produits',parent: 'Products',path: '/produits',},
   {key: 'Brands', label: 'Toutes les marques',parent: 'Products',path: '/marques',},

@@ -6,9 +6,14 @@ import { toast } from 'sonner'
 
 // Le "conteneur" partagé : par défaut, une liste vide
 const NotificationsContext = createContext([])
+// Signal pour recharger les compteurs de notifications non lues (sidebars)
+const UnreadRefreshContext = createContext({ unreadVersion: 0, refreshUnread: () => {} })
 
 export function NotificationsProvider({ children }) {
     const [notifications, setNotifications] = useState([])
+    // change à chaque fois que les notifications lues / non lues changent
+    const [unreadVersion, setUnreadVersion] = useState(0)
+    const refreshUnread = () => setUnreadVersion((v) => v + 1)
 
     // ==== AFFICHAGE DES NOTIFICATIONS ========
     useEffect(() => {
@@ -31,6 +36,8 @@ export function NotificationsProvider({ children }) {
             })
             // on ajoute la notification à la liste (la plus récente en premier)
             setNotifications((prev) => [data, ...prev])
+            // nouvelle notification non lue : les compteurs doivent augmenter
+            refreshUnread()
         })
 
         socket.on('connect_error', (error) => {
@@ -48,7 +55,9 @@ export function NotificationsProvider({ children }) {
     // On rend la liste des notifications disponible à tous les composants enfants
     return (
         <NotificationsContext.Provider value={notifications}>
-            {children}
+            <UnreadRefreshContext.Provider value={{ unreadVersion, refreshUnread }}>
+                {children}
+            </UnreadRefreshContext.Provider>
         </NotificationsContext.Provider>
     )
 }
@@ -56,4 +65,9 @@ export function NotificationsProvider({ children }) {
 // Raccourci pour lire les notifications dans un composant (ex : Header)
 export function useNotifications() {
     return useContext(NotificationsContext)
+}
+
+// Raccourci pour recharger les compteurs (refreshUnread) ou réagir à leur changement (unreadVersion)
+export function useUnreadRefresh() {
+    return useContext(UnreadRefreshContext)
 }
