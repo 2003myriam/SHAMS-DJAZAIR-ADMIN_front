@@ -9,6 +9,38 @@
   gap: 12px;
 }
 
+/* ---------- Barre : filtres + suppressions groupées ---------- */
+.notif__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.notif__toolbar > button {
+  border-radius: 10px;
+}
+
+/* "Tout supprimer" en rouge doux */
+.notif__delete-all {
+  color: #e5484d;
+}
+
+.notif__delete-all:hover {
+  color: #e5484d;
+  background: color-mix(in srgb, #e5484d 10%, transparent);
+}
+
+/* bouton de confirmation de la boîte de dialogue */
+.notif__confirm-delete {
+  background: #e5484d;
+  color: #fff;
+}
+
+.notif__confirm-delete:hover {
+  background: #d13c41;
+}
+
 /* ---------- Filtres (toutes / non lues / lues) ---------- */
 .notif__filters {
   display: inline-flex;
@@ -161,6 +193,22 @@
 }
 
 .notif__read svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* corbeille : rouge au survol */
+.notif__delete {
+  border-radius: 10px;
+  color: var(--muted-foreground);
+}
+
+.notif__delete:hover {
+  color: #e5484d;
+  background: color-mix(in srgb, #e5484d 10%, transparent);
+}
+
+.notif__delete svg {
   width: 18px;
   height: 18px;
 }

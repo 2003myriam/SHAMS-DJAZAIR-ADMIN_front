@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
-import { Check, CheckCheck, FileText, ShoppingCart } from "lucide-react"
+import { Check, CheckCheck, FileText, ShoppingCart, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
 import { Header } from "@/layouts/header"
 import { Main } from "@/layouts/main"
@@ -28,6 +38,8 @@ function Notification() {
     const [loading, setLoading] = useState(true)
     // filtre actif : "all", "false" (non lues) ou "true" (lues)
     const [filter, setFilter] = useState("all")
+    // suppression groupée à confirmer : "all" (toutes), "read" (les lues) ou null (fermé)
+    const [confirmDelete, setConfirmDelete] = useState(null)
 
     // ==========================================
     // Pagination
@@ -106,6 +118,46 @@ function Notification() {
     }
 
     // ==========================================
+    // Supprimer une notification
+    // ==========================================
+    const deleteNotif = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5001/notification/${id}`)
+            // si on supprime la dernière notification de la page, on revient à la page précédente
+            const page = notifications.length === 1 && pagination.currentPage > 1
+                ? pagination.currentPage - 1
+                : pagination.currentPage
+            getNotifications(filter, page)
+            refreshUnread()
+            toast.success("Notification supprimée.")
+        } catch (error) {
+            toast.error("Impossible de supprimer la notification.")
+        }
+    }
+
+    // ==========================================
+    // Supprimer toutes les notifications ou seulement les lues
+    // ==========================================
+    const deleteMany = async (type) => {
+        try {
+            const route = type === "all" ? "delete-all" : "delete-read"
+            await axios.delete(`http://localhost:5001/notification/${route}`)
+            getNotifications(filter, 1)
+            refreshUnread()
+            toast.success(type === "all" ? "Toutes les notifications ont été supprimées." : "Les notifications lues ont été supprimées.")
+        } catch (error) {
+            // le backend répond 404 quand il n'y a rien à supprimer
+            if (error.response?.status === 404) {
+                toast.info("Aucune notification à supprimer.")
+            } else {
+                toast.error("Impossible de supprimer les notifications.")
+            }
+        } finally {
+            setConfirmDelete(null)
+        }
+    }
+
+    // ==========================================
     // Clic sur la carte : aller vers la commande ou le devis
     // ==========================================
     const navigate = useNavigate()
@@ -138,6 +190,7 @@ function Notification() {
                         <p className="produits__subtitle">Les nouvelles commandes et demandes de devis.</p>
                     </div>
 
+                    <div className="notif__toolbar">
                     {/* Filtres : toutes / non lues / lues */}
                     <div className="notif__filters">
                         {[
@@ -157,6 +210,15 @@ function Notification() {
                                 {f.label}
                             </button>
                         ))}
+                    </div>
+
+                    {/* Suppressions groupées (avec confirmation) */}
+                    <Button variant="outline" onClick={() => setConfirmDelete("read")}>
+                        <CheckCheck />Supprimer les lues
+                    </Button>
+                    <Button variant="outline" className="notif__delete-all" onClick={() => setConfirmDelete("all")}>
+                        <Trash2 />Tout supprimer
+                    </Button>
                     </div>
                 </div>
 
@@ -215,6 +277,17 @@ function Notification() {
                                     >
                                         {notif.isRead ? <CheckCheck /> : <Check />}
                                     </Button>
+                                    {/* Supprimer la notification */}
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="notif__delete"
+                                        onClick={() => deleteNotif(notif._id)}
+                                        aria-label="Supprimer la notification"
+                                        title="Supprimer la notification"
+                                    >
+                                        <Trash2 />
+                                    </Button>
                                 </div>
                             </article>
                         )
@@ -231,6 +304,28 @@ function Notification() {
                         />
                     </div>
                 )}
+
+                {/* Confirmation des suppressions groupées */}
+                <AlertDialog open={confirmDelete !== null} onOpenChange={(open) => !open && setConfirmDelete(null)}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                {confirmDelete === "all" ? "Supprimer toutes les notifications ?" : "Supprimer les notifications lues ?"}
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                {confirmDelete === "all"
+                                    ? "Toutes les notifications, lues et non lues, seront supprimées définitivement."
+                                    : "Les notifications déjà lues seront supprimées définitivement."}
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogAction className="notif__confirm-delete" onClick={() => deleteMany(confirmDelete)}>
+                                Supprimer
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </Main>
         </>
     )
