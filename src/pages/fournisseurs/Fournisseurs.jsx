@@ -6,15 +6,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import Pagination from '@mui/material/Pagination'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import '../products/Produits.css'
 import '../devis/Devis.css'
 import '../clients/Clients.css'
+
+// valeur du Select pour « toutes les catégories » (un SelectItem ne peut pas avoir value="")
+const ALL_CATEGORIES = 'all'
 
 function Fournisseurs() {
     // ==========================================
     // Fournisseurs
     // ==========================================
     const [suppliers, setSuppliers] = useState([])
+
+    // ==========================================
+    // Filtrage par catégorie
+    // ==========================================
+    const [categories, setCategories] = useState([])
+    const [category, setCategory] = useState(ALL_CATEGORIES)
 
     // ==========================================
     // Pagination
@@ -33,7 +43,8 @@ function Fournisseurs() {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `http://localhost:5001/suppliers?page=${page}&limit=${pagination.suppliersPerPage}`,
+                `http://localhost:5001/suppliers?page=${page}&limit=${pagination.suppliersPerPage}`
+                + (category !== ALL_CATEGORIES ? `&categoryId=${category}` : ''),
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -48,11 +59,20 @@ function Fournisseurs() {
     }
 
     // ==========================================
-    // Chargement initial
+    // Récupération des catégories (pour le filtre)
+    // ==========================================
+    useEffect(() => {
+        axios.get('http://localhost:5001/categories')
+            .then((response) => setCategories(response.data.data || []))
+            .catch(() => toast.error("Impossible de récupérer les catégories."))
+    }, [])
+
+    // ==========================================
+    // Chargement initial + à chaque changement de catégorie
     // ==========================================
     useEffect(() => {
         getSuppliers(1)
-    }, [])
+    }, [category])
 
     return (
         <>
@@ -63,6 +83,22 @@ function Fournisseurs() {
                     <div>
                         <h1 className="produits__title">Fournisseurs</h1>
                         <p className="produits__subtitle">Voici la liste des fournisseurs.</p>
+                    </div>
+                    {/* Filtre par catégorie */}
+                    <div className="produits__toolbar">
+                        <Select value={category} onValueChange={setCategory}>
+                            <SelectTrigger className="produit-sheet__select">
+                                <SelectValue placeholder="Filtrer par catégorie" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value={ALL_CATEGORIES}>Toutes les catégories</SelectItem>
+                                    {categories.map((c) => (
+                                        <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
