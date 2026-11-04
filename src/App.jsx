@@ -17,6 +17,7 @@ import Commande from './pages/commande/Commande'
 import Category from './pages/categories/Category'
 import Notification from './pages/notification/Notification'
 import Clients from './pages/clients/Clients'
+import Fournisseurs from './pages/fournisseurs/Fournisseurs'
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
             <Route path='/categorie' element={<Category />} />
             <Route path='/notification' element={<Notification />} />
             <Route path='/clients' element={<Clients />} />
+            <Route path='/fournisseurs' element={<Fournisseurs />} />
           </Route>
 
           {/* ===== Page introuvable (404) ===== */}

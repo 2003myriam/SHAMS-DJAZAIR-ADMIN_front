@@ -3,6 +3,7 @@
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import './dashboard.css'
+import { Produits } from '../products/Produits'
 
 export function Dashboard() {
   return (
@@ -10,8 +11,9 @@ export function Dashboard() {
       <Header />
 
       <Main>
-        <h1 className='dashboard__title'>Aperçu général</h1>
+        {/* <h1 className='dashboard__title'>Aperçu général</h1> */}
         {/* Ajoutez le contenu de la page ici */}
+        <Produits />
       </Main>
     </>
   )

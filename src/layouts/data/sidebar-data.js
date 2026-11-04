@@ -2,14 +2,16 @@
 // Pour ajouter un lien : l'ajouter dans MENU_ITEMS2 avec le bon "parent".
 import { LayoutDashboard } from 'lucide-react'
 import { AiOutlineProduct } from 'react-icons/ai'
-import { FiFileText, FiUsers } from "react-icons/fi";
+import { FiFileText, FiFolder } from "react-icons/fi";
+import { RiContactsBook2Line } from "react-icons/ri";
 import { FaRegBell } from "react-icons/fa";
 // Sidebar 1 : les icônes (une icône = une section)
 export const MENU_ITEMS = [
   // { key: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
   { key: 'Products', label: 'Produits', icon: AiOutlineProduct },
   { key: 'Orders', label: 'Commande', icon: FiFileText },
-  { key: 'Clients', label: 'Clients', icon: FiUsers },
+  { key: 'Contacts', label: 'Contacts', icon: RiContactsBook2Line },
+  { key: 'Documents', label: 'Documents', icon: FiFolder },
   { key: 'Notifications', label: 'Notification', icon: FaRegBell },
 ]
 
@@ -23,8 +25,11 @@ export const MENU_ITEMS2 = [
   // PARENT commande
   {key: 'Orders', label: 'Toutes les commandes',parent: 'Orders',path: '/commande',},
   {key: 'quote', label: 'Demande de devis',parent: 'Orders',path: '/devis',},
-  // PARENT client
-  {key: 'Clients', label: 'Tous les clients',parent: 'Clients',path: '/clients',},
+  // PARENT contacts (clients + fournisseurs)
+  {key: 'Clients', label: 'Tous les clients',parent: 'Contacts',path: '/clients',},
+  {key: 'Suppliers', label: 'Tous les fournisseurs',parent: 'Contacts',path: '/fournisseurs',},
+  // PARENT documents
+  {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
   // PARENT notification
   {key: 'Notifications', label: 'Toutes les notifications',parent: 'Notifications',path: '/notification',},
  
