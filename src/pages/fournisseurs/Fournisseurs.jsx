@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Plus, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -37,9 +37,11 @@ function Fournisseurs() {
     const [supplierToDelete, setSupplierToDelete] = useState(null)
 
     // ==========================================
-    // Ajout : panneau latéral ouvert ou fermé
+    // Ajout / modification : panneau latéral ouvert ou fermé
+    // + fournisseur en cours de modification (null = création)
     // ==========================================
     const [sheetOpen, setSheetOpen] = useState(false)
+    const [currentSupplier, setCurrentSupplier] = useState(null)
 
     // ==========================================
     // Pagination
@@ -131,7 +133,12 @@ function Fournisseurs() {
                         <p className="produits__subtitle">Voici la liste des fournisseurs.</p>
                     </div>
                     <div className="produits__toolbar">
-                        <Button onClick={() => setSheetOpen(true)}>
+                        <Button
+                            onClick={() => {
+                                setCurrentSupplier(null)
+                                setSheetOpen(true)
+                            }}
+                        >
                             <Plus />
                             Ajouter un fournisseur
                         </Button>
@@ -222,6 +229,17 @@ function Fournisseurs() {
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => {
+                                                setCurrentSupplier(s)
+                                                setSheetOpen(true)
+                                            }}
+                                            aria-label="Modifier"
+                                        >
+                                            <Pencil />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
                                                 setSupplierToDelete(s)
                                                 setDeleteDialogOpen(true)
                                             }}
@@ -253,8 +271,9 @@ function Fournisseurs() {
             <SupplierSheet
                 open={sheetOpen}
                 onOpenChange={setSheetOpen}
+                supplier={currentSupplier}
                 categories={categories}
-                onSave={() => getSuppliers(1)}
+                onSave={() => getSuppliers(currentSupplier ? pagination.currentPage : 1)}
             />
 
             {/* Confirmation de suppression */}

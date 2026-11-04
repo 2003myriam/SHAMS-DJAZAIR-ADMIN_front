@@ -1,4 +1,4 @@
-// Panneau latéral (Sheet) qui s'ouvre pour ajouter un fournisseur.
+// Panneau latéral (Sheet) qui s'ouvre pour ajouter ou modifier un fournisseur.
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Button } from '@/components/ui/button'
@@ -18,14 +18,27 @@ const EMPTY_FORM = {
   specialties: '', // saisi sous forme de texte : "spé 1, spé 2"
 }
 
-export function SupplierSheet({ open, onOpenChange, categories, onSave }) {
+// fournisseur venant du backend -> valeurs du formulaire
+const toForm = (supplier) =>
+  supplier
+    ? {
+      name: supplier.name || '',
+      email: supplier.email || '',
+      phone: supplier.phone || '',
+      address: supplier.address || '',
+      categoryId: supplier.categoryId?._id || '',
+      specialties: (supplier.specialties || []).join(', '),
+    }
+    : EMPTY_FORM
+
+export function SupplierSheet({ open, onOpenChange, supplier, categories, onSave }) {
 
   const [form, setForm] = useState(EMPTY_FORM)
 
-  // à chaque ouverture : formulaire vide
+  // à chaque ouverture : formulaire vide (ajout) ou rempli (modification)
   useEffect(() => {
-    if (open) setForm(EMPTY_FORM)
-  }, [open])
+    if (open) setForm(toForm(supplier))
+  }, [open, supplier])
 
   // SOUMISSION DU FORMULAIRE
   const handleSubmit = async (e) => {
@@ -34,28 +47,29 @@ export function SupplierSheet({ open, onOpenChange, categories, onSave }) {
     try {
       const token = localStorage.getItem("token")
 
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/suppliers`,
-        {
-          ...form,
-          categoryId: form.categoryId || null,
-          // "spé 1, spé 2" -> ["spé 1", "spé 2"]
-          specialties: form.specialties.split(',').map((sp) => sp.trim()).filter(Boolean),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      )
+      const data = {
+        ...form,
+        categoryId: form.categoryId || null,
+        // "spé 1, spé 2" -> ["spé 1", "spé 2"]
+        specialties: form.specialties.split(',').map((sp) => sp.trim()).filter(Boolean),
+      }
+      const headers = { Authorization: `Bearer ${token}` }
 
-      toast.success("Fournisseur ajouté avec succès")
+      if (supplier) {
+        // MODIFICATION
+        await axios.put(`${import.meta.env.VITE_API_URL}/suppliers/${supplier._id}`, data, { headers })
+        toast.success("Fournisseur modifié avec succès")
+      } else {
+        // CRÉATION
+        await axios.post(`${import.meta.env.VITE_API_URL}/suppliers`, data, { headers })
+        toast.success("Fournisseur ajouté avec succès")
+      }
       // recharger la liste des fournisseurs dans la page parent
       onSave?.()
       onOpenChange(false)
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "Impossible d'ajouter le fournisseur.")
+      toast.error(error.response?.data?.message || "Impossible d'enregistrer le fournisseur.")
     }
   }
 
@@ -65,7 +79,9 @@ export function SupplierSheet({ open, onOpenChange, categories, onSave }) {
       <SheetContent className="produit-sheet">
         {/* header du formulaire  */}
         <SheetHeader className="produit-sheet__header">
-          <SheetTitle>Ajouter un fournisseur</SheetTitle>
+          <SheetTitle>
+            {supplier ? 'Modifier le fournisseur' : 'Ajouter un fournisseur'}
+          </SheetTitle>
           <SheetDescription>
             Remplissez les informations puis cliquez sur Enregistrer.
           </SheetDescription>
