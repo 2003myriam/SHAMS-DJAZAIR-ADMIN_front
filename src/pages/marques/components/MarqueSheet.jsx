@@ -37,7 +37,7 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
 
         // MODIFICATION
         const response = await axios.put(
-          `http://localhost:5001/brand/${marque._id}`,
+          `${import.meta.env.VITE_API_URL}/brand/${marque._id}`,
           form,
           {
             headers: {
@@ -56,7 +56,7 @@ export function MarqueSheet({ open, onOpenChange, marque, onSave }) {
 
         // CRÉATION
         const response = await axios.post(
-          "http://localhost:5001/brand",
+          `${import.meta.env.VITE_API_URL}/brand`,
           form,
           {
             headers: {

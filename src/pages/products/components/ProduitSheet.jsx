@@ -61,7 +61,7 @@ export function ProduitSheet({ open, onOpenChange, produit, onSave }) {
   const [marques, setMarques] = useState([])
   const getBrands = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/brand")
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/brand`)
       setMarques(response.data.data)
     }
     catch {
@@ -72,7 +72,7 @@ export function ProduitSheet({ open, onOpenChange, produit, onSave }) {
   const [categories, setCategories] = useState([])
   const getCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/categories")
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`)
       setCategories(response.data.data)
     }
     catch {
@@ -101,7 +101,7 @@ export function ProduitSheet({ open, onOpenChange, produit, onSave }) {
       const token = localStorage.getItem("token")
 
       const response = await axios.post(
-        "http://localhost:5001/products",
+        `${import.meta.env.VITE_API_URL}/products`,
         finalForm,
         {
           headers: {

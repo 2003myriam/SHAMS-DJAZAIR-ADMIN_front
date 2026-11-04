@@ -18,7 +18,7 @@ export function NotificationsProvider({ children }) {
     // ==== AFFICHAGE DES NOTIFICATIONS ========
     useEffect(() => {
         // socket io doit se connecter au backend
-        const socket = io('http://localhost:5001')
+        const socket = io(import.meta.env.VITE_API_URL)
 
         // connect est un événement interne de Socket.IO :
         // il signifie juste « je suis connecté ». Il ne transporte aucune donnée

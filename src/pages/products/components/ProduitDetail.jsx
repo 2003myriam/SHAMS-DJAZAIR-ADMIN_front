@@ -39,7 +39,7 @@ function ProduitDetail({ open, onOpenChange, productId }) {
         const getProduct = async () => {
             setLoading(true)
             try {
-                const response = await axios.get(`http://localhost:5001/products/${productId}`)
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/products/${productId}`)
                 setProduct(response.data.data)
             } catch (error) {
                 toast.error("Impossible de récupérer le produit.")

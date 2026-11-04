@@ -33,7 +33,7 @@ export function CategorySheet({ open, onOpenChange, category, onSave }) {
   useEffect(() => {
     if (!open) return
     setForm(toForm(category))
-    axios.get('http://localhost:5001/categories/parents')
+    axios.get(`${import.meta.env.VITE_API_URL}/categories/parents`)
       .then((response) => setParents(response.data.data || []))
       .catch(() => toast.error("Impossible de récupérer les catégories parents."))
   }, [open, category])
@@ -47,8 +47,8 @@ export function CategorySheet({ open, onOpenChange, category, onSave }) {
       await axios({
         method: category ? 'put' : 'post',
         url: category
-          ? `http://localhost:5001/categories/${category._id}`
-          : 'http://localhost:5001/categories',
+          ? `${import.meta.env.VITE_API_URL}/categories/${category._id}`
+          : `${import.meta.env.VITE_API_URL}/categories`,
         data: {
           ...form,
           // "none" => null (catégorie parent)

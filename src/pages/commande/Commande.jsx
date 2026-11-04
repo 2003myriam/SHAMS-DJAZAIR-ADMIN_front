@@ -74,7 +74,7 @@ function Commande() {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `http://localhost:5001/orders/admin`,
+                `${import.meta.env.VITE_API_URL}/orders/admin`,
                 {
                     params: {
                         page,
@@ -114,7 +114,7 @@ function Commande() {
         try {
             const token = localStorage.getItem("token");
             const route = field === "status" ? "status" : "payment"
-            await axios.patch(`http://localhost:5001/orders/admin/${id}/${route}`,
+            await axios.patch(`${import.meta.env.VITE_API_URL}/orders/admin/${id}/${route}`,
                 { [field]: value },
                 {
                     headers: {
@@ -136,7 +136,7 @@ function Commande() {
     const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:5001/orders/${id}`,
+            await axios.delete(`${import.meta.env.VITE_API_URL}/orders/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

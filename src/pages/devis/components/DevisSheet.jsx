@@ -69,7 +69,7 @@ export function DevisSheet({ open, onOpenChange, devis, onSave }) {
 
         // MODIFICATION
         await axios.put(
-          `http://localhost:5001/request/${devis._id}`,
+          `${import.meta.env.VITE_API_URL}/request/${devis._id}`,
           form,
           {
             headers: {
@@ -84,7 +84,7 @@ export function DevisSheet({ open, onOpenChange, devis, onSave }) {
 
         // CRÉATION
         await axios.post(
-          "http://localhost:5001/request",
+          `${import.meta.env.VITE_API_URL}/request`,
           form,
           {
             headers: {

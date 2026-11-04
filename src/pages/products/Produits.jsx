@@ -73,7 +73,7 @@ export function Produits() {
   const getProducts = async (page = 1) => {
     try {
       const response = await axios.get(
-        `http://localhost:5001/products?page=${page}&limit=${pagination.productsPerPage}&search=${encodeURIComponent(search)}`
+        `${import.meta.env.VITE_API_URL}/products?page=${page}&limit=${pagination.productsPerPage}&search=${encodeURIComponent(search)}`
       )
 
       setProduits(response.data.data || [])
@@ -162,7 +162,7 @@ export function Produits() {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(`http://localhost:5001/products/${id}`,
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/products/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -186,7 +186,7 @@ export function Produits() {
       const token = localStorage.getItem("token");
 
       const response = await axios.get(
-        "http://localhost:5001/products/export",
+        `${import.meta.env.VITE_API_URL}/products/export`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

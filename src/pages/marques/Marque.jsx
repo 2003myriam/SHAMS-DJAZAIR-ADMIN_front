@@ -47,7 +47,7 @@ function Marque() {
     const getBrands = async (page = 1) => {
         try {
             const response = await axios.get(
-                `http://localhost:5001/brand?page=${page}&limit=${pagination.brandsPerPage}`
+                `${import.meta.env.VITE_API_URL}/brand?page=${page}&limit=${pagination.brandsPerPage}`
             )
             setMarques(response.data.data || [])
             setPagination(
@@ -98,7 +98,7 @@ function Marque() {
     const handleDelete = async (id) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.delete(`http://localhost:5001/brand/${id}`,
+            const response = await axios.delete(`${import.meta.env.VITE_API_URL}/brand/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

@@ -21,7 +21,7 @@ export function SidebarGeneral() {
   const getNotifications = async () => {
     try {
       // seulement les non lues, avec une grande limite (la route est paginée à 12 par défaut)
-      const response = await axios.get("http://localhost:5001/notification", {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/notification`, {
         params: { isRead: false, limit: 1000 }
       })
       setNotifications(response.data.data || [])

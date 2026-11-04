@@ -60,7 +60,7 @@ export function CommandeSheet({ open, onOpenChange, order, onSave }) {
 
       // MODIFICATION
       await axios.patch(
-        `http://localhost:5001/orders/admin/${order._id}`,
+        `${import.meta.env.VITE_API_URL}/orders/admin/${order._id}`,
         {
           status: form.status,
           paymentStatus: form.paymentStatus,

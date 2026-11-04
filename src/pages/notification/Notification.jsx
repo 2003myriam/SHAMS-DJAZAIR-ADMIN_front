@@ -54,7 +54,7 @@ function Notification() {
     const getNotifications = async (isRead, page = 1) => {
         try {
             const response = await axios.get(
-                "http://localhost:5001/notification",
+                `${import.meta.env.VITE_API_URL}/notification`,
                 {
                     params: {
                         page,
@@ -99,7 +99,7 @@ function Notification() {
 
     const toggleRead = async (id) => {
         try {
-            const response = await axios.patch(`http://localhost:5001/notification/${id}/read`)
+            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/notification/${id}/read`)
             const isRead = response.data.data.isRead
             if (filter === "all") {
                 // on met à jour seulement isRead pour garder les données populées
@@ -122,7 +122,7 @@ function Notification() {
     // ==========================================
     const deleteNotif = async (id) => {
         try {
-            await axios.delete(`http://localhost:5001/notification/${id}`)
+            await axios.delete(`${import.meta.env.VITE_API_URL}/notification/${id}`)
             // si on supprime la dernière notification de la page, on revient à la page précédente
             const page = notifications.length === 1 && pagination.currentPage > 1
                 ? pagination.currentPage - 1
@@ -141,7 +141,7 @@ function Notification() {
     const deleteMany = async (type) => {
         try {
             const route = type === "all" ? "delete-all" : "delete-read"
-            await axios.delete(`http://localhost:5001/notification/${route}`)
+            await axios.delete(`${import.meta.env.VITE_API_URL}/notification/${route}`)
             getNotifications(filter, 1)
             refreshUnread()
             toast.success(type === "all" ? "Toutes les notifications ont été supprimées." : "Les notifications lues ont été supprimées.")

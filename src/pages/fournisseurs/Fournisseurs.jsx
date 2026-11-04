@@ -43,7 +43,7 @@ function Fournisseurs() {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `http://localhost:5001/suppliers?page=${page}&limit=${pagination.suppliersPerPage}`
+                `${import.meta.env.VITE_API_URL}/suppliers?page=${page}&limit=${pagination.suppliersPerPage}`
                 + (category !== ALL_CATEGORIES ? `&categoryId=${category}` : ''),
                 {
                     headers: {
@@ -62,7 +62,7 @@ function Fournisseurs() {
     // Récupération des catégories (pour le filtre)
     // ==========================================
     useEffect(() => {
-        axios.get('http://localhost:5001/categories')
+        axios.get(`${import.meta.env.VITE_API_URL}/categories`)
             .then((response) => setCategories(response.data.data || []))
             .catch(() => toast.error("Impossible de récupérer les catégories."))
     }, [])

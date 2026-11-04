@@ -42,7 +42,7 @@ function Category() {
     // ==========================================
     const getCategories = async () => {
         try {
-            const response = await axios.get(`http://localhost:5001/categories/parents`)
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories/parents`)
             setCategories(response.data.data || [])
         } catch (error) {
             toast.error('Impossible de récupérer les catégories.')
@@ -54,7 +54,7 @@ function Category() {
     // ==========================================
     const getSubcategories = async (id) => {
         try {
-            const response = await axios.get(`http://localhost:5001/categories/${id}/subcategories`)
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories/${id}/subcategories`)
             setSubcategories((prev) => ({ ...prev, [id]: response.data.data || [] }))
         } catch (error) {
             // l'API renvoie une erreur quand la catégorie n'a pas de sous-catégorie
@@ -103,7 +103,7 @@ function Category() {
     const handleDelete = async () => {
         try {
             const token = localStorage.getItem("token")
-            await axios.delete(`http://localhost:5001/categories/${categoryToDelete._id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/categories/${categoryToDelete._id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             refresh()
