@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Header } from '@/layouts/header'
@@ -10,6 +12,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import '../products/Produits.css'
 import '../devis/Devis.css'
 import '../clients/Clients.css'
+import DeleteSupplier from './components/DeleteSupplier'
+import { SupplierSheet } from './components/SupplierSheet'
 
 // valeur du Select pour « toutes les catégories » (un SelectItem ne peut pas avoir value="")
 const ALL_CATEGORIES = 'all'
@@ -25,6 +29,17 @@ function Fournisseurs() {
     // ==========================================
     const [categories, setCategories] = useState([])
     const [category, setCategory] = useState(ALL_CATEGORIES)
+
+    // ==========================================
+    // Suppression : dialog ouvert ou fermé + fournisseur à supprimer
+    // ==========================================
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [supplierToDelete, setSupplierToDelete] = useState(null)
+
+    // ==========================================
+    // Ajout : panneau latéral ouvert ou fermé
+    // ==========================================
+    const [sheetOpen, setSheetOpen] = useState(false)
 
     // ==========================================
     // Pagination
@@ -59,16 +74,47 @@ function Fournisseurs() {
     }
 
     // ==========================================
+    // Supprimer un fournisseur
+    // ==========================================
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`${import.meta.env.VITE_API_URL}/suppliers/${supplierToDelete._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            toast.success("Fournisseur supprimé.")
+            setDeleteDialogOpen(false)
+            getSuppliers(pagination.currentPage)
+        } catch (error) {
+            toast.error("Impossible de supprimer le fournisseur.")
+        }
+    }
+
+    // ==========================================
     // Récupération des catégories (pour le filtre)
     // ==========================================
+    const getCategories = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/categories`)
+            setCategories(response.data.data || [])
+        } catch (error) {
+            toast.error("Impossible de récupérer les catégories.")
+        }
+    }
+
+    // ==========================================
+    // Chargement initial des catégories
+    // ==========================================
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/categories`)
-            .then((response) => setCategories(response.data.data || []))
-            .catch(() => toast.error("Impossible de récupérer les catégories."))
+        getCategories()
     }, [])
 
     // ==========================================
-    // Chargement initial + à chaque changement de catégorie
+    // Chargement des fournisseurs (au départ + à chaque changement de catégorie)
     // ==========================================
     useEffect(() => {
         getSuppliers(1)
@@ -84,22 +130,30 @@ function Fournisseurs() {
                         <h1 className="produits__title">Fournisseurs</h1>
                         <p className="produits__subtitle">Voici la liste des fournisseurs.</p>
                     </div>
-                    {/* Filtre par catégorie */}
                     <div className="produits__toolbar">
-                        <Select value={category} onValueChange={setCategory}>
-                            <SelectTrigger className="produit-sheet__select">
-                                <SelectValue placeholder="Filtrer par catégorie" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value={ALL_CATEGORIES}>Toutes les catégories</SelectItem>
-                                    {categories.map((c) => (
-                                        <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <Button onClick={() => setSheetOpen(true)}>
+                            <Plus />
+                            Ajouter un fournisseur
+                        </Button>
                     </div>
+                </div>
+
+                {/* Barre d'outils : filtres */}
+                <div className="devis__toolbar">
+                    {/* Filtre par catégorie */}
+                    <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="devis__status-filter">
+                            <SelectValue placeholder="Filtrer par catégorie" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value={ALL_CATEGORIES}>Toutes les catégories</SelectItem>
+                                {categories.map((c) => (
+                                    <SelectItem key={c._id} value={c._id}>{c.name}</SelectItem>
+                                ))}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 {/* Tableau */}
@@ -114,13 +168,14 @@ function Fournisseurs() {
                                 <TableHead>Catégorie</TableHead>
                                 <TableHead>Spécialités</TableHead>
                                 <TableHead className="devis__center">Date de création</TableHead>
+                                <TableHead className="produits__actions">Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {/* Aucun fournisseur */}
                             {suppliers.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="produits__empty">Aucun fournisseur.</TableCell>
+                                    <TableCell colSpan={8} className="produits__empty">Aucun fournisseur.</TableCell>
                                 </TableRow>
                             )}
                             {/* Fournisseurs affichage */}
@@ -161,6 +216,20 @@ function Fournisseurs() {
                                             })
                                             : '-'}
                                     </TableCell>
+                                    {/* actions */}
+                                    <TableCell className="produits__actions">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                                setSupplierToDelete(s)
+                                                setDeleteDialogOpen(true)
+                                            }}
+                                            aria-label="Supprimer"
+                                        >
+                                            <Trash2 />
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -179,6 +248,22 @@ function Fournisseurs() {
                     </div>
                 )}
             </Main>
+
+            {/* Panneau latéral (ajout) */}
+            <SupplierSheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                categories={categories}
+                onSave={() => getSuppliers(1)}
+            />
+
+            {/* Confirmation de suppression */}
+            <DeleteSupplier
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onConfirm={handleDelete}
+                supplierName={supplierToDelete?.name}
+            />
         </>
     )
 }
