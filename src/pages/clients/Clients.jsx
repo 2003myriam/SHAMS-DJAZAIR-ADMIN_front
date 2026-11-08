@@ -60,7 +60,7 @@ function Clients() {
                 <div className="produits__top">
                     <div>
                         <h1 className="produits__title">Clients</h1>
-                        <p className="produits__subtitle">Voici la liste des clients.</p>
+                        <p className="produits__subtitle">Voici la liste des clients inscrits sur le site, avec le détail de leurs informations.</p>
                     </div>
                 </div>
 

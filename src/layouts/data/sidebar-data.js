@@ -26,7 +26,9 @@ export const MENU_ITEMS2 = [
   {key: 'Orders', label: 'Toutes les commandes',parent: 'Orders',path: '/commande',},
   {key: 'quote', label: 'Demande de devis',parent: 'Orders',path: '/devis',},
   // PARENT contacts (clients + fournisseurs)
-  {key: 'Clients', label: 'Tous les clients',parent: 'Contacts',path: '/clients',},
+  {key: 'Clients', label: 'Clients du site',parent: 'Contacts',path: '/clients',},
+  {key: 'CommercialClients', label: 'Clients commerciaux',parent: 'Contacts',path: '/clients-commerciaux',},
+  {key: 'Prospects', label: 'Prospects',parent: 'Contacts',path: '/prospects',},
   {key: 'Suppliers', label: 'Tous les fournisseurs',parent: 'Contacts',path: '/fournisseurs',},
   // PARENT documents
   {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
