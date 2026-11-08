@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Download, Pencil, Plus, SearchIcon, Trash2, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
+import { saveAs } from 'file-saver'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -29,6 +31,17 @@ function Fournisseurs() {
     // ==========================================
     const [categories, setCategories] = useState([])
     const [category, setCategory] = useState(ALL_CATEGORIES)
+
+    // ==========================================
+    // Recherche par nom
+    // ==========================================
+    const [search, setSearch] = useState('')
+
+    // paramètres communs à la liste et à l'export (catégorie + recherche)
+    const filterParams = () => ({
+        ...(category !== ALL_CATEGORIES && { categoryId: category }),
+        ...(search.trim() && { search: search.trim() }),
+    })
 
     // ==========================================
     // Suppression : dialog ouvert ou fermé + fournisseur à supprimer
@@ -60,9 +73,9 @@ function Fournisseurs() {
         try {
             const token = localStorage.getItem("token");
             const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/suppliers?page=${page}&limit=${pagination.suppliersPerPage}`
-                + (category !== ALL_CATEGORIES ? `&categoryId=${category}` : ''),
+                `${import.meta.env.VITE_API_URL}/suppliers`,
                 {
+                    params: { page, limit: pagination.suppliersPerPage, ...filterParams() },
                     headers: {
                         Authorization: `Bearer ${token}`,
                     }
@@ -97,6 +110,40 @@ function Fournisseurs() {
     }
 
     // ==========================================
+    // Exporter les fournisseurs (Excel) — selon la catégorie choisie
+    // ==========================================
+    const handleExport = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/suppliers/export`,
+                {
+                    params: filterParams(), // la catégorie et la recherche en cours sont prises en compte lors de l'exportation
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    responseType: "blob",
+                }
+            )
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            })
+            saveAs(blob, "Fournisseurs_DATA.xlsx")
+            toast.success("Exportation réussie !")
+        } catch (error) {
+            // avec responseType "blob", le message d'erreur du serveur arrive sous forme de Blob
+            let message = "Impossible d'exporter les fournisseurs."
+            if (error.response?.data instanceof Blob) {
+                try {
+                    const json = JSON.parse(await error.response.data.text())
+                    if (json.message) message = json.message
+                } catch { /* réponse non JSON */ }
+            }
+            toast.error(message)
+        }
+    }
+
+    // ==========================================
     // Récupération des catégories (pour le filtre)
     // ==========================================
     const getCategories = async () => {
@@ -116,11 +163,11 @@ function Fournisseurs() {
     }, [])
 
     // ==========================================
-    // Chargement des fournisseurs (au départ + à chaque changement de catégorie)
+    // Chargement des fournisseurs (au départ + à chaque changement de catégorie ou de recherche)
     // ==========================================
     useEffect(() => {
         getSuppliers(1)
-    }, [category])
+    }, [category, search])
 
     return (
         <>
@@ -133,6 +180,11 @@ function Fournisseurs() {
                         <p className="produits__subtitle">Voici la liste des fournisseurs.</p>
                     </div>
                     <div className="produits__toolbar">
+                        <Button variant="outline" onClick={handleExport}>
+                            <Download />
+                            Exporter
+                        </Button>
+
                         <Button
                             onClick={() => {
                                 setCurrentSupplier(null)
@@ -145,8 +197,31 @@ function Fournisseurs() {
                     </div>
                 </div>
 
-                {/* Barre d'outils : filtres */}
+                {/* Barre d'outils : recherche à gauche, filtre à droite */}
                 <div className="devis__toolbar">
+                    {/* Recherche par nom */}
+                    <div className="produits__search">
+                        <SearchIcon className="produits__search-icon" />
+                        <Input
+                            type="text"
+                            placeholder="Nom du fournisseur..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="produits__search-input"
+                        />
+                        {/* Effacer la recherche */}
+                        {search && (
+                            <button
+                                type="button"
+                                className="produits__search-clear"
+                                onClick={() => setSearch('')}
+                                aria-label="Effacer la recherche"
+                            >
+                                <X />
+                            </button>
+                        )}
+                    </div>
+
                     {/* Filtre par catégorie */}
                     <Select value={category} onValueChange={setCategory}>
                         <SelectTrigger className="devis__status-filter">
