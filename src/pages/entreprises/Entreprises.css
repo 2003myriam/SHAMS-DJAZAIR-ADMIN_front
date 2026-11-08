@@ -1,0 +1,53 @@
+/*
+ * Styles de la page Entreprises (blocs l'un sous l'autre).
+ */
+@reference '../../styles/index.css';
+
+/* Liste des blocs */
+.entreprises__list {
+  @apply flex flex-col gap-4;
+}
+
+/* Un bloc = une entreprise */
+.entreprise {
+  @apply flex flex-col gap-3 rounded-xl border bg-card p-5 shadow-sm;
+}
+
+/* En-tête : nom à gauche, statut à droite */
+.entreprise__header {
+  @apply flex items-center justify-between gap-3;
+}
+
+.entreprise__name {
+  @apply text-base font-semibold;
+}
+
+.entreprise__logo {
+  @apply size-8 shrink-0 rounded-full object-cover;
+}
+
+.entreprise__description {
+  @apply text-sm text-muted-foreground;
+}
+
+/* Coordonnées : icône + texte, sur plusieurs colonnes si la place le permet */
+.entreprise__infos {
+  @apply grid grid-cols-1 gap-2 text-sm sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.entreprise__infos span {
+  @apply flex items-center gap-2 break-all;
+}
+
+.entreprise__infos svg {
+  @apply size-4 shrink-0 text-muted-foreground;
+}
+
+.entreprise__sectors {
+  @apply flex flex-wrap gap-1;
+}
+
+/* NIF / NIS / RC */
+.entreprise__fiscal {
+  @apply flex flex-wrap gap-x-6 gap-y-1 border-t pt-3 text-xs text-muted-foreground;
+}

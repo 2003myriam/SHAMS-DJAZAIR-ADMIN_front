@@ -18,6 +18,7 @@ import Category from './pages/categories/Category'
 import Notification from './pages/notification/Notification'
 import Clients from './pages/clients/Clients'
 import Fournisseurs from './pages/fournisseurs/Fournisseurs'
+import Entreprises from './pages/entreprises/Entreprises'
 import ClientsCommerciaux from './pages/clients-commerciaux/ClientsCommerciaux'
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
             <Route path='/notification' element={<Notification />} />
             <Route path='/clients' element={<Clients />} />
             <Route path='/fournisseurs' element={<Fournisseurs />} />
+            <Route path='/entreprises' element={<Entreprises />} />
             {/* même page, le status change (key pour repartir de zéro en changeant de page) */}
             <Route path='/clients-commerciaux' element={<ClientsCommerciaux key='client' status='client' />} />
             <Route path='/prospects' element={<ClientsCommerciaux key='prospect' status='prospect' />} />

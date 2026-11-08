@@ -30,6 +30,7 @@ export const MENU_ITEMS2 = [
   {key: 'CommercialClients', label: 'Clients commerciaux',parent: 'Contacts',path: '/clients-commerciaux',},
   {key: 'Prospects', label: 'Prospects',parent: 'Contacts',path: '/prospects',},
   {key: 'Suppliers', label: 'Tous les fournisseurs',parent: 'Contacts',path: '/fournisseurs',},
+  {key: 'Companies', label: 'Toutes les entreprises',parent: 'Contacts',path: '/entreprises',},
   // PARENT documents
   {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
   // PARENT notification

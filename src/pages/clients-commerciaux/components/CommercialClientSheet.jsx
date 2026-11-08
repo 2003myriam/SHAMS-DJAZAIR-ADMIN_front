@@ -211,7 +211,7 @@ export function CommercialClientSheet({ open, onOpenChange, status, onSave }) {
               <Label htmlFor="address">Adresse</Label>
               <Input
                 id="address"
-                placeholder="Adresse du client"
+                placeholder="Adresse du siège"
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
                 required
