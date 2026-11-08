@@ -1,4 +1,4 @@
-// Panneau latéral (Sheet) qui s'ouvre pour ajouter une entreprise.
+// Panneau latéral (Sheet) qui s'ouvre pour ajouter ou modifier une entreprise.
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Button } from '@/components/ui/button'
@@ -31,7 +31,33 @@ const EMPTY_FORM = {
     isActive: true,
 }
 
-export function CompanySheet({ open, onOpenChange, onCompanyCreated }) {
+// entreprise venant du backend -> valeurs du formulaire
+const toForm = (company) =>
+    company
+        ? {
+            name: company.name || '',
+            email: company.email || '',
+            phone: company.phone || '',
+            description: company.description || '',
+            address: company.address || '',
+            website: company.website || '',
+            socialNetworks: {
+                instagram: company.socialNetworks?.instagram || '',
+                facebook: company.socialNetworks?.facebook || '',
+                linkedin: company.socialNetworks?.linkedin || '',
+            },
+            workingHours: company.workingHours || '',
+            NIF: company.NIF || '',
+            NIS: company.NIS || '',
+            RC: company.RC || '',
+            // les secteurs arrivent "populate" ({ _id, name }) -> on garde juste les id
+            activitySectorIds: (company.activitySectorIds || []).map((sector) => sector._id || sector),
+            isActive: company.isActive ?? true,
+        }
+        : EMPTY_FORM
+
+// company : null = création / une entreprise = modification
+export function CompanySheet({ open, onOpenChange, company, onCompanyCreated }) {
 
     const [form, setForm] = useState(EMPTY_FORM)
     // secteurs d'activité (pour les cases à cocher)
@@ -49,12 +75,12 @@ export function CompanySheet({ open, onOpenChange, onCompanyCreated }) {
         }
     }
 
-    // à chaque ouverture : formulaire vide + secteurs à jour
+    // à chaque ouverture : formulaire vide (ajout) ou rempli (modification) + secteurs à jour
     useEffect(() => {
         if (!open) return
-        setForm(EMPTY_FORM)
+        setForm(toForm(company))
         getSectors()
-    }, [open])
+    }, [open, company])
 
     // cocher / décocher un secteur
     const toggleSector = (id, checked) => {
@@ -81,19 +107,25 @@ export function CompanySheet({ open, onOpenChange, onCompanyCreated }) {
         try {
             const token = localStorage.getItem("token")
 
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/companies`, form, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
+            const headers = { Authorization: `Bearer ${token}` }
+            let response
 
-            toast.success("Entreprise ajoutée avec succès")
-            // envoyer la nouvelle entreprise au parent (ajout dans la liste + sélection automatique)
+            if (company) {
+                // MODIFICATION
+                response = await axios.put(`${import.meta.env.VITE_API_URL}/companies/${company._id}`, form, { headers })
+                toast.success("Entreprise modifiée avec succès")
+            } else {
+                // CRÉATION
+                response = await axios.post(`${import.meta.env.VITE_API_URL}/companies`, form, { headers })
+                toast.success("Entreprise ajoutée avec succès")
+            }
+
+            // envoyer l'entreprise au parent (recharger la liste / sélection automatique)
             onCompanyCreated?.(response.data.data)
             onOpenChange(false)
 
         } catch (error) {
-            toast.error(error.response?.data?.message || "Impossible d'ajouter l'entreprise.")
+            toast.error(error.response?.data?.message || "Impossible d'enregistrer l'entreprise.")
         }
     }
 
@@ -103,7 +135,7 @@ export function CompanySheet({ open, onOpenChange, onCompanyCreated }) {
             <SheetContent className="produit-sheet">
                 {/* header du formulaire  */}
                 <SheetHeader className="produit-sheet__header">
-                    <SheetTitle>Ajouter une entreprise</SheetTitle>
+                    <SheetTitle>{company ? "Modifier l'entreprise" : 'Ajouter une entreprise'}</SheetTitle>
                     <SheetDescription>
                         Remplissez les informations puis cliquez sur Enregistrer.
                     </SheetDescription>

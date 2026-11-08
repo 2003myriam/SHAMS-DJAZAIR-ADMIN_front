@@ -10,7 +10,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from "sonner"
 import '../../marques/Marque.css'
-import { CompanySheet } from './CompanySheet'
+import { CompanySheet } from '../../entreprises/components/CompanySheet'
 import { Plus } from 'lucide-react'
 
 const EMPTY_FORM = {

@@ -43,11 +43,20 @@
   @apply size-4 shrink-0 text-muted-foreground;
 }
 
+/* secteurs + statut en haut à droite */
 .entreprise__sectors {
-  @apply flex flex-wrap gap-1;
+  @apply flex flex-wrap justify-end gap-1;
 }
 
-/* NIF / NIS / RC */
+/* bas du bloc : NIF / NIS / RC à gauche, icônes modifier / supprimer à droite */
+.entreprise__footer {
+  @apply flex items-center justify-between gap-3 border-t pt-3;
+}
+
 .entreprise__fiscal {
-  @apply flex flex-wrap gap-x-6 gap-y-1 border-t pt-3 text-xs text-muted-foreground;
+  @apply flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground;
+}
+
+.entreprise__actions {
+  @apply flex shrink-0 items-center;
 }

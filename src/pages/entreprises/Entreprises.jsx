@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Clock, Globe, Mail, MapPin, Phone } from 'lucide-react'
+import { Clock, Globe, Mail, MapPin, Pencil, Phone, Plus, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
@@ -10,12 +11,27 @@ import Pagination from '@mui/material/Pagination'
 import '../products/Produits.css'
 import '../clients/Clients.css'
 import './Entreprises.css'
+import { CompanySheet } from './components/CompanySheet'
+import DeleteCompany from './components/DeleteCompany'
 
 function Entreprises() {
     // ==========================================
     // Entreprises
     // ==========================================
     const [companies, setCompanies] = useState([])
+
+    // ==========================================
+    // Ajout : panneau latéral ouvert ou fermé
+    // ==========================================
+    const [sheetOpen, setSheetOpen] = useState(false)
+    // entreprise en cours de modification (null = création)
+    const [currentCompany, setCurrentCompany] = useState(null)
+
+    // ==========================================
+    // Suppression : dialog ouvert ou fermé + entreprise à supprimer
+    // ==========================================
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+    const [companyToDelete, setCompanyToDelete] = useState(null)
 
     // ==========================================
     // Pagination
@@ -49,6 +65,27 @@ function Entreprises() {
     }
 
     // ==========================================
+    // Supprimer une entreprise
+    // ==========================================
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`${import.meta.env.VITE_API_URL}/companies/${companyToDelete._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            toast.success("Entreprise supprimée.")
+            setDeleteDialogOpen(false)
+            getCompanies(pagination.currentPage)
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Impossible de supprimer l'entreprise.")
+        }
+    }
+
+    // ==========================================
     // Chargement initial
     // ==========================================
     useEffect(() => {
@@ -64,6 +101,15 @@ function Entreprises() {
                     <div>
                         <h1 className="produits__title">Entreprises</h1>
                         <p className="produits__subtitle">Voici la liste de toutes les entreprises.</p>
+                    </div>
+                    <div className="produits__toolbar">
+                        <Button onClick={() => {
+                            setCurrentCompany(null)
+                            setSheetOpen(true)
+                        }}>
+                            <Plus />
+                            Ajouter une entreprise
+                        </Button>
                     </div>
                 </div>
 
@@ -87,9 +133,15 @@ function Entreprises() {
                                     )}
                                     <span className="entreprise__name">{c.name}</span>
                                 </div>
-                                <Badge className={c.isActive ? 'client__status--active' : 'client__status--inactive'}>
-                                    {c.isActive ? 'Active' : 'Inactive'}
-                                </Badge>
+                                {/* Secteurs d'activité + statut, à droite */}
+                                <div className="entreprise__sectors">
+                                    {c.activitySectorIds?.map((sector) => (
+                                        <Badge key={sector._id} variant="secondary">{sector.name}</Badge>
+                                    ))}
+                                    <Badge className={c.isActive ? 'client__status--active' : 'client__status--inactive'}>
+                                        {c.isActive ? 'Active' : 'Inactive'}
+                                    </Badge>
+                                </div>
                             </div>
 
                             {/* Description */}
@@ -111,20 +163,37 @@ function Entreprises() {
                                 {c.workingHours && <span><Clock /> {c.workingHours}</span>}
                             </div>
 
-                            {/* Secteurs d'activité */}
-                            {c.activitySectorIds?.length > 0 && (
-                                <div className="entreprise__sectors">
-                                    {c.activitySectorIds.map((sector) => (
-                                        <Badge key={sector._id} variant="secondary">{sector.name}</Badge>
-                                    ))}
+                            {/* Informations fiscales à gauche + actions à droite */}
+                            <div className="entreprise__footer">
+                                <div className="entreprise__fiscal">
+                                    <span><strong>NIF :</strong> {c.NIF || '-'}</span>
+                                    <span><strong>NIS :</strong> {c.NIS || '-'}</span>
+                                    <span><strong>RC :</strong> {c.RC || '-'}</span>
                                 </div>
-                            )}
-
-                            {/* Informations fiscales */}
-                            <div className="entreprise__fiscal">
-                                <span><strong>NIF :</strong> {c.NIF || '-'}</span>
-                                <span><strong>NIS :</strong> {c.NIS || '-'}</span>
-                                <span><strong>RC :</strong> {c.RC || '-'}</span>
+                                <div className="entreprise__actions">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => {
+                                            setCurrentCompany(c)
+                                            setSheetOpen(true)
+                                        }}
+                                        aria-label="Modifier"
+                                    >
+                                        <Pencil />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => {
+                                            setCompanyToDelete(c)
+                                            setDeleteDialogOpen(true)
+                                        }}
+                                        aria-label="Supprimer"
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -142,6 +211,22 @@ function Entreprises() {
                     </div>
                 )}
             </Main>
+
+            {/* Panneau latéral (ajout) : recharger la liste après l'ajout */}
+            <CompanySheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                company={currentCompany}
+                onCompanyCreated={() => getCompanies(currentCompany ? pagination.currentPage : 1)}
+            />
+
+            {/* Confirmation de suppression */}
+            <DeleteCompany
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onConfirm={handleDelete}
+                companyName={companyToDelete?.name}
+            />
         </>
     )
 }
