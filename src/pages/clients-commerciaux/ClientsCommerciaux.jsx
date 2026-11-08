@@ -2,7 +2,9 @@
 // La même page sert pour les deux : status = "client" ou "prospect".
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Header } from '@/layouts/header'
@@ -11,6 +13,7 @@ import Pagination from '@mui/material/Pagination'
 import '../products/Produits.css'
 import '../devis/Devis.css'
 import '../clients/Clients.css'
+import { CommercialClientSheet } from './components/CommercialClientSheet'
 
 // Titre et paragraphe de la page selon le status
 const PAGE_TEXT = {
@@ -31,6 +34,11 @@ function ClientsCommerciaux({ status }) {
     // Clients commerciaux / prospects
     // ==========================================
     const [clients, setClients] = useState([])
+
+    // ==========================================
+    // Ajout : panneau latéral ouvert ou fermé
+    // ==========================================
+    const [sheetOpen, setSheetOpen] = useState(false)
 
     // ==========================================
     // Pagination
@@ -82,6 +90,12 @@ function ClientsCommerciaux({ status }) {
                         <h1 className="produits__title">{text.title}</h1>
                         <p className="produits__subtitle">{text.subtitle}</p>
                     </div>
+                    <div className="produits__toolbar">
+                        <Button onClick={() => setSheetOpen(true)}>
+                            <Plus />
+                            {status === 'prospect' ? 'Ajouter un prospect' : 'Ajouter un client'}
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Tableau */}
@@ -92,10 +106,10 @@ function ClientsCommerciaux({ status }) {
                                 <TableHead>Nom et prénom</TableHead>
                                 <TableHead>Poste</TableHead>
                                 <TableHead>Entreprise</TableHead>
+                                <TableHead>Secteur d'activité</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Numéro de téléphone</TableHead>
                                 <TableHead>Adresse</TableHead>
-                                <TableHead>Site web</TableHead>
                                 <TableHead className="devis__center">Statut</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -122,18 +136,20 @@ function ClientsCommerciaux({ status }) {
                                     <TableCell>{c.position || '-'}</TableCell>
                                     {/* entreprise */}
                                     <TableCell>{c.companyId?.name || '-'}</TableCell>
+                                    {/* secteurs d'activité de l'entreprise (elle peut en avoir plusieurs) */}
+                                    <TableCell>
+                                        {c.companyId?.activitySectorIds?.length > 0
+                                            ? c.companyId.activitySectorIds.map((sector) => (
+                                                <Badge key={sector._id} variant="secondary" className="mr-1">{sector.name}</Badge>
+                                            ))
+                                            : '-'}
+                                    </TableCell>
                                     {/* email */}
                                     <TableCell>{c.email || '-'}</TableCell>
                                     {/* phone */}
                                     <TableCell>{c.phone || '-'}</TableCell>
                                     {/* adresse */}
                                     <TableCell>{c.address || '-'}</TableCell>
-                                    {/* site web */}
-                                    <TableCell>
-                                        {c.website
-                                            ? <a href={c.website} target="_blank" rel="noreferrer" className="underline">{c.website}</a>
-                                            : '-'}
-                                    </TableCell>
                                     {/* statut actif / inactif */}
                                     <TableCell className="devis__center">
                                         <Badge className={c.isActive ? 'client__status--active' : 'client__status--inactive'}>
@@ -158,6 +174,14 @@ function ClientsCommerciaux({ status }) {
                     </div>
                 )}
             </Main>
+
+            {/* Panneau latéral (ajout) */}
+            <CommercialClientSheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                status={status}
+                onSave={() => getClients(1)}
+            />
         </>
     )
 }
