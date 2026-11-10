@@ -10,6 +10,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from "sonner"
 import '../../marques/Marque.css'
+import './CommercialClientSheet.css'
 import { CompanySheet } from '../../entreprises/components/CompanySheet'
 import { Plus } from 'lucide-react'
 
@@ -195,15 +196,18 @@ export function CommercialClientSheet({ open, onOpenChange, status, onSave }) {
               </Select>
             </div>
             {/* ======== Entreprise introuvable =========== */}
-            <p>Entreprise introuvable ?</p>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setCompanySheetOpen(true)}
-            >
-              <Plus size={16} />
-              Ajouter une entreprise
-            </Button>
+            <div className="commercial-sheet__company-missing">
+              <p className="commercial-sheet__company-missing-text">Entreprise introuvable ?</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setCompanySheetOpen(true)}
+              >
+                <Plus size={16} />
+                Ajouter une entreprise
+              </Button>
+            </div>
 
 
             {/* ======== adresse =========== */}

@@ -1,0 +1,13 @@
+/*
+ * Styles du sheet d'ajout d'un client commercial.
+ */
+@reference '../../../styles/index.css';
+
+/* « Entreprise introuvable ? » + bouton d'ajout, sur une ligne */
+.commercial-sheet__company-missing {
+  @apply flex items-center justify-between gap-3 rounded-lg border border-dashed bg-muted/40 px-3 py-2;
+}
+
+.commercial-sheet__company-missing-text {
+  @apply text-sm text-muted-foreground;
+}
