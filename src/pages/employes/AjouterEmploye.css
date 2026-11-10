@@ -1,0 +1,21 @@
+/*
+ * Styles de la page Ajouter un employé.
+ */
+@reference '../../styles/index.css';
+
+.employe-form {
+  @apply flex max-w-2xl flex-col gap-4 rounded-xl border bg-card p-6 shadow-sm;
+}
+
+/* prénom + nom côte à côte sur grand écran */
+.employe-form__row {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+}
+
+.employe-form__field {
+  @apply flex flex-col gap-2;
+}
+
+.employe-form__footer {
+  @apply flex justify-end gap-2 border-t pt-4;
+}

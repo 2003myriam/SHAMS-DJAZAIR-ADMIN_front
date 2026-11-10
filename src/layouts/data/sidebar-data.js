@@ -2,7 +2,7 @@
 // Pour ajouter un lien : l'ajouter dans MENU_ITEMS2 avec le bon "parent".
 import { LayoutDashboard } from 'lucide-react'
 import { AiOutlineProduct } from 'react-icons/ai'
-import { FiFileText, FiFolder } from "react-icons/fi";
+import { FiBriefcase, FiFileText, FiFolder } from "react-icons/fi";
 import { RiContactsBook2Line } from "react-icons/ri";
 import { FaRegBell } from "react-icons/fa";
 // Sidebar 1 : les icônes (une icône = une section)
@@ -12,6 +12,7 @@ export const MENU_ITEMS = [
   { key: 'Orders', label: 'Commande', icon: FiFileText },
   { key: 'Contacts', label: 'Contacts', icon: RiContactsBook2Line },
   { key: 'Documents', label: 'Documents', icon: FiFolder },
+  { key: 'Employees', label: 'Employés', icon: FiBriefcase },
   { key: 'Notifications', label: 'Notification', icon: FaRegBell },
 ]
 
@@ -33,6 +34,8 @@ export const MENU_ITEMS2 = [
   {key: 'Companies', label: 'Toutes les entreprises',parent: 'Contacts',path: '/entreprises',},
   // PARENT documents
   {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
+  // PARENT employés
+  {key: 'AddEmployee', label: 'Ajouter un employé',parent: 'Employees',path: '/employes/ajouter',},
   // PARENT notification
   {key: 'Notifications', label: 'Toutes les notifications',parent: 'Notifications',path: '/notification',},
  
