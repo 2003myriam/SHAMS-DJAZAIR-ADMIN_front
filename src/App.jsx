@@ -10,6 +10,7 @@ import { AuthenticatedLayout } from '@/layouts/authenticated-layout'
 import { Dashboard } from '@/pages/dashboard/Dashboard'
 import { NotFoundError } from '@/pages/errors/NotFoundError'
 import { SignIn } from '@/pages/sign-in/SignIn'
+import { ChangePassword } from '@/pages/change-password/ChangePassword'
 import { Produits } from '@/pages/products/Produits'
 import Marque from './pages/marques/Marque'
 import Devis from './pages/devis/Devis'
@@ -31,6 +32,7 @@ export default function App() {
         <Routes>
           {/* ===== Page sans sidebar ===== */}
           <Route path='/sign-in' element={<SignIn />} />
+          <Route path='/change-password' element={<ChangePassword />} />
 
           {/* ===== Pages avec les sidebars + header ===== */}
           <Route element={<AuthenticatedLayout />}>

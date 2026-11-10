@@ -39,12 +39,20 @@ export function SignIn() {
         email,
         password,
       })
-      const { token } = response.data
+      // recupere le tokin de l'utilisateur et si mustchangepassword est true or false 
+      const { token, mustChangePassword } = response.data
 
       // token utilisé par les autres pages (Authorization: Bearer ...)
+      // il doit être enregistré AVANT la redirection : la page de changement de mot de passe en a besoin
       localStorage.setItem('token', token)
       auth.setUser({ email })
       auth.setAccessToken(token)
+
+      if (mustChangePassword) { // si mustchange est true donc l'utilisateur dois se deriger vers une page de changement de mot de passe
+        navigate('/change-password', { replace: true })
+        return
+      }
+
       toast.success(`Bon retour, ${email} !`)
 
       // retourne à la page demandée avant la connexion, sinon à l'accueil
