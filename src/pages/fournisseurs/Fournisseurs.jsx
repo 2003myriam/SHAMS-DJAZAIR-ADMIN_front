@@ -16,11 +16,20 @@ import '../devis/Devis.css'
 import '../clients/Clients.css'
 import DeleteSupplier from './components/DeleteSupplier'
 import { SupplierSheet } from './components/SupplierSheet'
+import { usePermission } from '@/hooks/usePermission'
 
 // valeur du Select pour « toutes les catégories » (un SelectItem ne peut pas avoir value="")
 const ALL_CATEGORIES = 'all'
 
 function Fournisseurs() {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canCreate = usePermission("suppliers", "create")
+    const canUpdate = usePermission("suppliers", "update")
+    const canDelete = usePermission("suppliers", "delete")
+    const canExport = usePermission("suppliers", "read")
     // ==========================================
     // Fournisseurs
     // ==========================================
@@ -180,20 +189,24 @@ function Fournisseurs() {
                         <p className="produits__subtitle">Voici la liste des fournisseurs.</p>
                     </div>
                     <div className="produits__toolbar">
-                        <Button variant="outline" onClick={handleExport}>
-                            <Download />
-                            Exporter
-                        </Button>
+                        {canExport && (
+                          <Button variant="outline" onClick={handleExport}>
+                              <Download />
+                              Exporter
+                          </Button>
+                        )}
 
-                        <Button
-                            onClick={() => {
-                                setCurrentSupplier(null)
-                                setSheetOpen(true)
-                            }}
-                        >
-                            <Plus />
-                            Ajouter un fournisseur
-                        </Button>
+                        {canCreate && (
+                          <Button
+                              onClick={() => {
+                                  setCurrentSupplier(null)
+                                  setSheetOpen(true)
+                              }}
+                          >
+                              <Plus />
+                              Ajouter un fournisseur
+                          </Button>
+                        )}
                     </div>
                 </div>
 
@@ -300,28 +313,32 @@ function Fournisseurs() {
                                     </TableCell>
                                     {/* actions */}
                                     <TableCell className="produits__actions">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => {
-                                                setCurrentSupplier(s)
-                                                setSheetOpen(true)
-                                            }}
-                                            aria-label="Modifier"
-                                        >
-                                            <Pencil />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => {
-                                                setSupplierToDelete(s)
-                                                setDeleteDialogOpen(true)
-                                            }}
-                                            aria-label="Supprimer"
-                                        >
-                                            <Trash2 />
-                                        </Button>
+                                        {canUpdate && (
+                                          <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => {
+                                                  setCurrentSupplier(s)
+                                                  setSheetOpen(true)
+                                              }}
+                                              aria-label="Modifier"
+                                          >
+                                              <Pencil />
+                                          </Button>
+                                        )}
+                                        {canDelete && (
+                                          <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => {
+                                                  setSupplierToDelete(s)
+                                                  setDeleteDialogOpen(true)
+                                              }}
+                                              aria-label="Supprimer"
+                                          >
+                                              <Trash2 />
+                                          </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

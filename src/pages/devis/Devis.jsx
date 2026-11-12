@@ -15,6 +15,7 @@ import './Devis.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import Pagination from '@mui/material/Pagination'
 import { DevisSheet } from './components/DevisSheet'
+import { usePermission } from '@/hooks/usePermission'
 
 // Libellés en français des statuts du modèle Devis
 const DEVIS_STATUS = {
@@ -29,6 +30,13 @@ const DEVIS_STATUS = {
 }
 
 function Devis() {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canCreate = usePermission("devis", "create")
+    const canUpdate = usePermission("devis", "update")
+    const canDelete = usePermission("devis", "delete")
     // ==========================================
     // Devis
     // ==========================================
@@ -250,7 +258,9 @@ function Devis() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
+                        {canCreate && (
+                          <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
+                        )}
                 </div>
 
                 {/* Tableau */}
@@ -305,6 +315,7 @@ function Devis() {
                                         <Select
                                             value={d.status}
                                             onValueChange={(value) => updateStatus(d._id, value)}
+                                            disabled={!canUpdate}
                                         >
                                             <SelectTrigger size="sm" className={`devis-status devis-status--${d.status}`}>
                                                 <SelectValue placeholder="Statut" />
@@ -322,23 +333,27 @@ function Devis() {
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
                                         {/* ICONE MODIFIER  */}
-                                        <Button variant="ghost"
-                                            size="icon"
-                                            onClick={() => openEdit(d)}
-                                            aria-label="Modifier">
-                                            <Pencil /></Button>
+                                        {canUpdate && (
+                                          <Button variant="ghost"
+                                              size="icon"
+                                              onClick={() => openEdit(d)}
+                                              aria-label="Modifier">
+                                              <Pencil /></Button>
+                                        )}
                                         {/* ICONE SUPPRIMER  */}
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => {
-                                                setDevisToDelete(d._id) // je garde ID de devis
-                                                setDeleteDialogOpen(true) // la boite est en etat ouvert
-                                            }}
-                                            aria-label="Supprimer"
-                                        >
-                                            <Trash2 />
-                                        </Button>
+                                        {canDelete && (
+                                          <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => {
+                                                  setDevisToDelete(d._id) // je garde ID de devis
+                                                  setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                              }}
+                                              aria-label="Supprimer"
+                                          >
+                                              <Trash2 />
+                                          </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

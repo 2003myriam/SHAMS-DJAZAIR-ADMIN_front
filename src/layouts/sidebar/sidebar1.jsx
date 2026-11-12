@@ -6,12 +6,16 @@ import logo from '@/assets/logo.png'
 import { useSidebar } from '@/components/ui/sidebar'
 import { SignOutDialog } from '@/components/sign-out-dialog'
 import { MENU_ITEMS } from '@/layouts/data/sidebar-data'
+import { usePermission } from '@/hooks/usePermission'
 import './sidebar1.css'
 
 // Sidebar d'icônes : choisit la section affichée dans Sidebar2
 export function Sidebar1({ selected, setSelected, totalCommandes }) {
   const { isMobile, setOpen, setOpenMobile } = useSidebar()
   const [signOutOpen, setSignOutOpen] = useState(false)
+  // la section Employés n'est visible que pour ceux qui peuvent créer un employé (admin)
+  const canCreateEmployee = usePermission('employees', 'create')
+  const menuItems = MENU_ITEMS.filter((item) => item.key !== 'Employees' || canCreateEmployee)
 
   const handleSelect = (key) => {
     setSelected(key)
@@ -32,7 +36,7 @@ export function Sidebar1({ selected, setSelected, totalCommandes }) {
         </div>
 
         <Menu className='app-sidebar__nav'>
-          {MENU_ITEMS.map((item) => (
+          {menuItems.map((item) => (
             <MenuItem
               key={item.key}
               icon={<item.icon size={21} />}

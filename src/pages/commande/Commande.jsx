@@ -17,6 +17,7 @@ import { CommandeSheet } from './components/CommandeSheet'
 import '../devis/Devis.css'
 import { SearchIcon, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { usePermission } from '@/hooks/usePermission'
 
 
 // Libellés en français des canaux (customer.source du modèle Order)
@@ -28,6 +29,12 @@ const SOURCES = {
 }
 
 function Commande() {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canUpdate = usePermission("orders", "update")
+    const canDelete = usePermission("orders", "delete")
     // ==========================================
     // Commandes
     // ==========================================
@@ -323,7 +330,7 @@ function Commande() {
                                     <TableCell>{SOURCES[o.customer?.source] || o.customer?.source || '—'}</TableCell>
                                     {/* statut de la commande */}
                                     <TableCell className="devis__center">
-                                        <Select value={o.status} onValueChange={(value) => updateOrderField(o._id, "status", value)}>
+                                        <Select value={o.status} onValueChange={(value) => updateOrderField(o._id, "status", value)} disabled={!canUpdate}>
                                             <SelectTrigger size="sm" className={`status-select status-badge--${o.status}`}>
                                                 <SelectValue placeholder="Statut" />
                                             </SelectTrigger>
@@ -338,7 +345,7 @@ function Commande() {
                                     </TableCell>
                                     {/* statut du paiement */}
                                     <TableCell className="devis__center">
-                                        <Select value={o.paymentStatus} onValueChange={(value) => updateOrderField(o._id, "paymentStatus", value)}>
+                                        <Select value={o.paymentStatus} onValueChange={(value) => updateOrderField(o._id, "paymentStatus", value)} disabled={!canUpdate}>
                                             <SelectTrigger size="sm" className={`status-select status-badge--${o.paymentStatus}`}>
                                                 <SelectValue placeholder="Paiement" />
                                             </SelectTrigger>
@@ -357,24 +364,28 @@ function Commande() {
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
                                         {/* ICONE MODIFIER  */}
-                                        <Button variant="ghost"
-                                            size="icon"
-                                            onClick={() => openEdit(o)}
-                                            aria-label="Modifier">
-                                            <Pencil /></Button>
+                                        {canUpdate && (
+                                          <Button variant="ghost"
+                                              size="icon"
+                                              onClick={() => openEdit(o)}
+                                              aria-label="Modifier">
+                                              <Pencil /></Button>
+                                        )}
                                         {/* ICONE SUPPRIMER  */}
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => {
-                                                setOrderToDelete(o._id) // je garde ID de la commande
-                                                setOrderNumberToDelete(o.orderNumber) // je garde le numéro de la commande
-                                                setDeleteDialogOpen(true) // la boite est en etat ouvert
-                                            }}
-                                            aria-label="Supprimer"
-                                        >
-                                            <Trash2 />
-                                        </Button>
+                                        {canDelete && (
+                                          <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => {
+                                                  setOrderToDelete(o._id) // je garde ID de la commande
+                                                  setOrderNumberToDelete(o.orderNumber) // je garde le numéro de la commande
+                                                  setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                              }}
+                                              aria-label="Supprimer"
+                                          >
+                                              <Trash2 />
+                                          </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

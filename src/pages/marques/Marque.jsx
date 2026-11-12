@@ -11,8 +11,16 @@ import { Checkbox } from "@/components/ui/checkbox"
 import Pagination from '@mui/material/Pagination'
 import './Marque.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
+import { usePermission } from '@/hooks/usePermission'
 
 function Marque() {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canCreate = usePermission("brand", "create")
+    const canUpdate = usePermission("brand", "update")
+    const canDelete = usePermission("brand", "delete")
     // ==========================================
     // Marque
     // ==========================================
@@ -137,7 +145,9 @@ function Marque() {
                         <h1 className="produits__title">Marques</h1>
                         <p className="produits__subtitle">Voici la liste de vos marque industrielles.</p>
                     </div>
-                    <Button onClick={openCreate}><Plus />Ajouter une marque</Button>
+                    {canCreate && (
+                      <Button onClick={openCreate}><Plus />Ajouter une marque</Button>
+                    )}
                 </div>
 
                 {/* Tableau */}
@@ -179,24 +189,28 @@ function Marque() {
                                     {/* Actions */}
                                     <TableCell className="produits__actions">
                                         {/* ICONE MODIFIER  */}
-                                        <Button variant="ghost"
-                                            size="icon"
-                                            onClick={() => openEdit(b)}
-                                            aria-label="Modifier">
-                                            <Pencil /></Button>
+                                        {canUpdate && (
+                                          <Button variant="ghost"
+                                              size="icon"
+                                              onClick={() => openEdit(b)}
+                                              aria-label="Modifier">
+                                              <Pencil /></Button>
+                                        )}
                                         {/* ICONE SUPPRIMER  */}
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => {
-                                                setBrandToDelete(b._id) // je garde ID de la marque
-                                                setBrandNameToDelete(b.name) // je garde nom de la marque 
-                                                setDeleteDialogOpen(true) // la boite est en etat ouvert
-                                            }}
-                                            aria-label="Supprimer"
-                                        >
-                                            <Trash2 />
-                                        </Button>
+                                        {canDelete && (
+                                          <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              onClick={() => {
+                                                  setBrandToDelete(b._id) // je garde ID de la marque
+                                                  setBrandNameToDelete(b.name) // je garde nom de la marque 
+                                                  setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                              }}
+                                              aria-label="Supprimer"
+                                          >
+                                              <Trash2 />
+                                          </Button>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

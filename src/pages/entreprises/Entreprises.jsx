@@ -13,8 +13,16 @@ import '../clients/Clients.css'
 import './Entreprises.css'
 import { CompanySheet } from './components/CompanySheet'
 import DeleteCompany from './components/DeleteCompany'
+import { usePermission } from '@/hooks/usePermission'
 
 function Entreprises() {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canCreate = usePermission("company", "create")
+    const canUpdate = usePermission("company", "update")
+    const canDelete = usePermission("company", "delete")
     // ==========================================
     // Entreprises
     // ==========================================
@@ -103,13 +111,15 @@ function Entreprises() {
                         <p className="produits__subtitle">Voici la liste de toutes les entreprises.</p>
                     </div>
                     <div className="produits__toolbar">
-                        <Button onClick={() => {
-                            setCurrentCompany(null)
-                            setSheetOpen(true)
-                        }}>
-                            <Plus />
-                            Ajouter une entreprise
-                        </Button>
+                        {canCreate && (
+                          <Button onClick={() => {
+                              setCurrentCompany(null)
+                              setSheetOpen(true)
+                          }}>
+                              <Plus />
+                              Ajouter une entreprise
+                          </Button>
+                        )}
                     </div>
                 </div>
 
@@ -171,28 +181,32 @@ function Entreprises() {
                                     <span><strong>RC :</strong> {c.RC || '-'}</span>
                                 </div>
                                 <div className="entreprise__actions">
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => {
-                                            setCurrentCompany(c)
-                                            setSheetOpen(true)
-                                        }}
-                                        aria-label="Modifier"
-                                    >
-                                        <Pencil />
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => {
-                                            setCompanyToDelete(c)
-                                            setDeleteDialogOpen(true)
-                                        }}
-                                        aria-label="Supprimer"
-                                    >
-                                        <Trash2 />
-                                    </Button>
+                                    {canUpdate && (
+                                      <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => {
+                                              setCurrentCompany(c)
+                                              setSheetOpen(true)
+                                          }}
+                                          aria-label="Modifier"
+                                      >
+                                          <Pencil />
+                                      </Button>
+                                    )}
+                                    {canDelete && (
+                                      <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => {
+                                              setCompanyToDelete(c)
+                                              setDeleteDialogOpen(true)
+                                          }}
+                                          aria-label="Supprimer"
+                                      >
+                                          <Trash2 />
+                                      </Button>
+                                    )}
                                 </div>
                             </div>
                         </div>

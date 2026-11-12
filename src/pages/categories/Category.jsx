@@ -10,6 +10,7 @@ import { Main } from '@/layouts/main'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import { CategorySheet } from './components/CategorySheet'
 import './Category.css'
+import { usePermission } from '@/hooks/usePermission'
 
 
 
@@ -17,6 +18,13 @@ import './Category.css'
 const TYPE_LABELS = ['Parent', 'Sous-catégorie', 'Sous-sous-catégorie']
 
 function Category() {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canCreate = usePermission("categories", "create")
+    const canUpdate = usePermission("categories", "update")
+    const canDelete = usePermission("categories", "delete")
     // ==========================================
     // Catégories
     // ==========================================
@@ -166,20 +174,24 @@ function Category() {
                     </TableCell>
                     {/* Actions */}
                     <TableCell className="produits__actions">
-                        <Button variant="ghost" size="icon" onClick={() => openSheet(c)} aria-label="Modifier">
-                            <Pencil />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                                setCategoryToDelete(c) // je garde la catégorie (id + nom)
-                                setDeleteDialogOpen(true)
-                            }}
-                            aria-label="Supprimer"
-                        >
-                            <Trash2 />
-                        </Button>
+                        {canUpdate && (
+                          <Button variant="ghost" size="icon" onClick={() => openSheet(c)} aria-label="Modifier">
+                              <Pencil />
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                  setCategoryToDelete(c) // je garde la catégorie (id + nom)
+                                  setDeleteDialogOpen(true)
+                              }}
+                              aria-label="Supprimer"
+                          >
+                              <Trash2 />
+                          </Button>
+                        )}
                     </TableCell>
                 </TableRow>
 
@@ -199,7 +211,9 @@ function Category() {
                         <h1 className="produits__title">Catégories</h1>
                         <p className="produits__subtitle">Voici la liste de vos catégories et sous-catégories.</p>
                     </div>
-                    <Button onClick={() => openSheet()}><Plus />Ajouter une catégorie</Button>
+                    {canCreate && (
+                      <Button onClick={() => openSheet()}><Plus />Ajouter une catégorie</Button>
+                    )}
                 </div>
 
                 {/* Tableau */}

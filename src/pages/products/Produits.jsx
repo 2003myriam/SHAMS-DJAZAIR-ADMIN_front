@@ -26,10 +26,20 @@ import { ProduitSheet } from './components/ProduitSheet'
 import './Produits.css'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import ProduitDetail from './components/ProduitDetail'
+import { usePermission } from '@/hooks/usePermission'
 
 
 
 export function Produits() {
+
+  // ==========================================
+  // Permissions (selon le rôle de l'utilisateur connecté)
+  // ==========================================
+
+  const canCreate = usePermission("products", "create")
+  const canUpdate = usePermission("products", "update")
+  const canDelete = usePermission("products", "delete")
+  const canExport = usePermission("products", "read")
 
   // ==========================================
   // Produits
@@ -267,15 +277,19 @@ export function Produits() {
               )}
             </div>
 
-            <Button variant="outline" onClick={handleExport}>
-              <Download />
-              Exporter
-            </Button>
+            {canExport && (
+              <Button variant="outline" onClick={handleExport}>
+                <Download />
+                Exporter
+              </Button>
+            )}
 
-            <Button onClick={openCreate}>
-              <Plus />
-              Ajouter un produit
-            </Button>
+            {canCreate && (
+              <Button onClick={openCreate}>
+                <Plus />
+                Ajouter un produit
+              </Button>
+            )}
           </div>
 
         </div>
@@ -415,27 +429,32 @@ export function Produits() {
                       <Eye />
                     </Button>
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => openEdit(p)}
-                      aria-label="Modifier"
-                    >
-                      <Pencil />
-                    </Button>
-                    {/* ICONE SUPPRIMER  */}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setProductToDelete(p._id) // je garde ID de la marque
-                        setProductNameToDelete(p.titre)// je garde nom de la marque 
-                        setDeleteDialogOpen(true) // la boite est en etat ouvert
-                      }}
-                      aria-label="Supprimer"
-                    >
-                      <Trash2 />
-                    </Button>
+                    {/* ICONE MODIFIER (masquée si pas la permission) */}
+                    {canUpdate && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEdit(p)}
+                        aria-label="Modifier"
+                      >
+                        <Pencil />
+                      </Button>
+                    )}
+                    {/* ICONE SUPPRIMER (masquée si pas la permission) */}
+                    {canDelete && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setProductToDelete(p._id) // je garde ID de la marque
+                          setProductNameToDelete(p.titre)// je garde nom de la marque 
+                          setDeleteDialogOpen(true) // la boite est en etat ouvert
+                        }}
+                        aria-label="Supprimer"
+                      >
+                        <Trash2 />
+                      </Button>
+                    )}
 
                   </TableCell>
 

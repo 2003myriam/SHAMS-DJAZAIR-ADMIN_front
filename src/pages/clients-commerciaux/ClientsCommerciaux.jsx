@@ -14,6 +14,7 @@ import '../products/Produits.css'
 import '../devis/Devis.css'
 import '../clients/Clients.css'
 import { CommercialClientSheet } from './components/CommercialClientSheet'
+import { usePermission } from '@/hooks/usePermission'
 
 // Titre et paragraphe de la page selon le status
 const PAGE_TEXT = {
@@ -30,6 +31,11 @@ const PAGE_TEXT = {
 }
 
 function ClientsCommerciaux({ status }) {
+
+    // ==========================================
+    // Permissions (selon le rôle de l'utilisateur connecté)
+    // ==========================================
+    const canCreate = usePermission("customers", "create")
     // ==========================================
     // Clients commerciaux / prospects
     // ==========================================
@@ -91,10 +97,12 @@ function ClientsCommerciaux({ status }) {
                         <p className="produits__subtitle">{text.subtitle}</p>
                     </div>
                     <div className="produits__toolbar">
-                        <Button onClick={() => setSheetOpen(true)}>
-                            <Plus />
-                            {status === 'prospect' ? 'Ajouter un prospect' : 'Ajouter un client'}
-                        </Button>
+                        {canCreate && (
+                          <Button onClick={() => setSheetOpen(true)}>
+                              <Plus />
+                              {status === 'prospect' ? 'Ajouter un prospect' : 'Ajouter un client'}
+                          </Button>
+                        )}
                     </div>
                 </div>
 
