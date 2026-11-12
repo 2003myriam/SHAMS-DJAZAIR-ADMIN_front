@@ -40,12 +40,12 @@ export function SignIn() {
         password,
       })
       // recupere le tokin de l'utilisateur et si mustchangepassword est true or false 
-      const { token, mustChangePassword } = response.data
+      const { token, mustChangePassword, role } = response.data
 
       // token utilisé par les autres pages (Authorization: Bearer ...)
       // il doit être enregistré AVANT la redirection : la page de changement de mot de passe en a besoin
       localStorage.setItem('token', token)
-      auth.setUser({ email })
+      auth.setUser({ email, role })
       auth.setAccessToken(token)
 
       if (mustChangePassword) { // si mustchange est true donc l'utilisateur dois se deriger vers une page de changement de mot de passe
