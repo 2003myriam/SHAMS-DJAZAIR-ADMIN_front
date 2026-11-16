@@ -58,7 +58,12 @@
 }
 
 .employe-card__footer {
-  @apply mt-auto flex justify-end;
+  @apply mt-auto flex items-center justify-between;
+}
+
+/* Bouton poubelle */
+.employe-card__delete {
+  @apply text-muted-foreground hover:bg-red-50 hover:text-red-600;
 }
 
 /* Badge du rôle : une couleur par rôle */

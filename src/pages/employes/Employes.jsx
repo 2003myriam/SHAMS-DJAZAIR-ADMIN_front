@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Plus, Mail, Phone, CalendarDays } from 'lucide-react'
+import { Plus, Mail, Phone, CalendarDays, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
 import { usePermission } from '@/hooks/usePermission'
+import DeleteConfirmation from './components/DeleteConfirmation'
 import '../products/Produits.css'
 import '../clients/Clients.css'
 import './Employes.css'
@@ -24,11 +25,42 @@ const ROLES = {
 function Employes() {
     const navigate = useNavigate()
     const canCreate = usePermission("employees", "create")
+    const canDelete = usePermission("employees", "delete")
 
     // ==========================================
     // Employés
     // ==========================================
     const [employees, setEmployees] = useState([])
+
+    // ==========================================
+    // Suppression : employé choisi + ouverture de la fenêtre de confirmation
+    // ==========================================
+    const [employeeToDelete, setEmployeeToDelete] = useState(null)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+    const openDeleteDialog = (employee) => {
+        setEmployeeToDelete(employee)
+        setDeleteDialogOpen(true)
+    }
+
+    const handleDelete = async () => {
+        try {
+            const token = localStorage.getItem("token")
+            await axios.delete(`${import.meta.env.VITE_API_URL}/auth/${employeeToDelete._id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            toast.success("Employé supprimé avec succès.")
+            // on retire l'employé de la liste sans recharger
+            setEmployees(employees.filter((e) => e._id !== employeeToDelete._id))
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Impossible de supprimer l'employé.")
+        } finally {
+            setDeleteDialogOpen(false)
+            setEmployeeToDelete(null)
+        }
+    }
 
     // ==========================================
     // Récupération des employés
@@ -111,15 +143,34 @@ function Employes() {
                                 </li>
                             </ul>
 
-                            {/* statut du compte */}
+                            {/* statut du compte + bouton de suppression */}
                             <div className="employe-card__footer">
                                 <Badge className={e.isActive ? 'client__status--active' : 'client__status--inactive'}>
                                     {e.isActive ? 'Compte actif' : 'Compte inactif'}
                                 </Badge>
+                                {canDelete && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="employe-card__delete"
+                                        title="Supprimer l'employé"
+                                        onClick={() => openDeleteDialog(e)}
+                                    >
+                                        <Trash2 />
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     ))}
                 </div>
+
+                {/* Confirmation de suppression */}
+                <DeleteConfirmation
+                    open={deleteDialogOpen}
+                    onOpenChange={setDeleteDialogOpen}
+                    onConfirm={handleDelete}
+                    employeeName={`${employeeToDelete?.firstName || ''} ${employeeToDelete?.lastName || ''}`}
+                />
             </Main>
         </>
     )
