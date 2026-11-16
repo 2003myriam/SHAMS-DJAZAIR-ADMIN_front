@@ -16,6 +16,33 @@
   @apply flex flex-1 items-center gap-3;
 }
 
+/* ================= MENU PROFIL ================= */
+.profile__trigger {
+  @apply flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-xs font-bold outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ring;
+  background: color-mix(in srgb, var(--yellow) 85%, transparent);
+  color: #1c2d44;
+}
+
+.profile__trigger:hover {
+  @apply ring-2 ring-border;
+}
+
+.profile__menu {
+  @apply w-60;
+}
+
+.profile__label {
+  @apply flex flex-col gap-0.5;
+}
+
+.profile__email {
+  @apply truncate text-sm font-medium text-foreground;
+}
+
+.profile__role {
+  @apply text-xs font-normal text-muted-foreground;
+}
+
 /* ================= CONTENU ================= */
 .main {
   @apply mx-auto w-full max-w-7xl px-4 py-6;

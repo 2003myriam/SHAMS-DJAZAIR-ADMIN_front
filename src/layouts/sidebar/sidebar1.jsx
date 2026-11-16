@@ -1,10 +1,8 @@
-// Sidebar d'icônes (Sidebar1) : logo, une icône par section et bouton de déconnexion.
-import { useState } from 'react'
-import { LogOut } from 'lucide-react'
+// Sidebar d'icônes (Sidebar1) : logo et une icône par section.
+// (la déconnexion est dans le menu profil du header)
 import { Menu, MenuItem, Sidebar } from 'react-pro-sidebar'
 import logo from '@/assets/logo.png'
 import { useSidebar } from '@/components/ui/sidebar'
-import { SignOutDialog } from '@/components/sign-out-dialog'
 import { MENU_ITEMS } from '@/layouts/data/sidebar-data'
 import { usePermission } from '@/hooks/usePermission'
 import './sidebar1.css'
@@ -12,7 +10,6 @@ import './sidebar1.css'
 // Sidebar d'icônes : choisit la section affichée dans Sidebar2
 export function Sidebar1({ selected, setSelected, totalCommandes }) {
   const { isMobile, setOpen, setOpenMobile } = useSidebar()
-  const [signOutOpen, setSignOutOpen] = useState(false)
   // la section Employés n'est visible que pour ceux qui peuvent créer un employé (admin)
   const canCreateEmployee = usePermission('employees', 'create')
   const menuItems = MENU_ITEMS.filter((item) => item.key !== 'Employees' || canCreateEmployee)
@@ -52,21 +49,7 @@ export function Sidebar1({ selected, setSelected, totalCommandes }) {
             </MenuItem>
           ))}
         </Menu>
-
-
-
-        <Menu className='app-sidebar__nav app-sidebar__nav--bottom'>
-          <MenuItem
-            className='app-sidebar__item--danger'
-            icon={<LogOut size={21} />}
-            onClick={() => setSignOutOpen(true)}
-            data-label='Déconnexion'
-            aria-label='Déconnexion'
-          />
-        </Menu>
       </Sidebar>
-
-      <SignOutDialog open={signOutOpen} onOpenChange={setSignOutOpen} />
     </>
   )
 }

@@ -3,6 +3,7 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { ProfileDropdown } from '@/components/profile-dropdown'
 import { CiBellOn } from "react-icons/ci";
 import {
   Popover,
@@ -51,6 +52,8 @@ export function Header({ children }) {
 
       </Popover>
       <ThemeSwitch />
+      {/* Profil : paramètres + déconnexion */}
+      <ProfileDropdown />
     </header>
   )
 }

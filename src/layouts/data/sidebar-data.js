@@ -11,7 +11,7 @@ export const MENU_ITEMS = [
   { key: 'Products', label: 'Produits', icon: AiOutlineProduct },
   { key: 'Orders', label: 'Commande', icon: FiFileText },
   { key: 'Contacts', label: 'Contacts', icon: RiContactsBook2Line },
-  { key: 'Documents', label: 'Documents', icon: FiFolder },
+  // { key: 'Documents', label: 'Documents', icon: FiFolder },
   { key: 'Employees', label: 'Employés', icon: FiBriefcase },
   { key: 'Notifications', label: 'Notification', icon: FaRegBell },
 ]
@@ -33,7 +33,7 @@ export const MENU_ITEMS2 = [
   {key: 'Suppliers', label: 'Tous les fournisseurs',parent: 'Contacts',path: '/fournisseurs',},
   {key: 'Companies', label: 'Toutes les entreprises',parent: 'Contacts',path: '/entreprises',},
   // PARENT documents
-  {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
+  // {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
   // PARENT employés
   {key: 'AllEmployees', label: 'Tous les employés',parent: 'Employees',path: '/employes',},
   {key: 'AddEmployee', label: 'Ajouter un employé',parent: 'Employees',path: '/employes/ajouter',},
