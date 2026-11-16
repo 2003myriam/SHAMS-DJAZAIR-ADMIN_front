@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 // Le "conteneur" partagé : par défaut, une liste vide
 const NotificationsContext = createContext([])
 // Signal pour recharger les compteurs de notifications non lues (sidebars)
-const UnreadRefreshContext = createContext({ unreadVersion: 0, refreshUnread: () => {} })
+const UnreadRefreshContext = createContext({ unreadVersion: 0, refreshUnread: () => { } })
 
 export function NotificationsProvider({ children }) {
     const [notifications, setNotifications] = useState([])
@@ -29,9 +29,9 @@ export function NotificationsProvider({ children }) {
         // On écoute l'événement envoyé par le serveur
         socket.on('notification', (data) => {
             toast.success(data.message, {
-                duration: Infinity,          // ne disparaît pas toute seule
+                // ne disparaît pas toute seule
                 closeButton: true,   // bouton pour la fermer   
-                // duration: 8000,    disparaît après 8 secondes
+                duration: 8000, //disparaît après 8 secondes
 
             })
             // on ajoute la notification à la liste (la plus récente en premier)

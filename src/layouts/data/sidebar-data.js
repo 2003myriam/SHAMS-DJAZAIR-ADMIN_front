@@ -35,6 +35,7 @@ export const MENU_ITEMS2 = [
   // PARENT documents
   {key: 'Documents', label: 'Tous les documents',parent: 'Documents',path: '/documents',},
   // PARENT employés
+  {key: 'AllEmployees', label: 'Tous les employés',parent: 'Employees',path: '/employes',},
   {key: 'AddEmployee', label: 'Ajouter un employé',parent: 'Employees',path: '/employes/ajouter',},
   // PARENT notification
   {key: 'Notifications', label: 'Toutes les notifications',parent: 'Notifications',path: '/notification',},

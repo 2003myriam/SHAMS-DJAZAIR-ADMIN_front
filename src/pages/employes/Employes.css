@@ -1,0 +1,83 @@
+/*
+ * Styles de la page Employés (affichage en cartes).
+ */
+@reference '../../styles/index.css';
+
+/* Grille : 1 colonne sur mobile, jusqu'à 4 sur grand écran */
+.employes__grid {
+  @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4;
+}
+
+.employes__empty {
+  @apply rounded-xl border border-dashed py-12 text-center text-sm text-muted-foreground;
+}
+
+/* Carte d'un employé */
+.employe-card {
+  @apply flex flex-col gap-4 rounded-xl border bg-card p-5 shadow-sm transition-shadow hover:shadow-md;
+}
+
+.employe-card__head {
+  @apply flex items-start gap-3;
+}
+
+.employe-card__avatar {
+  @apply flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-bold;
+  background: color-mix(in srgb, var(--yellow) 85%, transparent);
+  color: #1c2d44;
+}
+
+.employe-card__identity {
+  @apply flex min-w-0 flex-1 flex-col items-start gap-1.5;
+}
+
+.employe-card__name {
+  @apply truncate font-semibold;
+}
+
+/* Point de statut */
+.employe-card__dot {
+  @apply mt-1 size-2.5 shrink-0 rounded-full bg-slate-300;
+}
+
+.employe-card__dot--active {
+  @apply bg-emerald-500;
+}
+
+/* Infos de contact */
+.employe-card__infos {
+  @apply flex flex-col gap-2 border-t pt-4 text-sm text-muted-foreground;
+}
+
+.employe-card__infos li {
+  @apply flex items-center gap-2 truncate;
+}
+
+.employe-card__infos svg {
+  @apply size-4 shrink-0;
+}
+
+.employe-card__footer {
+  @apply mt-auto flex justify-end;
+}
+
+/* Badge du rôle : une couleur par rôle */
+.employe__role {
+  @apply border-transparent;
+}
+
+.employe__role--admin {
+  @apply bg-rose-100 text-rose-800;
+}
+
+.employe__role--sales_manager {
+  @apply bg-indigo-100 text-indigo-800;
+}
+
+.employe__role--sales {
+  @apply bg-sky-100 text-sky-800;
+}
+
+.employe__role--engineer {
+  @apply bg-amber-100 text-amber-800;
+}

@@ -21,6 +21,7 @@ import Clients from './pages/clients/Clients'
 import Fournisseurs from './pages/fournisseurs/Fournisseurs'
 import Entreprises from './pages/entreprises/Entreprises'
 import AjouterEmploye from './pages/employes/AjouterEmploye'
+import Employes from './pages/employes/Employes'
 import ClientsCommerciaux from './pages/clients-commerciaux/ClientsCommerciaux'
 
 export default function App() {
@@ -46,6 +47,7 @@ export default function App() {
             <Route path='/clients' element={<Clients />} />
             <Route path='/fournisseurs' element={<Fournisseurs />} />
             <Route path='/entreprises' element={<Entreprises />} />
+            <Route path='/employes' element={<Employes />} />
             <Route path='/employes/ajouter' element={<AjouterEmploye />} />
             {/* même page, le status change (key pour repartir de zéro en changeant de page) */}
             <Route path='/clients-commerciaux' element={<ClientsCommerciaux key='client' status='client' />} />
