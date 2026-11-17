@@ -3,6 +3,26 @@
  */
 @reference '../../styles/index.css';
 
+/* Haut de page : titre à gauche, recherche + Exporter + Ajouter à droite,
+   le tout sur une seule ligne à partir des écrans moyens */
+.entreprises__top {
+  @apply md:flex-nowrap;
+}
+
+/* la recherche prend la place restante au lieu d'une largeur fixe */
+.entreprises__top .produits__toolbar {
+  @apply md:min-w-0 md:flex-1 md:justify-end;
+}
+
+.entreprises__top .produits__search {
+  @apply sm:w-auto md:max-w-80 md:min-w-40 md:flex-1;
+}
+
+/* les boutons ne rétrécissent pas et leur texte ne passe pas à la ligne */
+.entreprises__top .produits__toolbar > button {
+  @apply h-10 shrink-0 whitespace-nowrap;
+}
+
 /* Liste des blocs */
 .entreprises__list {
   @apply flex flex-col gap-4;

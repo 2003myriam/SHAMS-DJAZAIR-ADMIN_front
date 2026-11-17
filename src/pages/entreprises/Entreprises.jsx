@@ -2,8 +2,10 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Clock, Globe, Mail, MapPin, Pencil, Phone, Plus, Trash2 } from 'lucide-react'
+import { saveAs } from 'file-saver'
+import { Clock, Download, Globe, Mail, MapPin, Pencil, Phone, Plus, SearchIcon, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
@@ -23,10 +25,17 @@ function Entreprises() {
     const canCreate = usePermission("company", "create")
     const canUpdate = usePermission("company", "update")
     const canDelete = usePermission("company", "delete")
+    // la route d'export demande la permission "read"
+    const canExport = usePermission("company", "read")
     // ==========================================
     // Entreprises
     // ==========================================
     const [companies, setCompanies] = useState([])
+
+    // ==========================================
+    // Recherche par nom de l'entreprise
+    // ==========================================
+    const [search, setSearch] = useState('')
 
     // ==========================================
     // Ajout : panneau latéral ouvert ou fermé
@@ -57,18 +66,51 @@ function Entreprises() {
     const getCompanies = async (page = 1) => {
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/companies?page=${page}&limit=${pagination.companiesPerPage}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    }
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/companies`, {
+                // la recherche n'est envoyée que si elle n'est pas vide (?search=...)
+                params: {
+                    page,
+                    limit: pagination.companiesPerPage,
+                    ...(search.trim() && { search: search.trim() }),
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 }
-            )
+            })
             setCompanies(response.data.data || [])
             if (response.data.pagination) setPagination(response.data.pagination)
         } catch (error) {
             toast.error("Impossible de récupérer les entreprises.")
+        }
+    }
+
+    // ==========================================
+    // Exporter les entreprises (fichier Excel)
+    // ==========================================
+    const handleExport = async () => {
+        try {
+            const token = localStorage.getItem("token")
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/companies/export`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                responseType: "blob", // le backend renvoie un fichier, pas du JSON
+            })
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            })
+            saveAs(blob, "Entreprises_DATA.xlsx")
+            toast.success("Exportation réussie !")
+        } catch (error) {
+            // avec responseType "blob", le message d'erreur du serveur arrive sous forme de Blob
+            let message = "Impossible d'exporter les entreprises."
+            if (error.response?.data instanceof Blob) {
+                try {
+                    const json = JSON.parse(await error.response.data.text())
+                    if (json.message) message = json.message
+                } catch { /* réponse non JSON */ }
+            }
+            toast.error(message)
         }
     }
 
@@ -94,23 +136,51 @@ function Entreprises() {
     }
 
     // ==========================================
-    // Chargement initial
+    // Chargement des entreprises (au départ + à chaque changement de recherche)
     // ==========================================
     useEffect(() => {
         getCompanies(1)
-    }, [])
+    }, [search])
 
     return (
         <>
             <Header />
             <Main>
                 {/* Titre */}
-                <div className="produits__top">
+                <div className="produits__top entreprises__top">
                     <div>
                         <h1 className="produits__title">Entreprises</h1>
                         <p className="produits__subtitle">Voici la liste de toutes les entreprises.</p>
                     </div>
+                    {/* Recherche par nom + bouton d'ajout */}
                     <div className="produits__toolbar">
+                        <div className="produits__search">
+                            <SearchIcon className="produits__search-icon" />
+                            <Input
+                                type="text"
+                                placeholder="Nom de l'entreprise..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="produits__search-input"
+                            />
+                            {/* Effacer la recherche */}
+                            {search && (
+                                <button
+                                    type="button"
+                                    className="produits__search-clear"
+                                    onClick={() => setSearch('')}
+                                    aria-label="Effacer la recherche"
+                                >
+                                    <X />
+                                </button>
+                            )}
+                        </div>
+                        {canExport && (
+                            <Button variant="outline" onClick={handleExport}>
+                                <Download />
+                                Exporter
+                            </Button>
+                        )}
                         {canCreate && (
                           <Button onClick={() => {
                               setCurrentCompany(null)
@@ -125,7 +195,9 @@ function Entreprises() {
 
                 {/* Aucune entreprise */}
                 {companies.length === 0 && (
-                    <p className="produits__empty">Aucune entreprise.</p>
+                    <p className="produits__empty">
+                        {search ? `Aucune entreprise trouvée pour « ${search} ».` : 'Aucune entreprise.'}
+                    </p>
                 )}
 
                 {/* Blocs des entreprises, l'un sous l'autre */}
