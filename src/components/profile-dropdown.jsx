@@ -51,9 +51,9 @@ export function ProfileDropdown() {
           {/* paramètres du profil */}
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <Link to='/change-password'>
+              <Link to='/settings'>
                 <IoSettingsOutline />
-                paramètre
+                Paramètres
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>

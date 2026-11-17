@@ -22,6 +22,7 @@ import Fournisseurs from './pages/fournisseurs/Fournisseurs'
 import Entreprises from './pages/entreprises/Entreprises'
 import AjouterEmploye from './pages/employes/AjouterEmploye'
 import Employes from './pages/employes/Employes'
+import Settings from './pages/settings/Settings'
 import ClientsCommerciaux from './pages/clients-commerciaux/ClientsCommerciaux'
 
 export default function App() {
@@ -48,7 +49,10 @@ export default function App() {
             <Route path='/fournisseurs' element={<Fournisseurs />} />
             <Route path='/entreprises' element={<Entreprises />} />
             <Route path='/employes' element={<Employes />} />
+            {/* paramètres du compte (ouverts depuis le menu profil du header) */}
+            <Route path='/settings' element={<Settings />} />       {/*puisque elle est a l'interieur de AuthenticatedLayout elle va s'afficher avec le sidebar et tt mais pas d'icone de paramtre dans le sidebar    */}
             <Route path='/employes/ajouter' element={<AjouterEmploye />} />
+
             {/* même page, le status change (key pour repartir de zéro en changeant de page) */}
             <Route path='/clients-commerciaux' element={<ClientsCommerciaux key='client' status='client' />} />
             <Route path='/prospects' element={<ClientsCommerciaux key='prospect' status='prospect' />} />

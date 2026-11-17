@@ -1,0 +1,18 @@
+/*
+ * Styles de la page Paramètres.
+ */
+@reference '../../styles/index.css';
+
+/* zone du badge de statut : même hauteur qu'un champ, pour être alignée avec "Rôle" */
+.settings__status {
+  @apply flex h-9 items-center;
+}
+
+/* petit point devant "Actif" / "Inactif" */
+.settings__dot {
+  @apply size-2 rounded-full bg-slate-400;
+}
+
+.settings__dot--active {
+  @apply bg-emerald-500;
+}
