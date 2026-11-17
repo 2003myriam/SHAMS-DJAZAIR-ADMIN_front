@@ -22,7 +22,9 @@ export function SidebarGeneral() {
     try {
       // seulement les non lues, avec une grande limite (la route est paginée à 12 par défaut)
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/notification`, {
-        params: { isRead: false, limit: 1000 }
+        params: { isRead: false, limit: 1000 },
+        // la route est protégée par verifyToken côté backend
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       })
       setNotifications(response.data.data || [])
     } catch (error) {

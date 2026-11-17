@@ -22,6 +22,11 @@ import { useUnreadRefresh } from "@/context/NotificationsContext"
 import "../devis/Devis.css"
 import "./Notification.css"
 
+// Le backend protège toutes les routes /notification (verifyToken) : on envoie le token à chaque appel
+const authHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+})
+
 // Formatage de la date (ex : 28/10/2026 14:05)
 const formatDate = (date) =>
     new Date(date).toLocaleString("fr-FR", {
@@ -60,7 +65,8 @@ function Notification() {
                         page,
                         limit: pagination.notifsPerPage,
                         ...(isRead === "all" ? {} : { isRead }),
-                    }
+                    },
+                    headers: authHeaders(),
                 }
             );
 
@@ -99,7 +105,7 @@ function Notification() {
 
     const toggleRead = async (id) => {
         try {
-            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/notification/${id}/read`)
+            const response = await axios.patch(`${import.meta.env.VITE_API_URL}/notification/${id}/read`, {}, { headers: authHeaders() })
             const isRead = response.data.data.isRead
             if (filter === "all") {
                 // on met à jour seulement isRead pour garder les données populées
@@ -122,7 +128,7 @@ function Notification() {
     // ==========================================
     const deleteNotif = async (id) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_API_URL}/notification/${id}`)
+            await axios.delete(`${import.meta.env.VITE_API_URL}/notification/${id}`, { headers: authHeaders() })
             // si on supprime la dernière notification de la page, on revient à la page précédente
             const page = notifications.length === 1 && pagination.currentPage > 1
                 ? pagination.currentPage - 1
@@ -141,7 +147,7 @@ function Notification() {
     const deleteMany = async (type) => {
         try {
             const route = type === "all" ? "delete-all" : "delete-read"
-            await axios.delete(`${import.meta.env.VITE_API_URL}/notification/${route}`)
+            await axios.delete(`${import.meta.env.VITE_API_URL}/notification/${route}`, { headers: authHeaders() })
             getNotifications(filter, 1)
             refreshUnread()
             toast.success(type === "all" ? "Toutes les notifications ont été supprimées." : "Les notifications lues ont été supprimées.")

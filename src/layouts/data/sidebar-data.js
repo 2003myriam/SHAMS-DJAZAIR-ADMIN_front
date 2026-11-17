@@ -13,7 +13,7 @@ export const MENU_ITEMS = [
   { key: 'Contacts', label: 'Contacts', icon: RiContactsBook2Line },
   // { key: 'Documents', label: 'Documents', icon: FiFolder },
   { key: 'Employees', label: 'Employés', icon: FiBriefcase },
-  { key: 'Notifications', label: 'Notification', icon: FaRegBell },
+  // { key: 'Notifications', label: 'Notification', icon: FaRegBell },
 ]
 
 // Sidebar 2 : les liens de la section sélectionnée (parent = key de MENU_ITEMS)
@@ -38,7 +38,7 @@ export const MENU_ITEMS2 = [
   {key: 'AllEmployees', label: 'Tous les employés',parent: 'Employees',path: '/employes',},
   {key: 'AddEmployee', label: 'Ajouter un employé',parent: 'Employees',path: '/employes/ajouter',},
   // PARENT notification
-  {key: 'Notifications', label: 'Toutes les notifications',parent: 'Notifications',path: '/notification',},
+  // {key: 'Notifications', label: 'Toutes les notifications',parent: 'Notifications',path: '/notification',},
  
 ]
 
