@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { KeyRound, LogOut } from 'lucide-react'
+import { IoSettingsOutline } from "react-icons/io5";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +49,14 @@ export function ProfileDropdown() {
           <DropdownMenuSeparator />
 
           {/* paramètres du profil */}
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild>
+              <Link to='/change-password'>
+                <IoSettingsOutline />
+                paramètre
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
               <Link to='/change-password'>

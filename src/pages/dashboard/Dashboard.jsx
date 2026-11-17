@@ -1,20 +1,9 @@
-// Page Aperçu général (page d'accueil "/") : page vide, prête à recevoir votre contenu.
-// Sert de modèle : copiez ce dossier pour créer une nouvelle page.
-import { Header } from '@/layouts/header'
-import { Main } from '@/layouts/main'
+// Page d'accueil "/" : affiche pour l'instant la page des produits.
+// Attention : <Produits /> contient déjà son <Header /> et son <Main>,
+// il ne faut donc pas les rajouter ici (sinon le header s'affiche deux fois).
 import './dashboard.css'
 import { Produits } from '../products/Produits'
 
 export function Dashboard() {
-  return (
-    <>
-      <Header />
-
-      <Main>
-        {/* <h1 className='dashboard__title'>Aperçu général</h1> */}
-        {/* Ajoutez le contenu de la page ici */}
-        <Produits />
-      </Main>
-    </>
-  )
+  return <Produits />
 }
