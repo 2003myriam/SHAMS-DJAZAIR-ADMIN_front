@@ -36,6 +36,32 @@
   @apply h-10! w-full shrink-0 sm:w-48;
 }
 
+/* filtre par date + bouton de réinitialisation */
+.devis__date-filter {
+  @apply relative w-full shrink-0 sm:w-44;
+}
+
+.devis__date-input {
+  @apply h-10 w-full pr-9 shadow-sm;
+}
+
+/* icône calendrier native : blanche en mode sombre */
+.devis__date-input::-webkit-calendar-picker-indicator {
+  @apply cursor-pointer;
+}
+
+.dark .devis__date-input {
+  color-scheme: dark;
+}
+
+.devis__date-clear {
+  @apply absolute top-1/2 right-2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground;
+}
+
+.devis__date-clear svg {
+  @apply size-4;
+}
+
 .devis__toolbar > button {
   @apply h-10 shrink-0 shadow-sm;
 }

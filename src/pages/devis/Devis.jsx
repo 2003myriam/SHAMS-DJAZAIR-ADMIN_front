@@ -264,17 +264,28 @@ function Devis() {
                                 </SelectItem>
                             ))}
                         </SelectContent>
-                        <input
+                    </Select>
+                    {/* Filtre par date */}
+                    <div className="devis__date-filter">
+                        <Input
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
+                            className="devis__date-input"
+                            aria-label="Filtrer par date"
                         />
                         {date && (
-                            <button onClick={() => setDate("")}>
-                                Réinitialiser
+                            <button
+                                type="button"
+                                className="devis__date-clear"
+                                onClick={() => setDate("")}
+                                aria-label="Réinitialiser la date"
+                                title="Réinitialiser"
+                            >
+                                <X />
                             </button>
                         )}
-                    </Select>
+                    </div>
                     {canCreate && (
                         <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
                     )}

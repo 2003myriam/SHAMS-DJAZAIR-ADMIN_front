@@ -105,13 +105,13 @@ function Clients() {
                         <h1 className="produits__title">Clients</h1>
                         <p className="produits__subtitle">Voici la liste des clients inscrits sur le site, avec le détail de leurs informations.</p>
                     </div>
+                    {canExport && (
+                        <Button variant="outline" onClick={handleExport}>
+                            <Download />
+                            Exporter
+                        </Button>
+                    )}
                 </div>
-                {canExport && (
-                    <Button variant="outline" onClick={handleExport}>
-                        <Download />
-                        Exporter
-                    </Button>
-                )}
 
                 {/* Tableau */}
                 <div className="produits__table">

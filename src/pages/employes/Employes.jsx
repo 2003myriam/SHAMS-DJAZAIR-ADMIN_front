@@ -138,19 +138,20 @@ function Employes() {
                             {employees.length} employé{employees.length > 1 ? 's' : ''} dans l'équipe de l'entreprise.
                         </p>
                     </div>
-                    {canExport && (
-                        <Button variant="outline" onClick={handleExport}>
-                            <Download />
-                            Exporter
-                        </Button>
-                    )}
-                    {canCreate && (
-                        <Button onClick={() => navigate('/employes/ajouter')}>
-                            <Plus />
-                            Ajouter un employé
-                        </Button>
-                    )}
-
+                    <div className="produits__toolbar">
+                        {canExport && (
+                            <Button variant="outline" onClick={handleExport}>
+                                <Download />
+                                Exporter
+                            </Button>
+                        )}
+                        {canCreate && (
+                            <Button onClick={() => navigate('/employes/ajouter')}>
+                                <Plus />
+                                Ajouter un employé
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Aucun employé */}
