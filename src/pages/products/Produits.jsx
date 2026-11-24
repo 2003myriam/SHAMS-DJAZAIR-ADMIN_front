@@ -223,7 +223,7 @@ export function Produits() {
           if (json.message) message = json.message;
         } catch { /* réponse non JSON */ }
       }
-      console.error("Export produits :", message);
+
       toast.error(message);
     }
   };

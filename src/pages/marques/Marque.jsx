@@ -146,7 +146,7 @@ function Marque() {
                         <p className="produits__subtitle">Voici la liste de vos marque industrielles.</p>
                     </div>
                     {canCreate && (
-                      <Button onClick={openCreate}><Plus />Ajouter une marque</Button>
+                        <Button onClick={openCreate}><Plus />Ajouter une marque</Button>
                     )}
                 </div>
 
@@ -190,26 +190,26 @@ function Marque() {
                                     <TableCell className="produits__actions">
                                         {/* ICONE MODIFIER  */}
                                         {canUpdate && (
-                                          <Button variant="ghost"
-                                              size="icon"
-                                              onClick={() => openEdit(b)}
-                                              aria-label="Modifier">
-                                              <Pencil /></Button>
+                                            <Button variant="ghost"
+                                                size="icon"
+                                                onClick={() => openEdit(b)}
+                                                aria-label="Modifier">
+                                                <Pencil /></Button>
                                         )}
                                         {/* ICONE SUPPRIMER  */}
                                         {canDelete && (
-                                          <Button
-                                              variant="ghost"
-                                              size="icon"
-                                              onClick={() => {
-                                                  setBrandToDelete(b._id) // je garde ID de la marque
-                                                  setBrandNameToDelete(b.name) // je garde nom de la marque 
-                                                  setDeleteDialogOpen(true) // la boite est en etat ouvert
-                                              }}
-                                              aria-label="Supprimer"
-                                          >
-                                              <Trash2 />
-                                          </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    setBrandToDelete(b._id) // je garde ID de la marque
+                                                    setBrandNameToDelete(b.name) // je garde nom de la marque 
+                                                    setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                                }}
+                                                aria-label="Supprimer"
+                                            >
+                                                <Trash2 />
+                                            </Button>
                                         )}
                                     </TableCell>
                                 </TableRow>

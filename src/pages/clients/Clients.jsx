@@ -3,10 +3,13 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
+import { Download } from 'lucide-react'
 import '../devis/Devis.css'
 import './Clients.css'
+import { usePermission } from '@/hooks/usePermission'
 
 // Libellés en français des rôles du modèle User
 const ROLES = {
@@ -25,7 +28,7 @@ function Clients() {
     // Clients
     // ==========================================
     const [users, setUsers] = useState([])
-
+    const canExport = usePermission("customers", "read")
     // ==========================================
     // Récupération des clients
     // ==========================================
@@ -44,6 +47,46 @@ function Clients() {
             toast.error("Impossible de récupérer les clients.")
         }
     }
+    // ==========================================
+    // Exporter les clients
+    // ==========================================
+    const handleExport = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/auth/export`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    responseType: "blob",
+                }
+            );
+
+            const fileName = "Client_DATA";
+
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            saveAs(blob, `${fileName}.xlsx`);
+
+            toast.success("Exportation réussie !");
+        } catch (error) {
+            // avec responseType "blob", le message d'erreur du serveur arrive sous forme de Blob
+            let message = "Impossible d'exporter les clients.";
+            if (error.response?.data instanceof Blob) {
+                try {
+                    const json = JSON.parse(await error.response.data.text());
+                    if (json.message) message = json.message;
+                } catch { /* réponse non JSON */ }
+            }
+            console.error("Export clients :", message);
+            toast.error(message);
+        }
+    };
+
 
     // ==========================================
     // Chargement initial
@@ -63,6 +106,12 @@ function Clients() {
                         <p className="produits__subtitle">Voici la liste des clients inscrits sur le site, avec le détail de leurs informations.</p>
                     </div>
                 </div>
+                {canExport && (
+                    <Button variant="outline" onClick={handleExport}>
+                        <Download />
+                        Exporter
+                    </Button>
+                )}
 
                 {/* Tableau */}
                 <div className="produits__table">

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/layouts/header'
 import { Main } from '@/layouts/main'
+import { Download } from 'lucide-react'
 import { usePermission } from '@/hooks/usePermission'
 import DeleteConfirmation from './components/DeleteConfirmation'
 import '../products/Produits.css'
@@ -31,7 +32,7 @@ function Employes() {
     // Employés
     // ==========================================
     const [employees, setEmployees] = useState([])
-
+    const canExport = usePermission("customers", "read")
     // ==========================================
     // Suppression : employé choisi + ouverture de la fenêtre de confirmation
     // ==========================================
@@ -78,6 +79,45 @@ function Employes() {
             toast.error("Impossible de récupérer les employés.")
         }
     }
+    // ==========================================
+    // Exporter les employees
+    // ==========================================
+    const handleExport = async () => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/auth/employees/export`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    responseType: "blob",
+                }
+            );
+
+            const fileName = "Employees";
+
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            saveAs(blob, `${fileName}.xlsx`);
+
+            toast.success("Exportation réussie !");
+        } catch (error) {
+            // avec responseType "blob", le message d'erreur du serveur arrive sous forme de Blob
+            let message = "Impossible d'exporter les employées.";
+            if (error.response?.data instanceof Blob) {
+                try {
+                    const json = JSON.parse(await error.response.data.text());
+                    if (json.message) message = json.message;
+                } catch { /* réponse non JSON */ }
+            }
+            console.error("Export employée :", message);
+            toast.error(message);
+        }
+    };
 
     // ==========================================
     // Chargement initial
@@ -98,12 +138,19 @@ function Employes() {
                             {employees.length} employé{employees.length > 1 ? 's' : ''} dans l'équipe de l'entreprise.
                         </p>
                     </div>
+                    {canExport && (
+                        <Button variant="outline" onClick={handleExport}>
+                            <Download />
+                            Exporter
+                        </Button>
+                    )}
                     {canCreate && (
                         <Button onClick={() => navigate('/employes/ajouter')}>
                             <Plus />
                             Ajouter un employé
                         </Button>
                     )}
+
                 </div>
 
                 {/* Aucun employé */}

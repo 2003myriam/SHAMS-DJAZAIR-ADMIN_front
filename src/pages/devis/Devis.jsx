@@ -49,6 +49,7 @@ function Devis() {
 
     // filtre par statut : "all" (tous) ou une clé de DEVIS_STATUS
     const [filter, setFilter] = useState("all")
+    const [date, setDate] = useState("");
     // ==========================================
     // Panneau latéral (ajout / modification)
     // ==========================================
@@ -79,11 +80,17 @@ function Devis() {
 
     const getDevis = async (status, page = 1) => {
         try {
+            const token = localStorage.getItem("token");
             const response = await axios.get(
                 `${import.meta.env.VITE_API_URL}/request`,
+
                 {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                     params: {
                         page,
+                        date,
                         limit: pagination.devisPerPage,
                         search,
                         // "all" : pas de filtre de statut
@@ -133,7 +140,7 @@ function Devis() {
 
         getDevis(filter, 1)
 
-    }, [search])
+    }, [search, status, date])
 
     // faire défiler jusqu'au devis venant d'une notification
     useEffect(() => {
@@ -222,45 +229,55 @@ function Devis() {
 
                 {/* Barre d'outils : recherche à gauche, filtre + bouton à droite */}
                 <div className="devis__toolbar">
-                        {/* Recherche par email ou téléphone */}
-                        <div className="produits__search">
-                            <SearchIcon className="produits__search-icon" />
-                            <Input
-                                type="text"
-                                placeholder="Email ou téléphone..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="produits__search-input"
-                            />
-                            {/* Effacer la recherche */}
-                            {search && (
-                                <button
-                                    type="button"
-                                    className="produits__search-clear"
-                                    onClick={() => setSearch('')}
-                                    aria-label="Effacer la recherche"
-                                >
-                                    <X />
-                                </button>
-                            )}
-                        </div>
-                        {/* Filtre par statut */}
-                        <Select value={filter} onValueChange={changeFilter}>
-                            <SelectTrigger className="devis__status-filter">
-                                <SelectValue placeholder="Statut" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Tous les statuts</SelectItem>
-                                {Object.entries(DEVIS_STATUS).map(([value, label]) => (
-                                    <SelectItem key={value} value={value}>
-                                        <span className={`devis-status__dot devis-status--${value}`} />{label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {canCreate && (
-                          <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
+                    {/* Recherche par email ou téléphone */}
+                    <div className="produits__search">
+                        <SearchIcon className="produits__search-icon" />
+                        <Input
+                            type="text"
+                            placeholder="Email ou téléphone..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="produits__search-input"
+                        />
+                        {/* Effacer la recherche */}
+                        {search && (
+                            <button
+                                type="button"
+                                className="produits__search-clear"
+                                onClick={() => setSearch('')}
+                                aria-label="Effacer la recherche"
+                            >
+                                <X />
+                            </button>
                         )}
+                    </div>
+                    {/* Filtre par statut */}
+                    <Select value={filter} onValueChange={changeFilter}>
+                        <SelectTrigger className="devis__status-filter">
+                            <SelectValue placeholder="Statut" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">Tous les statuts</SelectItem>
+                            {Object.entries(DEVIS_STATUS).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    <span className={`devis-status__dot devis-status--${value}`} />{label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                        <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                        />
+                        {date && (
+                            <button onClick={() => setDate("")}>
+                                Réinitialiser
+                            </button>
+                        )}
+                    </Select>
+                    {canCreate && (
+                        <Button onClick={openCreate}><Plus />Ajouter une demande</Button>
+                    )}
                 </div>
 
                 {/* Tableau */}
@@ -334,25 +351,25 @@ function Devis() {
                                     <TableCell className="produits__actions">
                                         {/* ICONE MODIFIER  */}
                                         {canUpdate && (
-                                          <Button variant="ghost"
-                                              size="icon"
-                                              onClick={() => openEdit(d)}
-                                              aria-label="Modifier">
-                                              <Pencil /></Button>
+                                            <Button variant="ghost"
+                                                size="icon"
+                                                onClick={() => openEdit(d)}
+                                                aria-label="Modifier">
+                                                <Pencil /></Button>
                                         )}
                                         {/* ICONE SUPPRIMER  */}
                                         {canDelete && (
-                                          <Button
-                                              variant="ghost"
-                                              size="icon"
-                                              onClick={() => {
-                                                  setDevisToDelete(d._id) // je garde ID de devis
-                                                  setDeleteDialogOpen(true) // la boite est en etat ouvert
-                                              }}
-                                              aria-label="Supprimer"
-                                          >
-                                              <Trash2 />
-                                          </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => {
+                                                    setDevisToDelete(d._id) // je garde ID de devis
+                                                    setDeleteDialogOpen(true) // la boite est en etat ouvert
+                                                }}
+                                                aria-label="Supprimer"
+                                            >
+                                                <Trash2 />
+                                            </Button>
                                         )}
                                     </TableCell>
                                 </TableRow>
